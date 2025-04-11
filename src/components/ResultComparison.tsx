@@ -37,53 +37,50 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
   return (
     <div className="w-full max-w-2xl mx-auto animate-scale-in">
       <GameCard title={showPredictions ? "Round Results & Predictions" : "Answer Reveal"}>
-        <p className="text-center text-gray-600 mb-6 text-lg italic">
+        <p className="text-center text-gray-700 mb-6 text-lg font-medium italic border-b pb-3">
           {questionText}
         </p>
-        <div className="space-y-6">
+        <div className="space-y-4">
           {result.players.map((playerResult) => {
-            const playerName = playerNames?.[playerResult.playerId] || playerResult.playerId;
-            
+            const playerName = playerNames?.[playerResult.playerId] || `Player ${playerResult.playerId.substring(0, 4)}`;
             const otherPlayerResult = result.players.find(p => p.playerId !== playerResult.playerId);
-            
-            const otherPlayerName = otherPlayerResult ? (playerNames?.[otherPlayerResult.playerId] || otherPlayerResult.playerId) : "Unknown";
-            
+            const otherPlayerName = otherPlayerResult ? (playerNames?.[otherPlayerResult.playerId] || `Player ${otherPlayerResult.playerId.substring(0, 4)}`) : "Opponent";
+
             return (
-              <div key={playerResult.playerId} className="border-b border-connection-light pb-6 last:border-b-0">
-                <div className="mb-4">
-                  <h3 className="font-medium text-lg">
-                    {playerName}'s Answer:
-                  </h3>
-                  <p className="text-xl mt-1 font-bold text-connection-tertiary">
-                    {playerResult.answer || <span className="text-gray-400 italic">No answer</span>}
+              <div key={playerResult.playerId} className="bg-white p-4 rounded-lg shadow border border-gray-200">
+                <h3 className="font-semibold text-lg text-connection-primary mb-3 border-b pb-2">
+                  {playerName}'s Results
+                </h3>
+
+                <div className="mb-3">
+                  <p className="text-sm font-medium text-gray-500">Answer:</p>
+                  <p className="text-xl font-semibold text-connection-tertiary ml-2 mt-1">
+                    {playerResult.answer || <span className="text-gray-400 italic text-base">No answer</span>}
                   </p>
                 </div>
-                
-                {showPredictions && otherPlayerResult && (
-                  <div className="mt-4 flex items-start gap-6">
-                    <div>
-                      <p className="text-sm text-gray-500 mb-1">
-                        {`${otherPlayerName}'s prediction:`}
+
+                {showPredictions && (
+                  <div className="mt-4 pt-3 border-t border-gray-100">
+                    <p className="text-sm font-medium text-gray-500">
+                      Prediction (for {otherPlayerName}):
+                    </p>
+                    <div className="flex justify-between items-center mt-1 ml-2">
+                      <p className="text-lg font-semibold text-gray-700">
+                        {playerResult.prediction || <span className="text-gray-400 italic text-base">No prediction</span>}
                       </p>
-                      <p className="font-medium">
-                        {otherPlayerResult.prediction || <span className="text-gray-400 italic">No prediction</span>}
-                      </p>
-                    </div>
-                    
-                    <div className="flex-1 text-right">
-                       {otherPlayerResult.isCorrect !== undefined ? (
-                         otherPlayerResult.isCorrect ? (
-                           <div className="inline-flex items-center gap-1 bg-green-100 px-2 py-1 rounded-md text-green-700">
-                             <Check size={16} />
-                             <span className="font-medium">Predicted Correctly!</span> 
-                           </div>
-                         ) : (
-                           <div className="inline-flex items-center gap-1 bg-red-100 px-2 py-1 rounded-md text-red-700">
-                             <X size={16} />
-                             <span>Predicted Incorrectly</span>
-                           </div>
-                         )
-                       ) : ( <span className="text-xs text-gray-400">Prediction N/A</span> )}
+                      {playerResult.isCorrect !== undefined ? (
+                        playerResult.isCorrect ? (
+                          <span className="inline-flex items-center gap-1.5 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">
+                            <Check size={14} strokeWidth={3} /> Correct
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">
+                            <X size={14} strokeWidth={3} /> Incorrect
+                          </span>
+                        )
+                      ) : (
+                        <span className="text-xs text-gray-400 italic">N/A</span>
+                      )}
                     </div>
                   </div>
                 )}
@@ -92,7 +89,7 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
           })}
         </div>
         
-        <div className="text-center mt-6">
+        <div className="text-center mt-8">
           <Button 
             onClick={onContinue} 
             className="bg-connection-primary hover:bg-connection-secondary"

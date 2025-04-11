@@ -44,12 +44,12 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
     currentQuestion,
     roundResult,
     hasSubmittedAnswer,
+    hasSubmittedPrediction,
     hasClickedContinue,
     handleAnswerSelect,
     handlePredictionSelect,
     handleContinue,
     getPlayerNameMap,
-    state,
   } = useGameLogic({
     roomId: roomId,
     players,
@@ -77,16 +77,29 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
     );
   }
 
-  // Determine if we should show the waiting state
-  // Show waiting if phase is 'waiting' OR if in 'answer' phase but already submitted
-  const showWaiting = currentPhase === 'waiting' || (currentPhase === 'answer' && hasSubmittedAnswer);
+  // Determine if we should show the waiting state after answering
+  const showWaitingAfterAnswer = currentPhase === 'waiting' || (currentPhase === 'answer' && hasSubmittedAnswer);
+
+  // Determine prediction prompt
+  const predictionPrompt = otherPlayer ? `Predict what ${otherPlayer.nickname} chose:` : `Predict the other player's answer:`;
+  const cardTitle = `Round ${currentRound}/${totalRounds}`;
 
   return (
     <GameCard 
-      title={`Round ${currentRound}/${totalRounds}: This or That`}
-      description={currentQuestion.text}
+      title={cardTitle}
       className="w-full max-w-2xl"
     >
+      {/* Display Question or Prediction Prompt prominently */}
+      <div className="text-center mb-6 px-4">
+        {currentPhase === 'answer' && (
+          <p className="text-xl md:text-2xl font-semibold text-gray-800">{currentQuestion?.text ?? 'Loading...'}</p>
+        )}
+        {currentPhase === 'prediction' && (
+          <p className="text-xl md:text-2xl font-semibold text-indigo-700">{predictionPrompt}</p>
+        )}
+      </div>
+
+      {/* Timer Widget - Moved slightly down */}
       {timerDuration > 0 && currentPhase === 'answer' && !hasSubmittedAnswer && (
         <TimerWidget 
           duration={timerDuration} 
@@ -105,11 +118,28 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
         />
       )}
 
-      {/* Waiting Phase (after submitting answer or before results) */} 
-      {showWaiting && (
+      {/* Prediction Phase - Show prediction options */} 
+      {currentPhase === 'prediction' && !hasSubmittedPrediction && (
+        <AnswerSelection 
+          options={currentQuestion.options}
+          onSelect={handlePredictionSelect}
+        />
+      )}
+
+      {/* Waiting Phase (after submitting answer) */} 
+      {showWaitingAfterAnswer && (
           <div className="text-center p-8">
-            <p className="text-lg text-gray-600 animate-pulse">Waiting for opponent...</p>
+            <p className="text-lg text-gray-600 animate-pulse">
+              {otherPlayer ? `Waiting for ${otherPlayer.nickname}...` : 'Waiting for your friend...'}
+            </p>
           </div>
+      )}
+
+      {/* Waiting Phase (after submitting prediction) */} 
+      {currentPhase === 'prediction' && hasSubmittedPrediction && (
+        <div className="text-center p-8">
+          <p className="text-lg text-gray-600 animate-pulse">Waiting for results...</p>
+        </div>
       )}
 
       {/* Results Phase */} 
@@ -118,8 +148,8 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
           result={roundResult}
           questionText={currentQuestion.text}
           playerNames={getPlayerNameMap()}
-          showPredictions={false} // Reveal only mode
-          onContinue={handleContinue} // Server will trigger next round via event
+          showPredictions={gameStyle === 'prediction'}
+          onContinue={handleContinue}
           hasClickedContinue={hasClickedContinue}
         />
       )}

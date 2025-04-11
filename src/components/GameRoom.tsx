@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { GameQuestion, GameMode, Player } from '@/types/game';
 import getQuestionsByMode from '@/utils/gameQuestions';
 import GuessWhoIAm from './GuessWhoIAm';
+import HotTakes from './HotTakes';
+import ThisOrThat from './ThisOrThat';
 import GameCard from './GameCard';
 import { toast } from '@/components/ui/use-toast';
 
@@ -207,8 +209,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
     );
   }
 
-  // Main gameplay
-  if (status === 'playing' && selectedGameMode === 'guess-who-i-am') {
+  // Main gameplay - render the appropriate game component based on selected mode
+  if (status === 'playing' && selectedGameMode) {
     return (
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
@@ -223,14 +225,38 @@ const GameRoom: React.FC<GameRoomProps> = ({
           </div>
         </div>
         
-        <GuessWhoIAm
-          players={players}
-          questions={questions}
-          currentRound={currentRound}
-          totalRounds={totalRounds}
-          onComplete={handleGameComplete}
-          onUpdateScore={handleUpdateScore}
-        />
+        {selectedGameMode === 'guess-who-i-am' && (
+          <GuessWhoIAm
+            players={players}
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            onComplete={handleGameComplete}
+            onUpdateScore={handleUpdateScore}
+          />
+        )}
+        
+        {selectedGameMode === 'hot-takes' && (
+          <HotTakes
+            players={players}
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            onComplete={handleGameComplete}
+            onUpdateScore={handleUpdateScore}
+          />
+        )}
+        
+        {selectedGameMode === 'this-or-that' && (
+          <ThisOrThat
+            players={players}
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            onComplete={handleGameComplete}
+            onUpdateScore={handleUpdateScore}
+          />
+        )}
       </div>
     );
   }

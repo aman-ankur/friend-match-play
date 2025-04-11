@@ -11,6 +11,7 @@ interface GameCardProps {
   onClick?: () => void;
   footer?: React.ReactNode;
   children: React.ReactNode;
+  colorScheme?: 'default' | 'purple' | 'orange' | 'blue';
 }
 
 const GameCard = ({ 
@@ -20,8 +21,35 @@ const GameCard = ({
   isFlipped = false,
   onClick,
   footer,
-  children 
+  children,
+  colorScheme = 'default'
 }: GameCardProps) => {
+  const getHeaderClass = () => {
+    switch (colorScheme) {
+      case 'purple':
+        return 'bg-purple-50';
+      case 'orange':
+        return 'bg-orange-50';
+      case 'blue':
+        return 'bg-blue-50';
+      default:
+        return 'bg-connection-light bg-opacity-50';
+    }
+  };
+
+  const getTitleClass = () => {
+    switch (colorScheme) {
+      case 'purple':
+        return 'text-purple-600';
+      case 'orange':
+        return 'text-orange-600';
+      case 'blue':
+        return 'text-blue-600';
+      default:
+        return 'text-connection-tertiary';
+    }
+  };
+
   return (
     <Card 
       className={cn(
@@ -33,8 +61,8 @@ const GameCard = ({
       onClick={onClick}
     >
       {(title || description) && (
-        <CardHeader className="bg-connection-light bg-opacity-50">
-          {title && <CardTitle className="text-connection-tertiary">{title}</CardTitle>}
+        <CardHeader className={getHeaderClass()}>
+          {title && <CardTitle className={getTitleClass()}>{title}</CardTitle>}
           {description && <CardDescription>{description}</CardDescription>}
         </CardHeader>
       )}

@@ -7,6 +7,7 @@ import useGameLogic from '@/hooks/useGameLogic';
 import TimerWidget from './TimerWidget';
 
 interface GuessWhoIAmProps {
+  roomId: string;
   players: Player[];
   questions: GameQuestion[];
   currentRound: number;
@@ -16,9 +17,11 @@ interface GuessWhoIAmProps {
   onNextRound: () => void;
   gameStyle: GameStyle;
   timerDuration: number;
+  currentPlayerId: string | null;
 }
 
 const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
+  roomId,
   players,
   questions,
   currentRound,
@@ -27,7 +30,8 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
   onUpdateScore,
   onNextRound,
   gameStyle,
-  timerDuration
+  timerDuration,
+  currentPlayerId
 }) => {
   console.log(`[GuessWhoIAm] Rendering. Received round prop: ${currentRound}`);
 
@@ -41,8 +45,11 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
     handleAnswerSelect,
     handlePredictionSelect,
     handleContinue,
-    getPlayerNameMap
+    getPlayerNameMap,
+    hasSubmittedAnswer,
+    hasSubmittedPrediction
   } = useGameLogic({
+    roomId: roomId,
     players,
     questions,
     currentRound,
@@ -50,11 +57,14 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
     onComplete,
     onUpdateScore,
     onNextRound,
-    answerSubmittedMessage: "All answers submitted!",
-    scorePerCorrectPrediction: gameStyle === 'prediction' ? 2 : 0,
-    scorePerMatchingAnswer: gameStyle === 'prediction' ? 1 : 0,
-    gameStyle
+    gameStyle,
+    currentPlayerId
   });
+
+  // Determine if the current player is waiting after submitting in the current phase
+  const isWaitingAfterSubmission = 
+    (currentPhase === 'answer' && hasSubmittedAnswer) || 
+    (currentPhase === 'prediction' && hasSubmittedPrediction);
 
   // Render different phases
   if (currentPhase === 'results' && roundResult) {
@@ -79,14 +89,37 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
         <div className="text-sm font-medium text-connection-secondary mb-1">
           Round {currentRound} of {totalRounds}
         </div>
-        <h2 className="text-xl md:text-2xl font-bold text-connection-tertiary">
-          {currentPhase === 'answer' ? "Answer Honestly" : "Make Your Prediction"}
-        </h2>
-        <p className="text-gray-600 mt-1">
-          {currentPhase === 'answer' 
-            ? `${currentPlayer.nickname}'s turn to answer` 
-            : `${currentPlayer.nickname}, predict what ${otherPlayer.nickname} answered`}
-        </p>
+        {/* Show header only when player names are available */}
+        {currentPlayer?.nickname && otherPlayer?.nickname ? (
+          <>
+            <h2 className="text-xl md:text-2xl font-bold text-connection-tertiary">
+              {currentPhase === 'answer' 
+                ? "Answer Honestly"
+                : (currentPhase === 'prediction' 
+                    // Use actual nickname 
+                    ? `Predict ${otherPlayer.nickname}'s Answer` 
+                    : "Waiting...") // Should ideally not hit this if results phase is handled
+              }
+            </h2>
+            <p className="text-gray-600 mt-1">
+              {currentPhase === 'answer' && !hasSubmittedAnswer
+                // Use actual nickname
+                ? `${currentPlayer.nickname}, what's your answer?` 
+                : (currentPhase === 'prediction' && !hasSubmittedPrediction
+                    // Use actual nicknames
+                    ? `${currentPlayer.nickname}, what do you think ${otherPlayer.nickname} answered?`
+                    : (isWaitingAfterSubmission 
+                        // Use actual nickname
+                        ? `Waiting for ${otherPlayer.nickname}...` 
+                        : "Loading phase...") // Fallback if somehow waiting but not after submission
+                )
+              }
+            </p>
+          </>
+        ) : (
+          // Show loading state if names are not yet available
+          <h2 className="text-xl md:text-2xl font-bold text-connection-tertiary animate-pulse">Loading names...</h2>
+        )}
       </div>
 
       <GameCard>
@@ -105,12 +138,19 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
                   ? handleAnswerSelect(option) 
                   : handlePredictionSelect(option)
               }
+              disabled={isWaitingAfterSubmission}
             >
               <span className="text-md">{option}</span>
             </Button>
           ))}
         </div>
       </GameCard>
+
+      {isWaitingAfterSubmission && (
+        <div className="mt-4 text-center text-sm text-gray-500 animate-pulse">
+          Waiting for other player...
+        </div>
+      )}
     </div>
   );
 };

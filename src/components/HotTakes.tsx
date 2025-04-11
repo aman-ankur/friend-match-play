@@ -7,6 +7,7 @@ import useGameLogic from '@/hooks/useGameLogic';
 import TimerWidget from './TimerWidget';
 
 interface HotTakesProps {
+  roomId: string;
   players: Player[];
   questions: GameQuestion[];
   currentRound: number;
@@ -16,9 +17,11 @@ interface HotTakesProps {
   onNextRound: () => void;
   gameStyle: GameStyle;
   timerDuration: number;
+  currentPlayerId: string | null;
 }
 
 const HotTakes: React.FC<HotTakesProps> = ({
+  roomId,
   players,
   questions,
   currentRound,
@@ -27,7 +30,8 @@ const HotTakes: React.FC<HotTakesProps> = ({
   onUpdateScore,
   onNextRound,
   gameStyle,
-  timerDuration
+  timerDuration,
+  currentPlayerId
 }) => {
   console.log(`[HotTakes] Rendering. Received round prop: ${currentRound}`);
 
@@ -43,6 +47,7 @@ const HotTakes: React.FC<HotTakesProps> = ({
     handleContinue,
     getPlayerNameMap
   } = useGameLogic({
+    roomId: roomId,
     players,
     questions,
     currentRound,
@@ -50,10 +55,8 @@ const HotTakes: React.FC<HotTakesProps> = ({
     onComplete,
     onUpdateScore,
     onNextRound,
-    answerSubmittedMessage: "All opinions submitted!",
-    scorePerCorrectPrediction: gameStyle === 'prediction' ? 2 : 0,
-    scorePerMatchingAnswer: 0, // Hot Takes doesn't award points for matching answers
-    gameStyle
+    gameStyle,
+    currentPlayerId
   });
 
   // Render different phases

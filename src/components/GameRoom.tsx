@@ -4,7 +4,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Home, User, Users } from 'lucide-react';
 import { GameQuestion, GameMode as SpecificGameMode, GameStyle, Player } from '@/types/game';
-import getQuestionsByMode from '@/utils/gameQuestions';
+import getQuestionsByMode, { GAME_DESCRIPTIONS } from '@/utils/gameQuestions';
 import GuessWhoIAm from './GuessWhoIAm';
 import HotTakes from './HotTakes';
 import ThisOrThat from './ThisOrThat';
@@ -27,7 +27,6 @@ interface Player {
 
 interface GameRoomProps {
   roomId: string;
-  currentPlayerId: string | null; // Allow null initially
   playerName: string;
   gameMode: AppGameMode;
   initialPlayersData: Player[] | null; // Receive initial players
@@ -36,15 +35,17 @@ interface GameRoomProps {
 
 const GameRoom: React.FC<GameRoomProps> = ({
   roomId,
-  currentPlayerId,
   playerName,
   gameMode,
-  initialPlayersData, // Destructure prop
+  initialPlayersData,
   onExitRoom
 }) => {
   const { socket } = useSocket();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false); // Add state for Start Game button
+
+  // Use socket.id as the source of truth for the current player's ID
+  const currentPlayerId = socket?.id || null;
 
   // Determine initial state based on gameMode AND initialPlayersData
   const getInitialState = () => {
@@ -54,16 +55,16 @@ const GameRoom: React.FC<GameRoomProps> = ({
         players: initialPlayersData 
       };
     } else if (gameMode === 'solo') {
-      // Use passed playerName for solo, ID can be null initially or socket.id
+      // Use derived currentPlayerId for solo
       return {
          status: 'selecting' as const,
          players: [{ id: currentPlayerId ?? 'solo-player', nickname: playerName, score: 0 }] 
       };
     } else {
+      // Use derived currentPlayerId for creator
       return {
         status: 'waiting' as const,
         players: [
-          // Use passed playerName for creator, ID can be null initially or socket.id
           { id: currentPlayerId ?? 'creator-loading', nickname: playerName, score: 0 },
           { id: 'player2_placeholder', nickname: 'Waiting...', score: 0 } 
         ]
@@ -83,8 +84,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const [nsfwLevel, setNsfwLevel] = useState(1);
   const [selectedTimerDuration, setSelectedTimerDuration] = useState<number>(0);
 
-  // Determine if the current player is the creator
-  // Now compares the potentially null currentPlayerId prop with the ID of the first player in state
+  // Determine if the current player is the creator using the derived currentPlayerId
   const isCreator = gameMode === 'solo' || 
                    (players.length > 0 && !!currentPlayerId && players[0]?.id === currentPlayerId);
 
@@ -139,11 +139,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
         toast({ title: "Game Started!", description: `Mode: ${data.selectedGameMode}` });
     };
 
-    // --- Add Listener for New Round --- 
+    // --- Listener for New Round (directly updates state) --- 
     const handleNewRound = (data: { currentRound: number }) => {
-        console.log(`[GameRoom] Received newRound event for round: ${data.currentRound}`);
+        console.log(`[GameRoom] Received newRound event for round: ${data.currentRound}. Setting state.`);
+        // Directly set the round state based on the server event
         setCurrentRound(data.currentRound);
-        // The useGameLogic hook's useEffect [currentRound] dependency will handle resetting its internal state.
     };
 
     // --- Add Listener for Game Over --- 
@@ -166,16 +166,26 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
     // Listener for when the other player leaves
     const handlePlayerLeft = (data: { playerId: string; playerName: string }) => {
-        console.log('[GameRoom] Received playerLeft event:', data);
-         if (gameMode === '2player') {
-             toast({
-              title: "Opponent Left",
-              description: `${data.playerName} has left the room.`,
-              variant: "destructive"
-            });
-            setPlayers(prev => prev.filter(p => p.id === currentPlayerId));
-            setStatus('selecting'); 
-         }
+      console.log('[GameRoom] Received playerLeft event:', data);
+       if (gameMode === '2player') {
+           toast({
+            title: "Opponent Left",
+            description: `${data.playerName} has left the room.`,
+            variant: "destructive"
+          });
+          // Update player list, remove the leaving player
+          setPlayers(prev => prev.filter(p => p.id !== data.playerId));
+          // Reset to selecting state if game was playing
+          if (status === 'playing') {
+              setStatus('selecting');
+              // Reset game-specific states
+              setSelectedGameMode(null);
+              setSelectedGameStyle('reveal-only');
+              setQuestions([]);
+              setCurrentRound(1);
+              setFinalScores(null);
+          }
+       }
     };
 
     socket.on('roomReady', handleRoomReady);
@@ -194,8 +204,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
       socket.off('newRound', handleNewRound); // Cleanup listener
       socket.off('gameOver', handleGameOver); // Cleanup listener
     };
-    // Re-evaluate if socket, gameMode, status, or currentPlayerId changes
-  }, [socket, gameMode, status, currentPlayerId, toast]); // Add toast to dependencies
+    // Re-evaluate if socket, gameMode, status, or currentPlayerId (derived) changes
+  }, [socket, gameMode, status, currentPlayerId, toast]); // Add currentPlayerId to dependencies
 
   const handleGameModeSelect = (mode: SpecificGameMode) => {
     // Allow anyone to select the mode visually, but only creator can *start* it
@@ -271,14 +281,6 @@ const GameRoom: React.FC<GameRoomProps> = ({
     );
   };
   
-  const handleNextRound = () => {
-    console.log('[GameRoom] handleNextRound called. Incrementing round.');
-    setCurrentRound(prev => {
-      console.log(`[GameRoom] setCurrentRound updater. Prev: ${prev}, Next: ${prev + 1}`);
-      return prev + 1;
-    });
-  };
-
   const handleGoHome = () => {
     setSelectedGameMode(null);
     setSelectedGameStyle('reveal-only');
@@ -343,20 +345,35 @@ const GameRoom: React.FC<GameRoomProps> = ({
     );
   };
 
+  // --- Game Rendering Logic ---
+  // Log state just before rendering game components
+  if (status === 'playing') {
+    console.log('[GameRoom] Rendering PLAYING state:', {
+      roomId,
+      currentPlayerId,
+      players,
+      selectedGameMode,
+      currentRound
+    });
+  }
+
   return (
-    <div className="container mx-auto flex flex-col min-h-screen"> 
+    <div className="container mx-auto flex flex-col min-h-screen">
       {renderHeader()}
-      <div className="flex-grow p-4 flex flex-col items-center"> 
-        {gameMode === '2player' && status === 'waiting' && (
-           <div className="w-full max-w-sm text-center animate-fade-in">
-            <GameCard title="Waiting for Friend">
-               <p className="mb-4">Room Code: <strong className="text-xl tracking-wider font-mono">{roomId}</strong></p>
-               <p className="text-gray-600 mb-6">Share this code with your friend to join.</p>
-               <div className="animate-pulse text-connection-secondary">Waiting for player 2...</div>
-            </GameCard>
-          </div>
+
+      <div className="flex-grow flex flex-col items-center justify-center overflow-auto p-4 md:p-6">
+        {status === 'waiting' && (
+          <GameCard className="text-center animate-fade-in w-full max-w-md">
+            <h2 className="text-2xl font-semibold mb-4 text-connection-tertiary">Waiting for Player 2...</h2>
+            <p className="text-gray-600 mb-2">Room ID: <span className="font-mono bg-gray-200 px-2 py-1 rounded">{roomId}</span></p>
+            <p className="text-gray-600 mb-6">Share this ID with your friend!</p>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-connection-secondary"></div>
+            </div>
+          </GameCard>
         )}
-        {status === 'selecting' && (
+
+        {status === 'selecting' && isCreator && (
           <div className="w-full max-w-3xl animate-fade-in">
             <h1 className="text-3xl font-bold text-center text-connection-tertiary mb-8">
               Choose a Game Mode
@@ -365,197 +382,159 @@ const GameRoom: React.FC<GameRoomProps> = ({
               <GameCard 
                 title="Guess Who I Am" 
                 description="Reveal how well you understand each other"
-                className="hover:border-connection-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                className={cn(
+                  "hover:border-connection-primary hover:scale-105 transition-all duration-300 cursor-pointer text-center",
+                  selectedGameMode === 'guess-who-i-am' && "border-2 border-connection-primary scale-105"
+                )}
                 onClick={() => handleGameModeSelect('guess-who-i-am')}
               >
-                <div className="h-24 flex items-center justify-center">
-                  <p className="text-center">Answer personality questions and predict your friend's responses</p>
-                </div>
+                <p className="text-sm text-gray-600 mt-2">
+                  Answer personality questions and predict your friend's responses.
+                </p>
               </GameCard>
               <GameCard
                 title="Hot Takes"
                 description="Test your opinion prediction skills"
-                className="hover:border-connection-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                className={cn(
+                  "hover:border-connection-primary hover:scale-105 transition-all duration-300 cursor-pointer text-center",
+                  selectedGameMode === 'hot-takes' && "border-2 border-connection-primary scale-105"
+                )}
                 onClick={() => handleGameModeSelect('hot-takes')}
               >
-                <div className="h-24 flex items-center justify-center">
-                  <p className="text-center">Share your opinions and predict each other's stances</p>
-                </div>
+                 <p className="text-sm text-gray-600 mt-2">
+                   Share your opinions and predict each other's stances.
+                 </p>
               </GameCard>
               <GameCard
                 title="This or That"
                 description="Forced choices with a twist"
-                className="hover:border-connection-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                className={cn(
+                  "hover:border-connection-primary hover:scale-105 transition-all duration-300 cursor-pointer text-center",
+                  selectedGameMode === 'this-or-that' && "border-2 border-connection-primary scale-105"
+                )}
                 onClick={() => handleGameModeSelect('this-or-that')}
               >
-                <div className="h-24 flex items-center justify-center">
-                  <p className="text-center">Make binary choices and predict your friend's preferences</p>
-                </div>
+                 <p className="text-sm text-gray-600 mt-2">
+                   Make binary choices and predict your friend's preferences.
+                 </p>
               </GameCard>
             </div>
+             {/* Adjusted text below cards */}
+            {selectedGameMode && (
+               <p className="text-sm text-gray-600 mt-6 text-center">Selected: <span className='font-semibold'>{selectedGameMode}</span>. Click below to configure style & options.</p>
+            )}
           </div>
         )}
-        {status === 'style-selecting' && selectedGameMode && (
-          <div className="w-full max-w-md animate-fade-in">
-            <GameCard title={isCreator ? "Customize Your Game" : "Waiting for Host"}>
-              {isCreator ? (
-                <>
-                  {/* Style Options (Prediction / Reveal) */}
-                  <div className="mb-6">
-                    <h3 className="text-lg font-medium mb-2">Game Style</h3>
-                    <RadioGroup 
-                      value={selectedGameStyle} 
-                      onValueChange={(value) => setSelectedGameStyle(value as GameStyle)}
-                      className="space-y-3"
-                    >
-                       <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <RadioGroupItem value="prediction" id="prediction" disabled={gameMode === 'solo'} />
-                        <div className="space-y-1">
-                          <Label htmlFor="prediction" className={cn("font-medium", gameMode === 'solo' && "text-gray-400")}>Prediction</Label>
-                          <p className={cn("text-xs text-gray-500", gameMode === 'solo' && "text-gray-400")}>(Unavailable in Solo)</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <RadioGroupItem value="reveal-only" id="reveal-only" />
-                         <div className="space-y-1">
-                           <Label htmlFor="reveal-only" className="font-medium">Reveal Only</Label>
-                           <p className="text-xs text-gray-500">Just answer and compare.</p>
-                         </div>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                  {/* NSFW Slider */}
-                  <div className="mb-6">
-                     <h3 className="text-lg font-medium mb-2">NSFW Content</h3>
-                     <NSFWSlider value={nsfwLevel} onChange={handleNsfwLevelChange} minimal />
-                  </div>
-                  {/* Timer Slider */}
-                  <div className="mb-6">
-                     <h3 className="text-lg font-medium mb-2">Answer Timer</h3>
-                     <RadioGroup 
-                        value={String(selectedTimerDuration)} 
-                        onValueChange={(value) => setSelectedTimerDuration(Number(value))}
-                        className="flex gap-2"
-                      >
-                        {[0, 15, 30, 45].map(duration => (
-                           <div key={duration} className="flex-1">
-                            <RadioGroupItem value={String(duration)} id={`timer-${duration}`} className="sr-only" />
-                            <Label 
-                              htmlFor={`timer-${duration}`}
-                              className={cn(
-                                "flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors",
-                                selectedTimerDuration === duration && "border-primary"
-                              )}
-                            >
-                               {duration === 0 ? "None" : `${duration}s`}
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                  </div>
-                  {/* Action Buttons (Creator) */}
-                  <div className="flex gap-4 justify-center">
-                    <Button variant="outline" onClick={() => setStatus('selecting')} disabled={isProcessing}>Back</Button>
-                    <Button onClick={handleCreatorStartGame} className="bg-connection-primary hover:bg-connection-secondary" disabled={isProcessing}>
-                        {isProcessing ? "Starting..." : "Start Game"}
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                // Non-creator view 
-                <div className="text-center p-8">
-                   <p className="text-lg text-gray-600 animate-pulse">Waiting for {creatorName} to start the game...</p>
-                   <p className="text-sm text-gray-500 mt-2">Selected Mode: {selectedGameMode}</p> 
-                </div>
-              )}
-            </GameCard>
+        
+        {status === 'selecting' && !isCreator && (
+           <GameCard className="text-center animate-fade-in">
+            <h2 className="text-2xl font-semibold mb-4 text-connection-tertiary">Waiting for Host</h2>
+            <p className="text-gray-600">{players[0]?.nickname || 'The host'} is selecting the game settings.</p>
+          </GameCard>
+        )}
+
+        {status === 'style-selecting' && isCreator && (
+          <div 
+            className="w-full max-w-md text-center animate-fade-in relative rounded-lg p-6 transition-colors duration-300 ease-in-out" 
+            style={{
+              // Calculate background alpha based on NSFW level (1=0, 10=0.25)
+              // Adjust the max alpha (0.25 here) for desired intensity
+              backgroundColor: `rgba(239, 68, 68, ${(Math.max(0, nsfwLevel - 1) / 9) * 0.25})` 
+            }}
+          >
+            <h3 className="text-xl font-semibold mb-4 text-connection-tertiary">Select Game Style for {selectedGameMode}</h3>
+            <RadioGroup 
+              value={selectedGameStyle}
+              className="flex justify-center space-x-4 mb-6"
+              onValueChange={(value: string) => setSelectedGameStyle(value as GameStyle)}
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="reveal-only" id="style-reveal" className="border-gray-400 text-connection-primary" />
+                <Label htmlFor="style-reveal">Reveal Only</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="prediction" id="style-prediction" className="border-gray-400 text-connection-primary" disabled={gameMode === 'solo'} />
+                <Label htmlFor="style-prediction" className={cn(gameMode === 'solo' && "text-gray-400 cursor-not-allowed")}>Prediction {gameMode === 'solo' && "(2P Only)"}</Label>
+              </div>
+            </RadioGroup>
+            
+            <h3 className="text-xl font-semibold mb-4 text-connection-tertiary">NSFW Level</h3>
+            <NSFWSlider onLevelChange={handleNsfwLevelChange} initialLevel={nsfwLevel} />
+
+            <Button onClick={handleCreatorStartGame} className="mt-6 w-full bg-connection-primary hover:bg-connection-secondary" disabled={isProcessing}>
+              {isProcessing ? "Starting..." : "Start Game"}
+            </Button>
+            <Button variant="link" onClick={() => { setSelectedGameMode(null); setStatus('selecting'); }} className="mt-2 text-connection-secondary">Back to Mode Select</Button>
           </div>
         )}
+
+        {status === 'playing' && selectedGameMode === 'guess-who-i-am' && (
+          <GuessWhoIAm 
+            roomId={roomId} // Pass roomId
+            players={players}
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            onComplete={handleGameComplete}
+            onUpdateScore={handleUpdateScore}
+            onNextRound={() => {}} // Pass empty function, no longer needed
+            gameStyle={selectedGameStyle}
+            timerDuration={selectedTimerDuration}
+            currentPlayerId={currentPlayerId} // Pass the derived ID
+          />
+        )}
+        
+        {status === 'playing' && selectedGameMode === 'hot-takes' && (
+          <HotTakes 
+            roomId={roomId} // Pass roomId
+            players={players}
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            onComplete={handleGameComplete}
+            onUpdateScore={handleUpdateScore}
+            onNextRound={() => {}} // Pass empty function, no longer needed
+            gameStyle={selectedGameStyle}
+            timerDuration={selectedTimerDuration}
+            currentPlayerId={currentPlayerId} // Pass the derived ID
+          />
+        )}
+
+        {status === 'playing' && selectedGameMode === 'this-or-that' && (
+          <ThisOrThat 
+            roomId={roomId} // Pass roomId
+            players={players}
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            onComplete={handleGameComplete}
+            onUpdateScore={handleUpdateScore}
+            onNextRound={() => {}} // Pass empty function, no longer needed
+            gameStyle={selectedGameStyle}
+            timerDuration={selectedTimerDuration}
+            currentPlayerId={currentPlayerId} // Pass the derived ID
+          />
+        )}
+
         {status === 'completed' && finalScores && (
-          <div className="w-full max-w-lg text-center animate-scale-in">
-            <GameCard title="Game Complete">
-              {gameMode === 'solo' ? (
-                <h2 className="text-2xl font-bold mb-6">You finished!</h2>
-              ) : (
-                 <h2 className="text-2xl font-bold mb-6">
-                  {(players.length > 1 && Object.values(finalScores).length === players.length && Object.values(finalScores).every((score, i, arr) => i === 0 || score === arr[i-1]))
-                    ? "It's a tie!"
-                    : `${players.find(p => p.id === Object.entries(finalScores).sort((a, b) => b[1] - a[1])[0]?.[0])?.nickname || 'Someone'} wins!`}
-                </h2>
-              )}
-              <div className="space-y-4 mb-8">
-                 {players.map((player) => (
-                   player.id !== 'player2_placeholder' && (
-                     <div key={player.id} className={`p-4 rounded-lg ${gameMode === '2player' && players.length > 1 && Object.values(finalScores).length === players.length && player.id === Object.entries(finalScores).sort((a, b) => b[1] - a[1])[0]?.[0] && !Object.values(finalScores).every((score, i, arr) => i === 0 || score === arr[i-1]) ? 'bg-connection-light' : 'bg-gray-100'}`}>
-                       <div className="flex justify-between items-center">
-                         <span className="font-medium">{player.nickname}</span>
-                         <span className="text-lg font-bold text-connection-tertiary">{finalScores[player.id] ?? 0} points</span>
-                       </div>
-                     </div>
-                   )
-                 ))}
-              </div>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button onClick={handlePlayAgain} className="bg-connection-primary hover:bg-connection-secondary">Play Again</Button>
-              </div>
-            </GameCard>
-          </div>
-        )}
-        {status === 'playing' && selectedGameMode && (
-           <div className="w-full flex flex-col items-center"> 
-            <NSFWSlider value={nsfwLevel} onChange={handleNsfwLevelChange} />
-            {selectedGameMode === 'guess-who-i-am' && (
-              <GuessWhoIAm
-                roomId={roomId}
-                currentPlayerId={currentPlayerId}
-                players={players.filter(p => p.id !== 'player2_placeholder')}
-                questions={questions}
-                currentRound={currentRound}
-                totalRounds={totalRounds}
-                onComplete={handleGameComplete}
-                onUpdateScore={handleUpdateScore}
-                onNextRound={handleNextRound}
-                gameStyle={selectedGameStyle}
-                timerDuration={selectedTimerDuration}
-                gameMode={gameMode}
-              />
-            )}
-            {selectedGameMode === 'hot-takes' && (
-              <HotTakes
-                roomId={roomId}
-                currentPlayerId={currentPlayerId}
-                players={players.filter(p => p.id !== 'player2_placeholder')}
-                questions={questions}
-                currentRound={currentRound}
-                totalRounds={totalRounds}
-                onComplete={handleGameComplete}
-                onUpdateScore={handleUpdateScore}
-                onNextRound={handleNextRound}
-                gameStyle={selectedGameStyle}
-                timerDuration={selectedTimerDuration}
-                gameMode={gameMode}
-              />
-            )}
-            {selectedGameMode === 'this-or-that' && (
-              <ThisOrThat
-                roomId={roomId}
-                currentPlayerId={currentPlayerId}
-                players={players.filter(p => p.id !== 'player2_placeholder')}
-                questions={questions}
-                currentRound={currentRound}
-                totalRounds={totalRounds}
-                onComplete={handleGameComplete}
-                onUpdateScore={handleUpdateScore}
-                onNextRound={handleNextRound}
-                gameStyle={selectedGameStyle}
-                timerDuration={selectedTimerDuration}
-                gameMode={gameMode}
-              />
-            )}
-          </div>
-        )}
-        {!['waiting', 'selecting', 'style-selecting', 'playing', 'completed'].includes(status) && (
-          <div>Loading game or error...</div>
+          <GameCard className="text-center animate-fade-in">
+            <h2 className="text-2xl font-semibold mb-4 text-connection-tertiary">Game Complete</h2>
+            <div className="space-y-4 mb-6">
+              {players.map((player) => (
+                player.id !== 'player2_placeholder' && (
+                  <div key={player.id} className="p-4 rounded-lg bg-gray-100">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">{player.nickname}</span>
+                      <span className="text-lg font-bold text-connection-tertiary">{finalScores[player.id] ?? 0} points</span>
+                    </div>
+                  </div>
+                )
+              ))}
+            </div>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button onClick={handlePlayAgain} className="bg-connection-primary hover:bg-connection-secondary">Play Again</Button>
+            </div>
+          </GameCard>
         )}
       </div>
     </div>

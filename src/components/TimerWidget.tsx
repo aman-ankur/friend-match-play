@@ -1,90 +1,90 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Clock } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Clock, Hourglass, Timer, Bomb } from 'lucide-react';
+import { cn } from "@/lib/utils";
 
 interface TimerWidgetProps {
-  duration: number; // Duration in seconds
-  onTimeout?: () => void; // Optional callback when timer hits 0
+  timeLeft: number;      // Current seconds remaining (controlled by parent)
+  totalDuration: number; // Initial duration for percentage calculation
 }
 
-const TimerWidget: React.FC<TimerWidgetProps> = ({ duration, onTimeout }) => {
-  const [timeLeft, setTimeLeft] = useState(duration);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    // Clear any existing interval when duration changes or component unmounts
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
-    // Only start interval if duration is positive
-    if (duration > 0) {
-      setTimeLeft(duration); // Reset time left when duration changes
-
-      intervalRef.current = setInterval(() => {
-        setTimeLeft((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(intervalRef.current!);
-            if (onTimeout) {
-              onTimeout();
-            }
-            return 0;
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
-    }
-
-    // Cleanup function
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [duration, onTimeout]);
-
-  // Don't render anything if duration is 0
-  if (duration <= 0) {
+const TimerWidget: React.FC<TimerWidgetProps> = ({ timeLeft, totalDuration }) => {
+  // Prevent rendering or calculation issues if totalDuration is invalid
+  if (totalDuration <= 0) {
     return null;
   }
 
-  const percentage = (timeLeft / duration) * 100;
-  const strokeDashoffset = 283 * (1 - percentage / 100); // 283 is approx circumference (2 * pi * 45)
+  // Animation state for the time number
+  const [animatePop, setAnimatePop] = useState(false);
+  
+  // Trigger pop animation when timeLeft changes
+  useEffect(() => {
+    setAnimatePop(true);
+    const timer = setTimeout(() => setAnimatePop(false), 300);
+    return () => clearTimeout(timer);
+  }, [timeLeft]);
 
-  // Determine color based on time left
-  let colorClass = 'text-green-500';
-  if (percentage <= 50) colorClass = 'text-yellow-500';
-  if (percentage <= 25) colorClass = 'text-red-500';
+  // Ensure timeLeft doesn't go below 0 for calculations
+  const displayTime = Math.max(0, timeLeft);
+  
+  // Calculate percentage, handle potential division by zero (though already checked)
+  const percentage = totalDuration > 0 ? (displayTime / totalDuration) * 100 : 0;
+  
+  // Dynamic styling based on time remaining
+  const isLow = displayTime <= 5 && displayTime > 0;
+  const isMedium = displayTime <= totalDuration * 0.5 && displayTime > totalDuration * 0.25;
+  const isCritical = displayTime <= totalDuration * 0.25;
+  
+  // Select icon based on time remaining
+  const TimerIcon = isLow ? Bomb : (isCritical ? Hourglass : Clock);
+  
+  // Calculate gradient rotation based on time remaining
+  const gradientRotation = 90 + (360 * (1 - percentage / 100));
+  
+  // Background style
+  const bgStyle = {
+    background: isLow 
+      ? `conic-gradient(from ${gradientRotation}deg at 50% 50%, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.8) ${percentage}%, rgba(239, 68, 68, 0.05) ${percentage}%)`
+      : isCritical
+      ? `conic-gradient(from ${gradientRotation}deg at 50% 50%, rgba(234, 179, 8, 0.2) 0%, rgba(234, 179, 8, 0.8) ${percentage}%, rgba(234, 179, 8, 0.05) ${percentage}%)`
+      : `conic-gradient(from ${gradientRotation}deg at 50% 50%, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.8) ${percentage}%, rgba(59, 130, 246, 0.05) ${percentage}%)`,
+  };
 
   return (
-    <div className="relative flex flex-col items-center justify-center w-20 h-20 mb-4">
-      <svg className="absolute w-full h-full" viewBox="0 0 100 100">
-        {/* Background circle */}
-        <circle
-          className="text-gray-200 stroke-current"
-          strokeWidth="10"
-          cx="50"
-          cy="50"
-          r="45"
-          fill="transparent"
-        ></circle>
-        {/* Progress circle */}
-        <circle
-          className={`${colorClass} stroke-current transition-all duration-500 ease-linear`}
-          strokeWidth="10"
-          strokeLinecap="round"
-          cx="50"
-          cy="50"
-          r="45"
-          fill="transparent"
-          strokeDasharray="283"
-          strokeDashoffset={strokeDashoffset}
-          transform="rotate(-90 50 50)" // Start from the top
-        ></circle>
-      </svg>
-      {/* Time left text */}
-      <div className="absolute flex flex-col items-center">
-         <Clock size={20} className={`mb-0.5 ${colorClass}`} />
-         <span className={`text-lg font-semibold ${colorClass}`}>{timeLeft}</span>
+    <div 
+      className={cn(
+        "relative flex items-center justify-center w-16 h-16 rounded-full overflow-hidden",
+        "transition-all duration-150 ease-out transform",
+        isLow && "animate-bounce shadow-neon-red",
+        isCritical && !isLow && "animate-pulse shadow-neon-yellow",
+        !isLow && !isCritical && "shadow-neon"
+      )}
+      style={bgStyle}
+    >
+      {/* Glass effect overlay */}
+      <div className="absolute inset-1 rounded-full bg-white/20 backdrop-blur-xs"></div>
+      
+      {/* Timer content */}
+      <div className={cn(
+        "relative z-10 flex flex-col items-center justify-center w-full h-full rounded-full bg-white/80 backdrop-blur-sm",
+        isLow ? "text-red-600" : isCritical ? "text-amber-600" : "text-blue-600",
+        animatePop && "animate-scale-in"
+      )}>
+        {/* Icon */}
+        <TimerIcon 
+          size={16} 
+          className={cn(
+            "mb-0.5",
+            isLow && "animate-spin text-red-600"
+          )} 
+        />
+        
+        {/* Time number */}
+        <span className={cn(
+          "text-xl font-bold tracking-tight",
+          animatePop && "scale-110 transition-transform duration-300"
+        )}>
+          {displayTime}
+        </span>
       </div>
     </div>
   );

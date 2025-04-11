@@ -9,6 +9,12 @@ import { useSocket } from '@/context/SocketContext';
 
 type GameMode = 'solo' | '2player';
 
+interface Player {
+  id: string;
+  nickname: string;
+  score: number;
+}
+
 interface RoomCreationProps {
   onRoomCreated: (roomId: string, playerName: string, gameMode: GameMode, players: Player[]) => void;
 }
@@ -20,13 +26,11 @@ const RoomCreation: React.FC<RoomCreationProps> = ({ onRoomCreated }) => {
   const { toast } = useToast();
   const { socket, isConnected } = useSocket();
 
-  // Listener for roomCreated event (Creator only)
   useEffect(() => {
     if (!socket) return;
     const handleRoomCreatedEvent = (data: { roomId: string }) => {
       console.log('[Creator] Received roomCreated event:', data);
-      // For creator, pass empty initial player list (GameRoom will use placeholder)
-      onRoomCreated(data.roomId, playerName, gameMode, []); 
+      onRoomCreated(data.roomId, playerName, gameMode, []);
       setIsProcessing(false);
     };
     socket.on('roomCreated', handleRoomCreatedEvent);
@@ -76,7 +80,10 @@ const RoomCreation: React.FC<RoomCreationProps> = ({ onRoomCreated }) => {
     setIsProcessing(true);
 
     console.log('Emitting createRoom:', { playerName, gameMode });
-    socket.emit('createRoom', { playerName: playerName.trim(), gameMode });
+    socket.emit('createRoom', { 
+      playerName: playerName.trim(), 
+      gameMode
+    });
   };
 
   return (
@@ -146,7 +153,7 @@ interface JoinRoomDialogProps {
   isProcessing: boolean;
   setIsProcessing: (isProcessing: boolean) => void;
   disabled?: boolean;
-  socket: Socket | null;
+  socket: any;
   isConnected: boolean;
 }
 
@@ -168,10 +175,10 @@ const JoinRoomDialog: React.FC<JoinRoomDialogProps> = ({
 
     const handleJoinSuccess = (data: { roomId: string; players: Player[] }) => {
       console.log('[Joiner] Received joinSuccess:', data);
-      const opponent = data.players.find(p => p.id !== socket.id);
+      const opponent = data.players.find(p => p.id !== socket?.id);
       toast({ 
           title: "Joined Room!", 
-          description: `You joined ${data.roomId}. Opponent: ${opponent?.name || 'Unknown'}` 
+          description: `You joined ${data.roomId}. Opponent: ${opponent?.nickname || 'Unknown'}` 
       });
       onRoomJoined(data.roomId, data.players);
       setIsProcessing(false);

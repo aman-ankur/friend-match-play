@@ -311,6 +311,11 @@ io.on('connection', (socket: Socket) => {
           results: results
         });
         console.log(`Emitted 'roundResults' (Reveal) for round ${room.currentRound} to room ${roomId}`);
+        
+        // Emit roundComplete to signal client to stop the timer
+        io.to(roomId).emit('roundComplete', { roundNumber: room.currentRound });
+        console.log(`Emitted 'roundComplete' for round ${room.currentRound} to room ${roomId}`);
+        
         room.readyForNextRound.clear(); // Prepare for player ready signals
       }
     } else {
@@ -411,6 +416,11 @@ io.on('connection', (socket: Socket) => {
         results: results
       });
       console.log(`Emitted 'roundResults' (Prediction) for round ${room.currentRound} to room ${roomId}`);
+      
+      // Emit roundComplete to signal client to stop the timer
+      io.to(roomId).emit('roundComplete', { roundNumber: room.currentRound });
+      console.log(`Emitted 'roundComplete' for round ${room.currentRound} to room ${roomId}`);
+      
       // Reset ready state for the next round confirmation
       room.readyForNextRound.clear(); 
     } else {

@@ -131,8 +131,9 @@ const useGameLogic = ({
     }));
 
     if (state.currentPlayerIndex === players.length - 1) {
-      // All players have made predictions, calculate results
-      calculateResults();
+      // All players have made predictions. 
+      // DO NOT calculate results here directly due to async state updates.
+      // Calculation will be triggered by the useEffect below.
     } else {
       // Move to next player
       setState(prev => ({
@@ -141,6 +142,16 @@ const useGameLogic = ({
       }));
     }
   };
+
+  // Effect to calculate results once all predictions are in
+  useEffect(() => {
+    // Only run if in prediction phase and we have collected predictions for all players
+    if (state.currentPhase === 'prediction' && state.predictions.length === players.length) {
+       console.log('[useEffect] All predictions received, calculating results...');
+       calculateResults();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.predictions, state.currentPhase]); // Dependencies: run when predictions or phase change
 
   // Calculate round results
   const calculateResults = (skipPredictions: boolean = false) => {
@@ -156,6 +167,8 @@ const useGameLogic = ({
 
     // First, collect all answers
     const allAnswers = state.answers;
+    console.log('[calculateResults] All submitted answers:', allAnswers); // Log answers
+    console.log('[calculateResults] All submitted predictions:', state.predictions); // Log predictions
     
     // Process each player's results
     for (const player of players) {
@@ -174,7 +187,9 @@ const useGameLogic = ({
       }
       
       // Handle prediction mode
+      console.log(`[calculateResults] Processing prediction for player ${player.id}'s answer`); // Log start
       const prediction = state.predictions.find(p => p.predictedForId === player.id)?.predictedOption || '';
+      console.log(`[calculateResults] Prediction found for player ${player.id}'s answer:`, prediction || '(empty)'); // Log found prediction
       const predictor = players.find(p => p.id !== player.id)!; // For 2 player game
 
       // Calculate points for correct prediction
@@ -202,8 +217,10 @@ const useGameLogic = ({
         isCorrect: isCorrect,
         pointsEarned: pointsEarned
       });
+      console.log(`[calculateResults] Pushed result for player ${player.id}:`, result.players[result.players.length - 1]); // Log the pushed object
     }
 
+    console.log('[calculateResults] Final calculated RoundResult:', result); // Log final result object
     setState(prev => ({
       ...prev,
       roundResult: result,

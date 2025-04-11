@@ -4,6 +4,7 @@ import { GameQuestion, Player, GameStyle } from '@/types/game';
 import GameCard from './GameCard';
 import ResultComparison from './ResultComparison';
 import useGameLogic from '@/hooks/useGameLogic';
+import TimerWidget from './TimerWidget';
 
 interface HotTakesProps {
   players: Player[];
@@ -14,6 +15,7 @@ interface HotTakesProps {
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
   onNextRound: () => void;
   gameStyle: GameStyle;
+  timerDuration: number;
 }
 
 const HotTakes: React.FC<HotTakesProps> = ({
@@ -24,7 +26,8 @@ const HotTakes: React.FC<HotTakesProps> = ({
   onComplete,
   onUpdateScore,
   onNextRound,
-  gameStyle
+  gameStyle,
+  timerDuration
 }) => {
   console.log(`[HotTakes] Rendering. Received round prop: ${currentRound}`);
 
@@ -81,6 +84,11 @@ const HotTakes: React.FC<HotTakesProps> = ({
   return (
     <div className="w-full max-w-2xl mx-auto animate-fade-in">
       <div className="mb-6 text-center">
+        {timerDuration > 0 && (
+          <div className="flex justify-center">
+            <TimerWidget duration={timerDuration} />
+          </div>
+        )}
         <div className="text-sm font-medium text-connection-secondary mb-1">
           Round {currentRound} of {totalRounds}
         </div>

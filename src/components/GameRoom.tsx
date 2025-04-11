@@ -11,6 +11,8 @@ import ThisOrThat from './ThisOrThat';
 import GameCard from './GameCard';
 import NSFWSlider from './NSFWSlider';
 import { toast } from '@/components/ui/use-toast';
+import TimerWidget from './TimerWidget';
+import { cn } from '@/lib/utils';
 
 interface GameRoomProps {
   roomId: string;
@@ -39,6 +41,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const [totalRounds, setTotalRounds] = useState(5);
   const [finalScores, setFinalScores] = useState<Record<string, number> | null>(null);
   const [nsfwLevel, setNsfwLevel] = useState(1);
+  const [selectedTimerDuration, setSelectedTimerDuration] = useState<number>(0);
 
   // For demo purposes, we'll automatically "join" the second player after a delay
   useEffect(() => {
@@ -225,31 +228,59 @@ const GameRoom: React.FC<GameRoomProps> = ({
         {/* Game style selection */} 
         {status === 'style-selecting' && selectedGameMode && (
           <div className="w-full max-w-md animate-fade-in">
-            <GameCard title="Choose Game Style">
+            <GameCard title="Customize Your Game">
+              {/* Game Style Selection */}
               <div className="mb-6">
-                <h2 className="text-xl font-medium mb-2">How do you want to play?</h2>
-                <p className="text-gray-600 text-sm mb-4">Select your preferred gameplay style</p>
+                <h3 className="text-lg font-medium mb-2">Game Style</h3>
                 <RadioGroup 
                   value={selectedGameStyle} 
                   onValueChange={(value) => setSelectedGameStyle(value as GameStyle)}
-                  className="space-y-4 mt-4"
+                  className="space-y-3"
                 >
-                  <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                   {/* Prediction Mode Radio */}
+                   <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
                     <RadioGroupItem value="prediction" id="prediction" />
-                    <div className="space-y-1.5">
-                      <Label htmlFor="prediction" className="font-medium">Prediction Mode</Label>
-                      <p className="text-sm text-gray-600">Predict your friend's answers and earn points for correct predictions. The classic competitive game.</p>
+                    <div className="space-y-1">
+                      <Label htmlFor="prediction" className="font-medium">Prediction</Label>
+                      <p className="text-xs text-gray-500">Predict answers, score points.</p>
                     </div>
                   </div>
+                  {/* Reveal-only Mode Radio */}
                   <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
                     <RadioGroupItem value="reveal-only" id="reveal-only" />
-                    <div className="space-y-1.5">
-                      <Label htmlFor="reveal-only" className="font-medium">Reveal-only Mode</Label>
-                      <p className="text-sm text-gray-600">Both players answer questions and then review each other's responses. No predictions or scoring.</p>
+                    <div className="space-y-1">
+                      <Label htmlFor="reveal-only" className="font-medium">Reveal-only</Label>
+                      <p className="text-xs text-gray-500">Just answer and compare.</p>
                     </div>
                   </div>
                 </RadioGroup>
               </div>
+              
+              {/* Timer Duration Selection */}
+              <div className="mb-6">
+                 <h3 className="text-lg font-medium mb-2">Answer Timer</h3>
+                 <RadioGroup 
+                    value={String(selectedTimerDuration)} 
+                    onValueChange={(value) => setSelectedTimerDuration(Number(value))}
+                    className="flex gap-2"
+                  >
+                    {[0, 15, 30, 45].map(duration => (
+                       <div key={duration} className="flex-1">
+                        <RadioGroupItem value={String(duration)} id={`timer-${duration}`} className="sr-only" />
+                        <Label 
+                          htmlFor={`timer-${duration}`}
+                          className={cn(
+                            "flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors",
+                            selectedTimerDuration === duration && "border-primary"
+                          )}
+                        >
+                           {duration === 0 ? "None" : `${duration}s`}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+              </div>
+
               <div className="flex gap-4 justify-center">
                 <Button variant="outline" onClick={() => setStatus('selecting')}>Back</Button>
                 <Button onClick={handleGameStyleSelect} className="bg-connection-primary hover:bg-connection-secondary">Start Game</Button>
@@ -297,6 +328,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
                 onUpdateScore={handleUpdateScore}
                 onNextRound={handleNextRound}
                 gameStyle={selectedGameStyle}
+                timerDuration={selectedTimerDuration}
               />
             )}
             {selectedGameMode === 'hot-takes' && (
@@ -309,6 +341,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
                 onUpdateScore={handleUpdateScore}
                 onNextRound={handleNextRound}
                 gameStyle={selectedGameStyle}
+                timerDuration={selectedTimerDuration}
               />
             )}
             {selectedGameMode === 'this-or-that' && (
@@ -321,6 +354,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
                 onUpdateScore={handleUpdateScore}
                 onNextRound={handleNextRound}
                 gameStyle={selectedGameStyle}
+                timerDuration={selectedTimerDuration}
               />
             )}
           </div>

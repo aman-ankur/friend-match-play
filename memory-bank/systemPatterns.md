@@ -56,3 +56,57 @@ graph TD
 - `src/hooks/useGameLogic.ts`: Centralizes core game state management and actions.
 
 *(Note: This is based on initial analysis. Deeper code review is needed to confirm state management, routing details, and the absence/presence of backend communication.)*
+
+# System Design Patterns & Architecture
+
+This document outlines key architectural patterns and design choices used in the FriendMatch Play application.
+
+## Frontend Architecture
+
+*   **Framework:** Next.js (React)
+*   **Language:** TypeScript
+*   **Styling:** Tailwind CSS with Shadcn UI components.
+*   **State Management:** Primarily React component state (`useState`) and prop drilling. Global state management (like Zustand or Redux) is not yet implemented but will be necessary for real-time features.
+*   **Component Structure:** Organized by feature/view (e.g., `GameRoom`, `GuessWhoIAm`) within the `src/components` directory.
+*   **Routing:** Handled by Next.js file-based routing (though currently minimal).
+
+## Key Design Patterns
+
+1.  **Custom Hooks (`useGameLogic`):**
+    *   **Purpose:** Encapsulates reusable game state logic (handling answers, predictions, results, phase transitions) shared across different game mode components (`GuessWhoIAm`, `HotTakes`, `ThisOrThat`).
+    *   **Benefits:** Promotes code reuse, separates concerns (logic vs. presentation), makes game components simpler.
+    *   **Considerations:** Assumes a two-player game structure currently. Might need adaptation for more players or complex state interactions.
+
+2.  **Component Composition:**
+    *   Standard React pattern. Components like `GameCard`, `ResultComparison`, `NSFWSlider`, `TimerWidget` are used within larger view components (`GameRoom`, game modes).
+    *   **Benefits:** Reusability, maintainability.
+
+3.  **Conditional Rendering:**
+    *   Used extensively in `GameRoom` to display different UI sections based on the game `status` (waiting, selecting, playing, completed).
+    *   Also used within game components to show answer/prediction phases and results.
+    *   **Benefits:** Manages complex UI flows within a single component structure.
+
+4.  **Centralized Game Settings (`GameRoom`):**
+    *   The `GameRoom` component holds the state for core game settings like the selected game mode, game style, NSFW level, and timer duration.
+    *   These settings are configured before the main gameplay loop begins and passed down as props.
+    *   **Benefits:** Single source of truth for game configuration during a session.
+
+5.  **Asynchronous State Updates & Effects (`useEffect`):**
+    *   **Pattern:** When an action depends on the result of an asynchronous state update (e.g., calculating results *after* the final prediction is saved), use `useEffect` hooked to the state variable being updated.
+    *   **Example:** In `useGameLogic`, the results calculation is triggered by a `useEffect` watching the `predictions` array, ensuring it runs only after the state reflects all submitted predictions.
+    *   **Benefits:** Avoids race conditions and ensures calculations use the latest state.
+    *   **Caution:** Be mindful of dependency arrays to prevent infinite loops or unnecessary executions.
+
+## Data Flow
+
+*   **Game Setup:** User selects game mode, style, timer duration in `GameRoom`. Questions are loaded via `getQuestionsByMode`.
+*   **Gameplay:** State managed largely within `useGameLogic` based on props from `GameRoom` (players, questions, round, settings). User interactions (button clicks) call handlers in the hook (`handleAnswerSelect`, `handlePredictionSelect`).
+*   **Results:** `useGameLogic` calculates `RoundResult`, sets it in state. `ResultComparison` component displays this.
+*   **Progression:** `handleContinue` in `useGameLogic` calls `onNextRound` (passed from `GameRoom`) to update the parent `currentRound` state.
+*   **Navigation:** `handleGoHome` in `GameRoom` resets state variables to return to the selection view.
+
+## Future Considerations
+
+*   **Real-time State Sync:** Transitioning from client-side state in `GameRoom` to a server-authoritative model using WebSockets is the highest priority for multiplayer.
+*   **State Management Library:** Introduce Zustand or similar for managing global UI state and potentially caching server data.
+*   **API Layer:** Define a clear API for communication between frontend and a potential backend.

@@ -4,6 +4,7 @@ import { GameQuestion, Player, GameStyle } from '@/types/game';
 import GameCard from './GameCard';
 import ResultComparison from './ResultComparison';
 import useGameLogic from '@/hooks/useGameLogic';
+import TimerWidget from './TimerWidget';
 
 interface GuessWhoIAmProps {
   players: Player[];
@@ -14,6 +15,7 @@ interface GuessWhoIAmProps {
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
   onNextRound: () => void;
   gameStyle: GameStyle;
+  timerDuration: number;
 }
 
 const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
@@ -24,7 +26,8 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
   onComplete,
   onUpdateScore,
   onNextRound,
-  gameStyle
+  gameStyle,
+  timerDuration
 }) => {
   console.log(`[GuessWhoIAm] Rendering. Received round prop: ${currentRound}`);
 
@@ -68,6 +71,11 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
   return (
     <div className="w-full max-w-2xl mx-auto animate-fade-in">
       <div className="mb-6 text-center">
+        {timerDuration > 0 && (
+          <div className="flex justify-center">
+            <TimerWidget duration={timerDuration} />
+          </div>
+        )}
         <div className="text-sm font-medium text-connection-secondary mb-1">
           Round {currentRound} of {totalRounds}
         </div>

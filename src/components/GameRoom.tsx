@@ -1,7 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { GameQuestion, GameMode, Player } from '@/types/game';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { GameQuestion, GameMode, GameStyle, Player } from '@/types/game';
 import getQuestionsByMode from '@/utils/gameQuestions';
 import GuessWhoIAm from './GuessWhoIAm';
 import HotTakes from './HotTakes';
@@ -23,13 +24,14 @@ const GameRoom: React.FC<GameRoomProps> = ({
   onExitRoom
 }) => {
   // In a real app, most of this state would be managed on the server
-  const [status, setStatus] = useState<'waiting' | 'selecting' | 'playing' | 'completed'>('waiting');
+  const [status, setStatus] = useState<'waiting' | 'selecting' | 'style-selecting' | 'playing' | 'completed'>('waiting');
   const [players, setPlayers] = useState<Player[]>([
     { id: currentPlayerId, nickname: playerName, score: 0 },
     // In a real app, the second player would join dynamically
     { id: 'player2', nickname: 'Friend', score: 0 }
   ]);
   const [selectedGameMode, setSelectedGameMode] = useState<GameMode | null>(null);
+  const [selectedGameStyle, setSelectedGameStyle] = useState<GameStyle>('prediction');
   const [questions, setQuestions] = useState<GameQuestion[]>([]);
   const [currentRound, setCurrentRound] = useState(1);
   const [totalRounds, setTotalRounds] = useState(5);
@@ -52,7 +54,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
   const handleGameModeSelect = (mode: GameMode) => {
     setSelectedGameMode(mode);
-    const selectedQuestions = getQuestionsByMode(mode, totalRounds);
+    setStatus('style-selecting');
+  };
+  
+  const handleGameStyleSelect = () => {
+    const selectedQuestions = getQuestionsByMode(selectedGameMode!, totalRounds);
     setQuestions(selectedQuestions);
     setStatus('playing');
   };
@@ -64,6 +70,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
   
   const handlePlayAgain = () => {
     setSelectedGameMode(null);
+    setSelectedGameStyle('prediction');
     setQuestions([]);
     setCurrentRound(1);
     setPlayers(players.map(p => ({ ...p, score: 0 })));
@@ -164,6 +171,63 @@ const GameRoom: React.FC<GameRoomProps> = ({
     );
   }
 
+  // Game style selection (new screen)
+  if (status === 'style-selecting' && selectedGameMode) {
+    return (
+      <div className="max-w-md mx-auto animate-fade-in">
+        <GameCard title="Choose Game Style">
+          <div className="mb-6">
+            <h2 className="text-xl font-medium mb-2">How do you want to play?</h2>
+            <p className="text-gray-600 text-sm mb-4">
+              Select your preferred gameplay style
+            </p>
+            
+            <RadioGroup 
+              value={selectedGameStyle} 
+              onValueChange={(value) => setSelectedGameStyle(value as GameStyle)}
+              className="space-y-4 mt-4"
+            >
+              <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                <RadioGroupItem value="prediction" id="prediction" />
+                <div className="space-y-1.5">
+                  <Label htmlFor="prediction" className="font-medium">Prediction Mode</Label>
+                  <p className="text-sm text-gray-600">
+                    Predict your friend's answers and earn points for correct predictions. The classic competitive game.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                <RadioGroupItem value="reveal-only" id="reveal-only" />
+                <div className="space-y-1.5">
+                  <Label htmlFor="reveal-only" className="font-medium">Reveal-only Mode</Label>
+                  <p className="text-sm text-gray-600">
+                    Both players answer questions and then review each other's responses. No predictions or scoring.
+                  </p>
+                </div>
+              </div>
+            </RadioGroup>
+          </div>
+          
+          <div className="flex gap-4 justify-center">
+            <Button 
+              variant="outline" 
+              onClick={() => setStatus('selecting')}
+            >
+              Back
+            </Button>
+            <Button 
+              onClick={handleGameStyleSelect}
+              className="bg-connection-primary hover:bg-connection-secondary"
+            >
+              Start Game
+            </Button>
+          </div>
+        </GameCard>
+      </div>
+    );
+  }
+
   // Game completed, show results
   if (status === 'completed' && finalScores) {
     const playerEntries = Object.entries(finalScores);
@@ -217,7 +281,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
           <div className="text-sm">Room code: <span className="font-medium">{roomId}</span></div>
           
           <div className="flex gap-4">
-            {players.map((player) => (
+            {selectedGameStyle === 'prediction' && players.map((player) => (
               <div key={player.id} className="text-sm">
                 <span className="font-medium">{player.nickname}</span>: {player.score} pts
               </div>
@@ -233,6 +297,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
             totalRounds={totalRounds}
             onComplete={handleGameComplete}
             onUpdateScore={handleUpdateScore}
+            gameStyle={selectedGameStyle}
           />
         )}
         
@@ -244,6 +309,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
             totalRounds={totalRounds}
             onComplete={handleGameComplete}
             onUpdateScore={handleUpdateScore}
+            gameStyle={selectedGameStyle}
           />
         )}
         
@@ -255,6 +321,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
             totalRounds={totalRounds}
             onComplete={handleGameComplete}
             onUpdateScore={handleUpdateScore}
+            gameStyle={selectedGameStyle}
           />
         )}
       </div>

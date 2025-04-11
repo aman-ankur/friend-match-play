@@ -1,79 +1,80 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { RoundResult } from '@/types/game';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle } from 'lucide-react';
+import GameCard from './GameCard';
+import { RoundResult } from '@/types/game';
+import { Check, X } from 'lucide-react';
 
 interface ResultComparisonProps {
   result: RoundResult;
   playerNames: Record<string, string>;
   onContinue: () => void;
+  showPredictions?: boolean;
 }
 
 const ResultComparison: React.FC<ResultComparisonProps> = ({ 
   result, 
-  playerNames,
-  onContinue 
+  playerNames, 
+  onContinue,
+  showPredictions = true
 }) => {
   return (
-    <div className="w-full max-w-lg mx-auto animate-scale-in">
-      <Card className="p-6 border-connection-light">
-        <h2 className="text-2xl font-bold text-center text-connection-tertiary mb-6">Round Results</h2>
-        
+    <div className="w-full max-w-2xl mx-auto animate-scale-in">
+      <GameCard title="Round Results">
         <div className="space-y-6">
-          {result.players.map((playerResult) => (
-            <div key={playerResult.playerId} className="bg-connection-light bg-opacity-30 rounded-lg p-4">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-lg font-medium">{playerNames[playerResult.playerId]}</h3>
-                <div className="flex items-center space-x-1">
-                  <span className="font-semibold text-connection-primary">
-                    +{playerResult.pointsEarned} points
-                  </span>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Their answer:</p>
-                  <p className="bg-white p-3 rounded border border-connection-light">
+          {result.players.map(playerResult => {
+            const playerName = playerNames[playerResult.playerId] || 'Player';
+            const predictorId = Object.keys(playerNames).find(id => id !== playerResult.playerId);
+            const predictorName = predictorId ? playerNames[predictorId] : 'Friend';
+            
+            return (
+              <div key={playerResult.playerId} className="border-b pb-6 last:border-b-0">
+                <div className="mb-4">
+                  <h3 className="font-medium text-lg">
+                    {playerName}'s Answer:
+                  </h3>
+                  <p className="text-xl mt-1 font-bold text-connection-tertiary">
                     {playerResult.answer}
                   </p>
                 </div>
                 
-                {playerResult.prediction && (
-                  <div>
-                    <p className="text-sm text-gray-500 mb-1">Their prediction:</p>
-                    <div className="relative">
-                      <p className="bg-white p-3 rounded border border-connection-light">
+                {showPredictions && (
+                  <div className="flex items-start gap-6">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">
+                        {predictorName}'s prediction:
+                      </p>
+                      <p className="font-medium">
                         {playerResult.prediction}
                       </p>
-                      {playerResult.isCorrect !== undefined && (
-                        <div className="absolute -top-2 -right-2">
-                          {playerResult.isCorrect ? (
-                            <CheckCircle className="h-6 w-6 text-connection-correct" />
-                          ) : (
-                            <XCircle className="h-6 w-6 text-connection-incorrect" />
-                          )}
+                    </div>
+                    
+                    <div className="flex-1 text-right">
+                      {playerResult.isCorrect ? (
+                        <div className="inline-flex items-center gap-1 bg-green-100 px-2 py-1 rounded-md text-green-700">
+                          <Check size={16} />
+                          <span className="font-medium">Correct! +{playerResult.pointsEarned} pts</span>
+                        </div>
+                      ) : (
+                        <div className="inline-flex items-center gap-1 bg-red-100 px-2 py-1 rounded-md text-red-700">
+                          <X size={16} />
+                          <span>Incorrect</span>
                         </div>
                       )}
                     </div>
                   </div>
                 )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         
-        <div className="mt-8 text-center">
-          <Button 
-            onClick={onContinue}
-            className="bg-connection-primary hover:bg-connection-secondary"
-          >
-            Continue to Next Round
+        <div className="text-center mt-6">
+          <Button onClick={onContinue} className="bg-connection-primary hover:bg-connection-secondary">
+            Continue
           </Button>
         </div>
-      </Card>
+      </GameCard>
     </div>
   );
 };

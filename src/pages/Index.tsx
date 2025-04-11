@@ -59,10 +59,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-connection-tertiary mb-4">
-              Card Connection
+              Welcome to <span className="font-bold font-sans">Cards Against Maturity</span>
             </h1>
             <p className="text-lg text-gray-600">
-              Connect with friends through games that spark meaningful conversations
+              How well do you *really* know your friends?
             </p>
           </div>
         </div>
@@ -131,9 +131,9 @@ const Index = () => {
         </div>
       </main>
       
-      <footer className="bg-connection-light bg-opacity-30 py-6">
-        <div className="container mx-auto px-4 text-center text-sm text-gray-600">
-          <p>&copy; 2025 Card Connection. Designed for meaningful connections.</p>
+      <footer className="bg-muted py-6 px-4 md:px-6">
+        <div className="container mx-auto text-center text-muted-foreground text-sm">
+          <p>&copy; 2025 <span className="font-bold font-sans">Cards Against Maturity</span>. Designed for interesting conversations.</p>
         </div>
       </footer>
     </div>

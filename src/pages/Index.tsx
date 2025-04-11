@@ -1,12 +1,121 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React, { useState } from 'react';
+import RoomCreation from '@/components/RoomCreation';
+import GameRoom from '@/components/GameRoom';
 
 const Index = () => {
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const [playerId, setPlayerId] = useState<string | null>(null);
+  const [playerName, setPlayerName] = useState<string>('');
+
+  const handleRoomCreated = (newRoomId: string, name: string) => {
+    // In a real app, we'd connect to a server here
+    const newPlayerId = `player_${Date.now()}`;
+    setRoomId(newRoomId);
+    setPlayerId(newPlayerId);
+    setPlayerName(name);
+  };
+
+  const handleExitRoom = () => {
+    setRoomId(null);
+    setPlayerId(null);
+  };
+
+  // If we have a room ID and player ID, render the game room
+  if (roomId && playerId) {
+    return (
+      <GameRoom
+        roomId={roomId}
+        currentPlayerId={playerId}
+        playerName={playerName}
+        onExitRoom={handleExitRoom}
+      />
+    );
+  }
+
+  // Otherwise, render the landing page
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <header className="py-8">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-connection-tertiary mb-4">
+              Card Connection
+            </h1>
+            <p className="text-lg text-gray-600">
+              Connect with friends through games that spark meaningful conversations
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Ready to Play?</h2>
+              <p className="text-gray-600 mb-6">
+                Create a room or join an existing one to start having meaningful conversations with friends through our engaging card games.
+              </p>
+              
+              <RoomCreation onRoomCreated={handleRoomCreated} />
+            </div>
+            
+            <div className="bg-connection-light rounded-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">How It Works</h2>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">1</div>
+                  <p>Create a room and share the code with a friend</p>
+                </div>
+                <div className="flex items-start">
+                  <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">2</div>
+                  <p>Select from three different game modes designed to foster meaningful connections</p>
+                </div>
+                <div className="flex items-start">
+                  <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">3</div>
+                  <p>Answer questions about yourself and predict how your friend will respond</p>
+                </div>
+                <div className="flex items-start">
+                  <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">4</div>
+                  <p>Earn points for correct predictions and discover new insights about each other</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold mb-6 text-center">Game Modes</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
+                <h3 className="text-xl font-bold mb-2">Guess Who I Am</h3>
+                <p className="text-gray-600">
+                  Answer personality-based questions and predict how well you know each other.
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
+                <h3 className="text-xl font-bold mb-2">Hot Takes</h3>
+                <p className="text-gray-600">
+                  Share your opinions on various topics and see if your friend can predict your stance.
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
+                <h3 className="text-xl font-bold mb-2">This or That</h3>
+                <p className="text-gray-600">
+                  Make binary choices on hypothetical scenarios and predict your friend's preferences.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <footer className="bg-connection-light bg-opacity-30 py-6">
+        <div className="container mx-auto px-4 text-center text-sm text-gray-600">
+          <p>&copy; 2025 Card Connection. Designed for meaningful connections.</p>
+        </div>
+      </footer>
     </div>
   );
 };

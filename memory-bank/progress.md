@@ -81,6 +81,12 @@
 *   **Game Over Sync:** Implemented `gameOver` event.
 *   **Disconnect Handling:** Basic cleanup and notification.
 *   **Numerous Bug Fixes:** Resolved issues related to `process.env`, import paths, prop mismatches, creator detection, race conditions, missing components, and question availability.
+*   **Timer Functionality & Fixes:**
+    - Implemented `roundComplete` event emission on server after all players answer.
+    - Added client-side handling for `roundComplete` to stop timer.
+    - Fixed timer not restarting correctly between rounds.
+    - Corrected timer countdown logic and dependencies in `GameRoom.tsx`.
+    - Ensured `stopTimer` fully resets timer state.
 
 ## Current Focus / Next Steps
 
@@ -101,4 +107,5 @@
 
 *   ~~Game doesn't progress to the next round after results.~~ (Resolved)
 *   ~~Friend's prediction is not shown on the results screen in Prediction mode.~~ (Resolved)
+*   ~~Timer doesn't restart between rounds / counts down incorrectly.~~ (Resolved)
 *   Client-side state management needs to be replaced for true multiplayer.

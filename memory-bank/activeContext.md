@@ -8,6 +8,10 @@ The primary focus is establishing the initial Memory Bank documentation based on
 
 - **Memory Bank Initialization:** This is the first step in creating the Memory Bank. The `memory-bank` directory and the initial versions of `projectbrief.md` and `productContext.md` have just been created.
 - **Codebase Status (Inferred):** Based on the file structure, foundational UI components (`RoomCreation`, `GameRoom`, specific game modes like `GuessWhoIAm`, `HotTakes`, `ThisOrThat`, `ResultComparison`) and supporting elements (`useGameLogic` hook, `game.ts` types, `gameQuestions.ts`) appear to exist. The exact functionality and completeness of these components are yet to be fully assessed against the PRD.
+- **Gameplay Timer Fixes (Nov 2023):** Addressed significant bugs related to the round timer in `GameRoom.tsx`.
+    - Server now emits `roundComplete` when both players answer.
+    - Client handles `roundComplete` to stop the timer.
+    - Fixed timer not restarting or counting down correctly between rounds by correcting `useEffect` dependencies and state management logic in `GameRoom.tsx`.
 
 ## 3. Next Steps
 
@@ -15,6 +19,7 @@ The primary focus is establishing the initial Memory Bank documentation based on
 2.  **Code Review & Alignment:** Once the Memory Bank is established, review the existing code components (`src/components`, `src/hooks`, `src/types`, `src/utils`) in detail to understand their current state and align them with the requirements documented in the Memory Bank.
 3.  **Identify Gaps:** Determine missing features or functionalities based on the PRD and the code review.
 4.  **Plan Implementation:** Outline the tasks needed to implement missing features and refine existing ones.
+5.  **Continue with Feature Development:** Based on `progress.md`, the next focus areas are likely Prediction Mode logic and Solo Mode refinement.
 
 ## 4. Active Decisions & Considerations
 

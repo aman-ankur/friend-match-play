@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { GameQuestion, Player, GameStyle } from '@/types/game';
@@ -13,6 +12,7 @@ interface GuessWhoIAmProps {
   totalRounds: number;
   onComplete: (finalScores: Record<string, number>) => void;
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
+  onNextRound: () => void;
   gameStyle: GameStyle;
 }
 
@@ -23,8 +23,11 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
   totalRounds,
   onComplete,
   onUpdateScore,
+  onNextRound,
   gameStyle
 }) => {
+  console.log(`[GuessWhoIAm] Rendering. Received round prop: ${currentRound}`);
+
   const {
     currentPhase,
     currentPlayerIndex,
@@ -43,6 +46,7 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
     totalRounds,
     onComplete,
     onUpdateScore,
+    onNextRound,
     answerSubmittedMessage: "All answers submitted!",
     scorePerCorrectPrediction: gameStyle === 'prediction' ? 2 : 0,
     scorePerMatchingAnswer: gameStyle === 'prediction' ? 1 : 0,

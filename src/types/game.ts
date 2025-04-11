@@ -1,4 +1,3 @@
-
 export type GameMode = 'guess-who-i-am' | 'hot-takes' | 'this-or-that';
 export type GameStyle = 'prediction' | 'reveal-only';
 
@@ -6,6 +5,8 @@ export interface GameQuestion {
   id: string;
   text: string;
   options: string[];
+  nsfwRating: number; // 1-10, where 10 is "unhinged"
+  categories: string[]; // e.g. ["life", "romance", "sex", "career", "friends", "hobby"]
 }
 
 export interface Player {

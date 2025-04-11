@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { GameQuestion, Player, GameStyle } from '@/types/game';
@@ -13,6 +12,7 @@ interface HotTakesProps {
   totalRounds: number;
   onComplete: (finalScores: Record<string, number>) => void;
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
+  onNextRound: () => void;
   gameStyle: GameStyle;
 }
 
@@ -23,8 +23,11 @@ const HotTakes: React.FC<HotTakesProps> = ({
   totalRounds,
   onComplete,
   onUpdateScore,
+  onNextRound,
   gameStyle
 }) => {
+  console.log(`[HotTakes] Rendering. Received round prop: ${currentRound}`);
+
   const {
     currentPhase,
     currentPlayerIndex,
@@ -43,6 +46,7 @@ const HotTakes: React.FC<HotTakesProps> = ({
     totalRounds,
     onComplete,
     onUpdateScore,
+    onNextRound,
     answerSubmittedMessage: "All opinions submitted!",
     scorePerCorrectPrediction: gameStyle === 'prediction' ? 2 : 0,
     scorePerMatchingAnswer: 0, // Hot Takes doesn't award points for matching answers
@@ -58,6 +62,19 @@ const HotTakes: React.FC<HotTakesProps> = ({
         onContinue={handleContinue}
         showPredictions={gameStyle === 'prediction'}
       />
+    );
+  }
+
+  // Add loading state
+  if (!currentQuestion || !currentPlayer || !otherPlayer) {
+    return (
+      <div className="w-full max-w-2xl mx-auto animate-fade-in">
+        <GameCard>
+          <div className="text-center py-8">
+            <p className="text-gray-600">Loading question...</p>
+          </div>
+        </GameCard>
+      </div>
     );
   }
 

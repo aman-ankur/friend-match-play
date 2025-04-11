@@ -1,10 +1,19 @@
 import { GameQuestion, GameMode } from "../types/game";
 
 // Game descriptions for each mode
-export const GAME_DESCRIPTIONS: Record<GameMode, string> = {
-  "guess-who-i-am": "Reveal hidden aspects of your personality! Answer personal questions about yourself, then predict how your friend would answer the same questions. Discover how well you truly know each other.",
-  "hot-takes": "Test your ability to predict opinions! Share your stance on controversial topics and predict your friend's reactions. See who's better at reading each other's minds.",
-  "this-or-that": "Make tough choices and predict your friend's preferences! Face impossible dilemmas and discover how your choices align (or don't) with your friend's."
+export const GAME_DESCRIPTIONS: Record<GameMode, { title: string; description: string }> = {
+  "guess-who-i-am": {
+    title: "Guess Who I Am",
+    description: "Reveal hidden aspects of your personality! Answer personal questions about yourself, then predict how your friend would answer the same questions. Discover how well you truly know each other."
+  },
+  "hot-takes": {
+    title: "Hot Takes",
+    description: "Test your ability to predict opinions! Share your stance on controversial topics and predict your friend's reactions. See who's better at reading each other's minds."
+  },
+  "this-or-that": {
+    title: "This or That",
+    description: "Make tough choices and predict your friend's preferences! Face impossible dilemmas and discover how your choices align (or don't) with your friend's."
+  }
 };
 
 const guessWhoIAmQuestions: GameQuestion[] = [

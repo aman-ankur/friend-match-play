@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GameQuestion, Answer, Prediction, RoundResult, Player, GameStyle } from '@/types/game';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -10,6 +9,7 @@ interface UseGameLogicProps {
   totalRounds: number;
   onComplete: (finalScores: Record<string, number>) => void;
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
+  onNextRound: () => void;
   answerSubmittedMessage?: string;
   scorePerCorrectPrediction?: number;
   scorePerMatchingAnswer?: number;
@@ -31,6 +31,7 @@ const useGameLogic = ({
   totalRounds,
   onComplete,
   onUpdateScore,
+  onNextRound,
   answerSubmittedMessage = "All answers submitted!",
   scorePerCorrectPrediction = 2,
   scorePerMatchingAnswer = 1,
@@ -45,12 +46,33 @@ const useGameLogic = ({
   });
   const { toast } = useToast();
 
+  // Validate inputs
+  useEffect(() => {
+    if (!questions || questions.length === 0) {
+      console.error('No questions provided to useGameLogic');
+      return;
+    }
+    if (!players || players.length === 0) {
+      console.error('No players provided to useGameLogic');
+      return;
+    }
+    if (currentRound < 1 || currentRound > totalRounds) {
+      console.error('Invalid currentRound or totalRounds');
+      return;
+    }
+  }, [questions, players, currentRound, totalRounds]);
+
   const currentPlayer = players[state.currentPlayerIndex];
   const otherPlayer = players[1 - state.currentPlayerIndex]; // Assuming 2 players
   const currentQuestion = questions[currentRound - 1];
 
   // Handle answer selection
   const handleAnswerSelect = (option: string) => {
+    if (!currentQuestion || !currentPlayer) {
+      console.error('Cannot handle answer selection: currentQuestion or currentPlayer is undefined');
+      return;
+    }
+
     const newAnswer: Answer = {
       questionId: currentQuestion.id,
       playerId: currentPlayer.id,
@@ -91,6 +113,11 @@ const useGameLogic = ({
 
   // Handle prediction selection
   const handlePredictionSelect = (option: string) => {
+    if (!currentQuestion || !currentPlayer || !otherPlayer) {
+      console.error('Cannot handle prediction selection: currentQuestion, currentPlayer, or otherPlayer is undefined');
+      return;
+    }
+
     const newPrediction: Prediction = {
       questionId: currentQuestion.id,
       predictorId: currentPlayer.id,
@@ -117,37 +144,53 @@ const useGameLogic = ({
 
   // Calculate round results
   const calculateResults = (skipPredictions: boolean = false) => {
+    if (!currentQuestion) {
+      console.error('Cannot calculate results: currentQuestion is undefined');
+      return;
+    }
+
     const result: RoundResult = {
       questionId: currentQuestion.id,
       players: []
     };
 
+    // First, collect all answers
+    const allAnswers = state.answers;
+    
+    // Process each player's results
     for (const player of players) {
-      const playerAnswer = state.answers.find(a => a.playerId === player.id)?.selectedOption || '';
-      const prediction = skipPredictions ? '' : state.predictions.find(p => p.predictedForId === player.id)?.predictedOption || '';
+      const playerAnswer = allAnswers.find(a => a.playerId === player.id)?.selectedOption || '';
+      
+      // In reveal-only mode, we don't need predictions
+      if (skipPredictions || gameStyle === 'reveal-only') {
+        result.players.push({
+          playerId: player.id,
+          answer: playerAnswer,
+          prediction: '',
+          isCorrect: false,
+          pointsEarned: 0
+        });
+        continue;
+      }
+      
+      // Handle prediction mode
+      const prediction = state.predictions.find(p => p.predictedForId === player.id)?.predictedOption || '';
       const predictor = players.find(p => p.id !== player.id)!; // For 2 player game
 
       // Calculate points for correct prediction
       let pointsEarned = 0;
-      let isCorrect = false;
+      const isCorrect = prediction === playerAnswer;
       
-      if (!skipPredictions) {
-        isCorrect = prediction === playerAnswer;
-        
-        if (isCorrect) {
-          pointsEarned += scorePerCorrectPrediction;
-          // Update predictor's score
-          onUpdateScore(predictor.id, scorePerCorrectPrediction);
-        }
+      if (isCorrect) {
+        pointsEarned = scorePerCorrectPrediction;
+        onUpdateScore(predictor.id, scorePerCorrectPrediction);
       }
       
       // Check if both players gave the same answer (bonus point for both)
-      // Only applicable if scorePerMatchingAnswer > 0
       if (scorePerMatchingAnswer > 0) {
-        const otherPlayerAnswer = state.answers.find(a => a.playerId !== player.id)?.selectedOption;
+        const otherPlayerAnswer = allAnswers.find(a => a.playerId !== player.id)?.selectedOption;
         if (playerAnswer === otherPlayerAnswer) {
           pointsEarned += scorePerMatchingAnswer;
-          // Add bonus point for matching answers
           onUpdateScore(player.id, scorePerMatchingAnswer);
         }
       }
@@ -170,7 +213,9 @@ const useGameLogic = ({
 
   // Handle continuing to next round
   const handleContinue = () => {
+    console.log(`[useGameLogic] handleContinue called. Current round prop: ${currentRound}, Total rounds: ${totalRounds}`);
     if (currentRound === totalRounds) {
+      console.log('[useGameLogic] Game complete.');
       // Game is complete
       const finalScores = players.reduce((acc, player) => {
         acc[player.id] = player.score;
@@ -179,6 +224,7 @@ const useGameLogic = ({
       
       onComplete(finalScores);
     } else {
+      console.log('[useGameLogic] Resetting state for next round.');
       // Reset for next round
       setState({
         currentPhase: 'answer',
@@ -187,6 +233,9 @@ const useGameLogic = ({
         predictions: [],
         roundResult: null
       });
+      console.log('[useGameLogic] Calling onNextRound...');
+      onNextRound();
+      console.log('[useGameLogic] onNextRound called.');
     }
   };
 

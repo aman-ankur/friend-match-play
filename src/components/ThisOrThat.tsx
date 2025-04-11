@@ -5,8 +5,12 @@ import GameCard from './GameCard';
 import ResultComparison from './ResultComparison';
 import useGameLogic from '@/hooks/useGameLogic';
 import TimerWidget from './TimerWidget';
+import AnswerSelection from '@/components/AnswerSelection';
+import { useSocket } from '@/context/SocketContext';
 
 interface ThisOrThatProps {
+  roomId: string;
+  currentPlayerId: string | null;
   players: Player[];
   questions: GameQuestion[];
   currentRound: number;
@@ -16,9 +20,12 @@ interface ThisOrThatProps {
   onNextRound: () => void;
   gameStyle: GameStyle;
   timerDuration: number;
+  gameMode: 'solo' | '2player';
 }
 
 const ThisOrThat: React.FC<ThisOrThatProps> = ({
+  roomId,
+  currentPlayerId,
   players,
   questions,
   currentRound,
@@ -27,22 +34,22 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
   onUpdateScore,
   onNextRound,
   gameStyle,
-  timerDuration
+  timerDuration,
+  gameMode,
 }) => {
-  console.log(`[ThisOrThat] Rendering. Received round prop: ${currentRound}`);
-
   const {
     currentPhase,
-    currentPlayerIndex,
     currentPlayer,
-    otherPlayer,
     currentQuestion,
     roundResult,
+    hasSubmittedAnswer,
+    hasClickedContinue,
     handleAnswerSelect,
-    handlePredictionSelect,
     handleContinue,
-    getPlayerNameMap
+    getPlayerNameMap,
+    state,
   } = useGameLogic({
+    roomId,
     players,
     questions,
     currentRound,
@@ -50,29 +57,16 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
     onComplete,
     onUpdateScore,
     onNextRound,
-    answerSubmittedMessage: "Choices made!",
-    scorePerCorrectPrediction: gameStyle === 'prediction' ? 2 : 0,
-    scorePerMatchingAnswer: 0, // This or That doesn't award points for matching answers
-    gameStyle
+    gameStyle,
+    currentPlayerId,
   });
 
-  // Render different phases
-  if (currentPhase === 'results' && roundResult) {
-    return (
-      <ResultComparison 
-        result={roundResult} 
-        playerNames={getPlayerNameMap()} 
-        onContinue={handleContinue}
-        showPredictions={gameStyle === 'prediction'}
-      />
-    );
-  }
+  console.log(`[ThisOrThat] Rendering. Phase: ${currentPhase}, Round: ${currentRound}, HasSubmitted: ${hasSubmittedAnswer}`);
 
-  // Add loading state
-  if (!currentQuestion || !currentPlayer || !otherPlayer) {
+  if (!currentQuestion) {
     return (
       <div className="w-full max-w-2xl mx-auto animate-fade-in">
-        <GameCard>
+        <GameCard title={`Round ${currentRound}/${totalRounds}`}>
           <div className="text-center py-8">
             <p className="text-gray-600">Loading question...</p>
           </div>
@@ -81,50 +75,53 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
     );
   }
 
+  // Determine if we should show the waiting state
+  // Show waiting if phase is 'waiting' OR if in 'answer' phase but already submitted
+  const showWaiting = currentPhase === 'waiting' || (currentPhase === 'answer' && hasSubmittedAnswer);
+
   return (
-    <div className="w-full max-w-2xl mx-auto animate-fade-in">
-      <div className="mb-6 text-center">
-        {timerDuration > 0 && (
-          <div className="flex justify-center">
-            <TimerWidget duration={timerDuration} />
+    <GameCard 
+      title={`Round ${currentRound}/${totalRounds}: This or That`}
+      description={currentQuestion.text}
+      className="w-full max-w-2xl"
+    >
+      {timerDuration > 0 && currentPhase === 'answer' && !hasSubmittedAnswer && (
+        <TimerWidget 
+          duration={timerDuration} 
+          key={`${currentQuestion.id}-${currentPhase}`} 
+          onTimeout={() => {
+              if (!hasSubmittedAnswer) handleAnswerSelect(currentQuestion.options[0]);
+          }}
+        />
+      )}
+
+      {/* Answer Phase - Show only if in answer phase and haven't submitted */} 
+      {currentPhase === 'answer' && !hasSubmittedAnswer && (
+        <AnswerSelection 
+          options={currentQuestion.options}
+          onSelect={handleAnswerSelect}
+        />
+      )}
+
+      {/* Waiting Phase (after submitting answer or before results) */} 
+      {showWaiting && (
+          <div className="text-center p-8">
+            <p className="text-lg text-gray-600 animate-pulse">Waiting for opponent...</p>
           </div>
-        )}
-        <div className="text-sm font-medium text-connection-secondary mb-1">
-          Round {currentRound} of {totalRounds}
-        </div>
-        <h2 className="text-xl md:text-2xl font-bold text-connection-tertiary">
-          {currentPhase === 'answer' ? "This or That?" : "Predict their choice"}
-        </h2>
-        <p className="text-gray-600 mt-1">
-          {currentPhase === 'answer' 
-            ? `${currentPlayer.nickname}, make your choice` 
-            : `${currentPlayer.nickname}, predict what ${otherPlayer.nickname} chose`}
-        </p>
-      </div>
+      )}
 
-      <GameCard>
-        <div className="text-xl font-medium text-center mb-6">
-          {currentQuestion.text}
-        </div>
-
-        <div className="grid gap-4">
-          {currentQuestion.options.map((option, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className="p-6 h-auto text-left justify-center text-center hover:bg-connection-light hover:text-connection-tertiary transition-all border-connection-light"
-              onClick={() => 
-                currentPhase === 'answer' 
-                  ? handleAnswerSelect(option) 
-                  : handlePredictionSelect(option)
-              }
-            >
-              <span className="text-md">{option}</span>
-            </Button>
-          ))}
-        </div>
-      </GameCard>
-    </div>
+      {/* Results Phase */} 
+      {currentPhase === 'results' && roundResult && (
+        <ResultComparison 
+          result={roundResult}
+          questionText={currentQuestion.text}
+          playerNames={getPlayerNameMap()}
+          showPredictions={false} // Reveal only mode
+          onContinue={handleContinue} // Server will trigger next round via event
+          hasClickedContinue={hasClickedContinue}
+        />
+      )}
+    </GameCard>
   );
 };
 

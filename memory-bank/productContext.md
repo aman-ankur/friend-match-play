@@ -2,45 +2,75 @@
 
 ## Core Concept
 
-Cards Against Maturity is a web-based party game designed for two players to test how well they know each other's personalities, opinions, and preferences through various question-based game modes.
+Cards Against Maturity is a web-based party game where players connect and test how well they know each other's personalities, opinions, and preferences through various question-based game modes. Supports Solo and 2-Player modes.
 
 ## Target Audience
 
-*   Friends, couples, or pairs looking for a fun, interactive way to connect and learn more about each other.
-*   Users seeking simple, engaging online games for two players.
+*   Individuals looking for self-reflection or casual solo play.
+*   Friends, couples, or pairs seeking a fun, interactive way to connect.
+*   Users seeking simple, engaging online games.
 
 ## Key Features
 
-1.  **Multiple Game Modes:**
-    *   **Guess Who I Am:** Players answer personal questions and predict their friend's answers.
-    *   **Hot Takes:** Players share opinions on controversial topics and predict their friend's stance.
-    *   **This or That:** Players choose between two options in dilemma-style questions and predict their friend's choice.
-2.  **Gameplay Styles:**
-    *   **Prediction Mode:** Players earn points by correctly predicting their friend's answers (and potentially for matching answers, depending on the mode). Competitive.
-    *   **Reveal-only Mode:** Players answer questions, and answers are simply revealed for comparison and discussion. No scoring.
-3.  **NSFW/Spice Level Control:**
-    *   Users can adjust the "spice level" of questions using a segmented button control (Mild, Medium, Spicy, Hot, Wild) before starting.
-    *   This filters the question pool to match the desired intensity.
-4.  **Answer Timer (Optional):**
-    *   Players can optionally select a timer duration (15s, 30s, 45s) for answering each question.
-    *   A visual timer widget is displayed during the answering phase if a duration is chosen.
-5.  **Real-time (Planned):** The ultimate goal is a real-time experience where players join a room and see updates instantly.
-6.  **Simple Room Joining:** Players join via a shared room code (currently simulated).
-7.  **Clear Results Display:** Shows each player's answer and, in prediction mode, the predictions made and points earned.
-8.  **Easy Navigation:** Includes a persistent "Home" button to return to the game selection screen and an "Exit" button.
+1.  **Game Modes:**
+    *   **Solo Play:** Play against yourself or answer prompts for reflection.
+    *   **2-Player Mode:** Real-time gameplay with a friend.
+2.  **Multiple Question Sets:**
+    *   **Guess Who I Am:** Personal questions & prediction.
+    *   **Hot Takes:** Opinions & prediction.
+    *   **This or That:** Dilemmas & prediction.
+3.  **Gameplay Styles (2-Player):**
+    *   **Prediction Mode:** (Future) Earn points by predicting answers.
+    *   **Reveal-only Mode:** Answer and compare for discussion.
+4.  **NSFW/Spice Level Control:** Filter question pool by desired intensity.
+5.  **Answer Timer (Optional):** Add time pressure to rounds.
+6.  **Real-time Communication (2-Player):** Uses a Node.js backend with Socket.IO for instant updates on player joins, game start, answers, results, and disconnects.
+7.  **Room Creation/Joining (2-Player):** Simple code-based room system managed by the server.
+8.  **Synchronized Gameplay:** Server ensures both players see the same game state (question, results, next round) simultaneously.
+9.  **Clear Results Display:** Shows answers side-by-side after each round.
+10. **Easy Navigation:** Exit/Home options.
 
-## User Flow
+## User Flow (2-Player Mode)
 
-1.  Player 1 creates/joins a room, gets a room code.
-2.  Player 2 joins using the room code (currently simulated auto-join).
-3.  Players select a Game Mode (Guess Who I Am, Hot Takes, This or That).
-4.  Players select a Game Style (Prediction or Reveal-only) and optionally an Answer Timer duration.
-5.  Players adjust the NSFW/Spice Level.
-6.  Game starts.
-7.  **Round Loop (Repeats `totalRounds` times):**
-    *   **Answer Phase:** Each player answers the current question (timer shown if selected).
-    *   **Prediction Phase (Prediction Mode Only):** Each player predicts the other's answer (timer shown if selected).
-    *   **Results Phase:** Answers (and predictions/scores if applicable) are revealed.
-    *   Players click "Continue".
-8.  **Game End:** Final scores (if applicable) are displayed. Options to "Play Again" or "Exit".
-9.  Players can use the "Home" button at any point after joining to return to the game selection screen.
+1.  **Player 1 (Creator):**
+    *   Visits the site.
+    *   Enters nickname, selects "2 Player".
+    *   Clicks "Create Room".
+    *   Frontend sends `createRoom` event to backend.
+    *   Backend creates room, stores creator, joins creator's socket to room.
+    *   Backend sends `roomCreated` event back to Player 1 with `roomId`.
+    *   Player 1 enters `GameRoom` component, sees "Waiting for Friend..." screen with `roomId`.
+2.  **Player 2 (Joiner):**
+    *   Gets `roomId` from Player 1.
+    *   Visits the site.
+    *   Enters nickname.
+    *   Clicks "Join Room", enters `roomId`.
+    *   Clicks "Join" in dialog.
+    *   Frontend sends `joinRoom` event to backend.
+    *   Backend validates, adds Player 2 to room, joins socket to room.
+    *   Backend sends `joinSuccess` event to Player 2 (with player list).
+    *   Backend sends `roomReady` event to *both* players (with player list).
+3.  **Game Setup:**
+    *   Player 2 receives `joinSuccess`, enters `GameRoom` configured with initial player list (status `'selecting'`).
+    *   Player 1 receives `roomReady`, updates players list, sets status to `'selecting'`. 
+    *   Both players see the "Choose a Game Mode" screen.
+    *   Player 1 selects a game mode (e.g., "This or That"). UI updates locally to `'style-selecting'`. 
+    *   Player 1 sees customization options (Style, NSFW, Timer). Player 2 sees "Waiting for Host...".
+    *   Player 1 configures options, clicks "Start Game".
+    *   Frontend sends `startGame` event to backend with settings.
+    *   Backend validates, generates questions, updates room state (`status='playing'`, `currentRound=1`, etc.).
+    *   Backend sends `gameStarted` event to *both* players with initial game state.
+4.  **Gameplay Loop (Repeats `totalRounds` times):**
+    *   Both players receive `gameStarted` or `newRound`, update state, see current question.
+    *   Player A selects answer -> emits `submitAnswer` -> UI shows "Waiting...".
+    *   Player B selects answer -> emits `submitAnswer` -> UI shows "Waiting...".
+    *   Backend receives second answer -> emits `roundResults` to *both* players with all answers.
+    *   Both players receive `roundResults`, update state, see the results comparison.
+    *   Player A clicks "Continue" -> emits `playerReady`.
+    *   Player B clicks "Continue" -> emits `playerReady`.
+    *   Backend receives second `playerReady` -> increments round, clears answers/ready set -> emits `newRound` (or `gameOver`) to *both* players.
+5.  **Game End:**
+    *   Backend emits `gameOver` with final scores.
+    *   Both players receive `gameOver`, update state, see final results screen.
+    *   Option to "Play Again" (TODO: Implement) or "Exit".
+6.  **Disconnection:** If a player disconnects, server removes them, emits `playerLeft` to the remaining player, who sees a notification and might be returned to game selection.

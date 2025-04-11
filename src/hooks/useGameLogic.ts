@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GameQuestion, Answer, Prediction, RoundResult, Player, GameStyle } from '@/types/game';
 import { useToast } from '@/components/ui/use-toast';
+import { useSocket } from '@/context/SocketContext';
 
 interface UseGameLogicProps {
+  roomId: string;
   players: Player[];
   questions: GameQuestion[];
   currentRound: number;
@@ -10,21 +12,21 @@ interface UseGameLogicProps {
   onComplete: (finalScores: Record<string, number>) => void;
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
   onNextRound: () => void;
-  answerSubmittedMessage?: string;
-  scorePerCorrectPrediction?: number;
-  scorePerMatchingAnswer?: number;
   gameStyle: GameStyle;
+  currentPlayerId: string | null;
 }
 
 interface GameLogicState {
-  currentPhase: 'answer' | 'prediction' | 'results';
-  currentPlayerIndex: number;
-  answers: Answer[];
-  predictions: Prediction[];
+  currentPhase: 'answer' | 'prediction' | 'results' | 'waiting';
+  answers: Record<string, string>;
+  predictions: Record<string, string>;
   roundResult: RoundResult | null;
+  hasSubmittedAnswer: boolean;
+  hasClickedContinue: boolean;
 }
 
 const useGameLogic = ({
+  roomId,
   players,
   questions,
   currentRound,
@@ -32,249 +34,131 @@ const useGameLogic = ({
   onComplete,
   onUpdateScore,
   onNextRound,
-  answerSubmittedMessage = "All answers submitted!",
-  scorePerCorrectPrediction = 2,
-  scorePerMatchingAnswer = 1,
-  gameStyle = 'prediction'
+  gameStyle,
+  currentPlayerId
 }: UseGameLogicProps) => {
+  const { socket } = useSocket();
   const [state, setState] = useState<GameLogicState>({
     currentPhase: 'answer',
-    currentPlayerIndex: 0,
-    answers: [],
-    predictions: [],
-    roundResult: null
+    answers: {},
+    predictions: {},
+    roundResult: null,
+    hasSubmittedAnswer: false,
+    hasClickedContinue: false,
   });
   const { toast } = useToast();
 
-  // Validate inputs
   useEffect(() => {
-    if (!questions || questions.length === 0) {
-      console.error('No questions provided to useGameLogic');
-      return;
+    console.log(`[useGameLogic] Round changed to ${currentRound}. Resetting local state.`);
+    setState(prev => ({
+      ...prev,
+      currentPhase: prev.currentPhase === 'results' ? 'results' : 'answer',
+      answers: {},
+      predictions: {},
+      hasSubmittedAnswer: false,
+      hasClickedContinue: false,
+    }));
+    if (state.currentPhase === 'results') {
+        const timer = setTimeout(() => {
+            setState(prev => ({ ...prev, roundResult: null, currentPhase: 'answer' }));
+        }, 500);
+        return () => clearTimeout(timer);
     }
-    if (!players || players.length === 0) {
-      console.error('No players provided to useGameLogic');
-      return;
-    }
-    if (currentRound < 1 || currentRound > totalRounds) {
-      console.error('Invalid currentRound or totalRounds');
-      return;
-    }
-  }, [questions, players, currentRound, totalRounds]);
+  }, [currentRound]);
 
-  const currentPlayer = players[state.currentPlayerIndex];
-  const otherPlayer = players[1 - state.currentPlayerIndex]; // Assuming 2 players
   const currentQuestion = questions[currentRound - 1];
 
-  // Handle answer selection
-  const handleAnswerSelect = (option: string) => {
-    if (!currentQuestion || !currentPlayer) {
-      console.error('Cannot handle answer selection: currentQuestion or currentPlayer is undefined');
-      return;
-    }
-
-    const newAnswer: Answer = {
-      questionId: currentQuestion.id,
-      playerId: currentPlayer.id,
-      selectedOption: option
-    };
-
-    setState(prev => ({
-      ...prev,
-      answers: [...prev.answers, newAnswer]
-    }));
-
-    if (state.currentPlayerIndex === players.length - 1) {
-      // All players have answered
-      if (gameStyle === 'reveal-only') {
-        // In reveal-only mode, skip prediction phase and go straight to results
-        calculateResults(true);
-        return;
-      }
-      
-      // In prediction mode, move to prediction phase
-      setState(prev => ({
-        ...prev,
-        currentPlayerIndex: 0,
-        currentPhase: 'prediction'
-      }));
-      toast({
-        title: answerSubmittedMessage,
-        description: "Now predict what your friend thinks."
-      });
-    } else {
-      // Move to next player
-      setState(prev => ({
-        ...prev,
-        currentPlayerIndex: prev.currentPlayerIndex + 1
-      }));
-    }
-  };
-
-  // Handle prediction selection
-  const handlePredictionSelect = (option: string) => {
-    if (!currentQuestion || !currentPlayer || !otherPlayer) {
-      console.error('Cannot handle prediction selection: currentQuestion, currentPlayer, or otherPlayer is undefined');
-      return;
-    }
-
-    const newPrediction: Prediction = {
-      questionId: currentQuestion.id,
-      predictorId: currentPlayer.id,
-      predictedForId: otherPlayer.id,
-      predictedOption: option
-    };
-
-    setState(prev => ({
-      ...prev,
-      predictions: [...prev.predictions, newPrediction]
-    }));
-
-    if (state.currentPlayerIndex === players.length - 1) {
-      // All players have made predictions. 
-      // DO NOT calculate results here directly due to async state updates.
-      // Calculation will be triggered by the useEffect below.
-    } else {
-      // Move to next player
-      setState(prev => ({
-        ...prev,
-        currentPlayerIndex: prev.currentPlayerIndex + 1
-      }));
-    }
-  };
-
-  // Effect to calculate results once all predictions are in
   useEffect(() => {
-    // Only run if in prediction phase and we have collected predictions for all players
-    if (state.currentPhase === 'prediction' && state.predictions.length === players.length) {
-       console.log('[useEffect] All predictions received, calculating results...');
-       calculateResults();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.predictions, state.currentPhase]); // Dependencies: run when predictions or phase change
+    if (!socket) return;
 
-  // Calculate round results
-  const calculateResults = (skipPredictions: boolean = false) => {
-    if (!currentQuestion) {
-      console.error('Cannot calculate results: currentQuestion is undefined');
+    const handleRoundResults = (data: { round: number; answers: Record<string, string>; }) => {
+      if (data.round === currentRound) {
+        console.log(`[useGameLogic] Received roundResults for round ${data.round}:`, data.answers);
+        
+        const formattedResult: RoundResult = {
+          questionId: currentQuestion?.id ?? 'unknown',
+          players: players.map(p => ({
+            playerId: p.id,
+            answer: data.answers[p.id] || '',
+            prediction: '',
+            isCorrect: false,
+            pointsEarned: 0
+          }))
+        };
+
+        setState(prev => ({
+          ...prev,
+          roundResult: formattedResult,
+          currentPhase: 'results',
+          hasClickedContinue: false
+        }));
+      }
+    };
+
+    const handleNewRound = (data: { currentRound: number }) => {
+      console.log(`[useGameLogic] Received newRound event: ${data.currentRound}`);
+    };
+
+    const handleGameOver = (data: { finalScores: Record<string, number> }) => {
+      console.log('[useGameLogic] Received gameOver event:', data.finalScores);
+      onComplete(data.finalScores);
+    };
+
+    socket.on('roundResults', handleRoundResults);
+    socket.on('newRound', handleNewRound);
+    socket.on('gameOver', handleGameOver);
+
+    return () => {
+      socket.off('roundResults', handleRoundResults);
+      socket.off('newRound', handleNewRound);
+      socket.off('gameOver', handleGameOver);
+    };
+  }, [socket, currentRound, currentQuestion?.id, players, onComplete]);
+
+  const handleAnswerSelect = useCallback((option: string) => {
+    if (!socket || !currentQuestion || !currentPlayerId || state.hasSubmittedAnswer) {
       return;
     }
 
-    const result: RoundResult = {
-      questionId: currentQuestion.id,
-      players: []
-    };
+    console.log(`[useGameLogic] Emitting submitAnswer: ${option}`);
+    socket.emit('submitAnswer', { roomId, answer: option });
 
-    // First, collect all answers
-    const allAnswers = state.answers;
-    console.log('[calculateResults] All submitted answers:', allAnswers); // Log answers
-    console.log('[calculateResults] All submitted predictions:', state.predictions); // Log predictions
-    
-    // Process each player's results
-    for (const player of players) {
-      const playerAnswer = allAnswers.find(a => a.playerId === player.id)?.selectedOption || '';
-      
-      // In reveal-only mode, we don't need predictions
-      if (skipPredictions || gameStyle === 'reveal-only') {
-        result.players.push({
-          playerId: player.id,
-          answer: playerAnswer,
-          prediction: '',
-          isCorrect: false,
-          pointsEarned: 0
-        });
-        continue;
-      }
-      
-      // Handle prediction mode
-      console.log(`[calculateResults] Processing prediction for player ${player.id}'s answer`); // Log start
-      const prediction = state.predictions.find(p => p.predictedForId === player.id)?.predictedOption || '';
-      console.log(`[calculateResults] Prediction found for player ${player.id}'s answer:`, prediction || '(empty)'); // Log found prediction
-      const predictor = players.find(p => p.id !== player.id)!; // For 2 player game
-
-      // Calculate points for correct prediction
-      let pointsEarned = 0;
-      const isCorrect = prediction === playerAnswer;
-      
-      if (isCorrect) {
-        pointsEarned = scorePerCorrectPrediction;
-        onUpdateScore(predictor.id, scorePerCorrectPrediction);
-      }
-      
-      // Check if both players gave the same answer (bonus point for both)
-      if (scorePerMatchingAnswer > 0) {
-        const otherPlayerAnswer = allAnswers.find(a => a.playerId !== player.id)?.selectedOption;
-        if (playerAnswer === otherPlayerAnswer) {
-          pointsEarned += scorePerMatchingAnswer;
-          onUpdateScore(player.id, scorePerMatchingAnswer);
-        }
-      }
-
-      result.players.push({
-        playerId: player.id,
-        answer: playerAnswer,
-        prediction: prediction,
-        isCorrect: isCorrect,
-        pointsEarned: pointsEarned
-      });
-      console.log(`[calculateResults] Pushed result for player ${player.id}:`, result.players[result.players.length - 1]); // Log the pushed object
-    }
-
-    console.log('[calculateResults] Final calculated RoundResult:', result); // Log final result object
     setState(prev => ({
       ...prev,
-      roundResult: result,
-      currentPhase: 'results'
+      hasSubmittedAnswer: true,
+      currentPhase: 'waiting'
     }));
-  };
+  }, [socket, roomId, currentQuestion, currentPlayerId, state.hasSubmittedAnswer]);
 
-  // Handle continuing to next round
-  const handleContinue = () => {
-    console.log(`[useGameLogic] handleContinue called. Current round prop: ${currentRound}, Total rounds: ${totalRounds}`);
-    if (currentRound === totalRounds) {
-      console.log('[useGameLogic] Game complete.');
-      // Game is complete
-      const finalScores = players.reduce((acc, player) => {
-        acc[player.id] = player.score;
-        return acc;
-      }, {} as Record<string, number>);
-      
-      onComplete(finalScores);
-    } else {
-      console.log('[useGameLogic] Resetting state for next round.');
-      // Reset for next round
-      setState({
-        currentPhase: 'answer',
-        currentPlayerIndex: 0,
-        answers: [],
-        predictions: [],
-        roundResult: null
-      });
-      console.log('[useGameLogic] Calling onNextRound...');
-      onNextRound();
-      console.log('[useGameLogic] onNextRound called.');
+  const handleContinue = useCallback(() => {
+    if (state.currentPhase === 'results' && !state.hasClickedContinue && socket) {
+      console.log('[useGameLogic] handleContinue emitting playerReady...');
+      socket.emit('playerReady', { roomId });
+      setState(prev => ({
+        ...prev,
+        hasClickedContinue: true,
+      }));
     }
-  };
+  }, [state.currentPhase, state.hasClickedContinue, socket, roomId]);
 
-  // Return player names by ID for the result component
-  const getPlayerNameMap = (): Record<string, string> => {
+  const getPlayerNameMap = useCallback((): Record<string, string> => {
     return players.reduce((acc, player) => {
       acc[player.id] = player.nickname;
       return acc;
     }, {} as Record<string, string>);
-  };
+  }, [players]);
 
   return {
     currentPhase: state.currentPhase,
-    currentPlayerIndex: state.currentPlayerIndex,
-    currentPlayer,
-    otherPlayer,
+    currentPlayer: players.find(p => p.id === currentPlayerId),
     currentQuestion,
     roundResult: state.roundResult,
+    hasSubmittedAnswer: state.hasSubmittedAnswer,
+    hasClickedContinue: state.hasClickedContinue,
     handleAnswerSelect,
-    handlePredictionSelect,
     handleContinue,
-    getPlayerNameMap
+    getPlayerNameMap,
+    answers: state.answers,
   };
 };
 

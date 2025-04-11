@@ -1,38 +1,58 @@
 import React, { useState } from 'react';
 import RoomCreation from '@/components/RoomCreation';
 import GameRoom from '@/components/GameRoom';
+import { useSocket } from '@/context/SocketContext';
+
+// Need Player type definition if not globally available
+interface Player {
+  id: string;
+  nickname: string;
+  score: number;
+}
+
+type GameMode = 'solo' | '2player';
 
 const Index = () => {
+  const { socket } = useSocket();
   const [roomId, setRoomId] = useState<string | null>(null);
-  const [playerId, setPlayerId] = useState<string | null>(null);
   const [playerName, setPlayerName] = useState<string>('');
+  const [gameMode, setGameMode] = useState<GameMode | null>(null);
+  const [initialPlayersState, setInitialPlayersState] = useState<Player[] | null>(null);
 
-  const handleRoomCreated = (newRoomId: string, name: string) => {
-    // In a real app, we'd connect to a server here
-    const newPlayerId = `player_${Date.now()}`;
+  const handleRoomCreated = (
+    newRoomId: string,
+    name: string,
+    mode: GameMode,
+    initialPlayers: Player[]
+  ) => {
     setRoomId(newRoomId);
-    setPlayerId(newPlayerId);
     setPlayerName(name);
+    setGameMode(mode);
+    setInitialPlayersState(initialPlayers.length > 0 ? initialPlayers : null);
   };
 
   const handleExitRoom = () => {
     setRoomId(null);
-    setPlayerId(null);
+    setPlayerName('');
+    setGameMode(null);
+    setInitialPlayersState(null);
   };
 
-  // If we have a room ID and player ID, render the game room
-  if (roomId && playerId) {
+  const currentUserId = socket?.id;
+
+  if (roomId && currentUserId && gameMode) {
     return (
       <GameRoom
         roomId={roomId}
-        currentPlayerId={playerId}
+        currentPlayerId={currentUserId}
         playerName={playerName}
+        gameMode={gameMode}
+        initialPlayersData={initialPlayersState}
         onExitRoom={handleExitRoom}
       />
     );
   }
 
-  // Otherwise, render the landing page
   return (
     <div className="min-h-screen flex flex-col">
       <header className="py-8">

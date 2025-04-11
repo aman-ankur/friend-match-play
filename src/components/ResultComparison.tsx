@@ -9,17 +9,35 @@ interface ResultComparisonProps {
   playerNames: Record<string, string>;
   onContinue: () => void;
   showPredictions?: boolean;
+  hasClickedContinue?: boolean;
+  questionText: string;
 }
 
 const ResultComparison: React.FC<ResultComparisonProps> = ({ 
   result, 
-  playerNames, 
+  playerNames,
   onContinue,
-  showPredictions = true
+  showPredictions = true,
+  hasClickedContinue = false,
+  questionText
 }) => {
+
+  // Safety check
+  if (!result || !result.players) {
+    console.error('[ResultComparison] Received invalid result prop:', result);
+    return (
+      <div className="w-full max-w-2xl mx-auto">
+        <GameCard title="Results">
+           <p className="text-center text-red-500">Error loading results.</p>
+        </GameCard>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-2xl mx-auto animate-scale-in">
       <GameCard title={showPredictions ? "Round Results & Predictions" : "Answer Reveal"}>
+        <p className="text-center text-gray-600 mb-4 text-lg italic">"{questionText}"</p>
         <div className="space-y-6">
           {result.players.map((playerResult, index) => {
             const playerName = playerNames[playerResult.playerId] || `Player ${index + 1}`;
@@ -70,8 +88,12 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
         </div>
         
         <div className="text-center mt-6">
-          <Button onClick={onContinue} className="bg-connection-primary hover:bg-connection-secondary">
-            Continue
+          <Button 
+            onClick={onContinue} 
+            className="bg-connection-primary hover:bg-connection-secondary"
+            disabled={hasClickedContinue}
+          >
+            {hasClickedContinue ? "Waiting for opponent..." : "Continue"}
           </Button>
         </div>
       </GameCard>

@@ -1,495 +1,378 @@
 import { GameQuestion, GameMode } from "../types/game";
 
-export const getQuestionsByMode = (mode: GameMode, count: number = 5): GameQuestion[] => {
-  const questionsPool = allQuestions[mode] || [];
-  
-  // Shuffle and pick the first 'count' questions
-  const shuffled = [...questionsPool].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
+// Game descriptions for each mode
+export const GAME_DESCRIPTIONS: Record<GameMode, string> = {
+  "guess-who-i-am": "Reveal hidden aspects of your personality! Answer personal questions about yourself, then predict how your friend would answer the same questions. Discover how well you truly know each other.",
+  "hot-takes": "Test your ability to predict opinions! Share your stance on controversial topics and predict your friend's reactions. See who's better at reading each other's minds.",
+  "this-or-that": "Make tough choices and predict your friend's preferences! Face impossible dilemmas and discover how your choices align (or don't) with your friend's."
 };
 
 const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-1",
-    text: "What's something you're secretly proud of but rarely mention?",
-    options: [
-      "A creative talent or skill",
-      "An act of kindness I did anonymously",
-      "Overcoming a personal fear",
-      "A professional achievement"
-    ]
+    text: "What's your go-to karaoke song when you're feeling confident?",
+    options: ["Bohemian Rhapsody", "Don't Stop Believin'", "Sweet Caroline", "Livin' on a Prayer"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "music"]
   },
   {
     id: "gwia-2",
-    text: "What's your actual reaction when someone cancels plans last minute?",
-    options: [
-      "Relief - I could use the free time",
-      "Disappointment, but I understand",
-      "Irritation, especially if I was looking forward to it",
-      "Suspicion that they didn't want to meet in the first place"
-    ]
+    text: "What's your secret talent that no one would guess?",
+    options: ["I can solve a Rubik's cube", "I'm really good at impressions", "I can recite pi to 50 digits", "I'm a great cook"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "skills"]
   },
   {
     id: "gwia-3",
-    text: "When was the last time you felt genuinely vulnerable with someone?",
-    options: [
-      "Within the last week",
-      "Within the last month",
-      "Within the last year",
-      "It's been over a year"
-    ]
+    text: "What's your guilty pleasure TV show?",
+    options: ["The Bachelor", "Keeping Up with the Kardashians", "90 Day Fiancé", "Love Island"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["entertainment", "personal"]
   },
   {
     id: "gwia-4",
-    text: "What's your go-to strategy when feeling overwhelmed?",
-    options: [
-      "Creating a structured plan or list",
-      "Taking a break and practicing self-care",
-      "Talking it out with someone I trust",
-      "Pushing through and handling things one at a time"
-    ]
+    text: "What's your most irrational fear?",
+    options: ["Clowns", "Heights", "Spiders", "Public Speaking"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "fears"]
   },
   {
     id: "gwia-5",
-    text: "What quality do you admire most in other people?",
-    options: [
-      "Authenticity and honesty",
-      "Kindness and empathy",
-      "Intelligence and creativity",
-      "Determination and resilience"
-    ]
+    text: "What's your dream travel destination?",
+    options: ["Japan", "Italy", "New Zealand", "Iceland"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["travel", "personal"]
   },
   {
     id: "gwia-6",
-    text: "How do you typically express affection to people you care about?",
-    options: [
-      "Quality time and being present",
-      "Acts of service and practical help",
-      "Verbal affirmation and encouragement",
-      "Physical touch and closeness"
-    ]
+    text: "What's your most controversial food opinion?",
+    options: ["Pineapple belongs on pizza", "Ketchup is overrated", "Avocado is just okay", "Coffee is better without sugar"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["food", "opinions"]
   },
   {
     id: "gwia-7",
-    text: "What's your biggest pet peeve that you don't usually tell people about?",
-    options: [
-      "People who are chronically late",
-      "Loud eating or drinking sounds",
-      "People who interrupt conversations",
-      "Those who don't respect personal space"
-    ]
+    text: "What's your most embarrassing dating app story?",
+    options: ["Matched with my ex", "Got catfished", "Awkward first date", "Ghosted after great conversation"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["dating", "personal"]
   },
   {
     id: "gwia-8",
-    text: "What was the most impactful book, movie, or show you've experienced?",
-    options: [
-      "Something that changed my perspective on life",
-      "A piece that helped me through a difficult time",
-      "A story that inspired a personal passion",
-      "Something that connected me with others"
-    ]
+    text: "What's your most controversial relationship opinion?",
+    options: ["Living together before marriage is essential", "Long-distance relationships never work", "Age gaps don't matter", "Friends with exes is fine"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["relationships", "opinions"]
   },
   {
     id: "gwia-9",
-    text: "What's your approach to making difficult decisions?",
-    options: [
-      "Weigh pros and cons logically",
-      "Go with my intuition or gut feeling",
-      "Seek advice from people I trust",
-      "Consider the emotional impact on everyone involved"
-    ]
+    text: "What's your most scandalous social media habit?",
+    options: ["Stalking exes", "Posting thirst traps", "Arguing in comments", "Fake checking in at fancy places"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["social", "personal"]
   },
   {
     id: "gwia-10",
-    text: "What's something you wish more people knew about you?",
-    options: [
-      "I'm more sensitive than I appear",
-      "I have interests or talents people don't expect",
-      "I need more alone time than people realize",
-      "I'm actually quite different from first impressions"
-    ]
+    text: "What's your most controversial opinion about modern dating?",
+    options: ["Ghosting is sometimes necessary", "Dating apps ruined romance", "Marriage is outdated", "Friends with benefits never works"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["dating", "opinions"]
   },
   {
     id: "gwia-11",
-    text: "What's the most rebellious thing you've ever done?",
-    options: [
-      "Broke a significant rule or law",
-      "Defied my parents/authority on something important",
-      "Changed my appearance dramatically against others' wishes",
-      "Walked away from a major commitment/expectation"
-    ]
+    text: "What's your most controversial opinion about sex?",
+    options: ["Communication is overrated", "Monogamy is unnatural", "Size doesn't matter", "Sex on first date is fine"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "opinions"]
   },
   {
     id: "gwia-12",
-    text: "What's your biggest relationship regret?",
-    options: [
-      "Not expressing my feelings when I had the chance",
-      "Staying too long in a bad relationship",
-      "Hurting someone I genuinely cared about",
-      "Never prioritizing relationships enough"
-    ]
+    text: "What's your most scandalous dating app behavior?",
+    options: ["Using fake photos", "Lying about age", "Having multiple accounts", "Using someone else's photos"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["dating", "personal"]
   },
   {
     id: "gwia-13",
-    text: "What insecurity affects your daily life the most?",
-    options: [
-      "Physical appearance",
-      "Social skills/likability",
-      "Professional competence",
-      "Financial stability"
-    ]
+    text: "What's your most controversial opinion about relationships?",
+    options: ["Cheating can be justified", "Open relationships are better", "Marriage is a scam", "Love is just chemicals"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["relationships", "opinions"]
   },
   {
     id: "gwia-14",
-    text: "What's something you've done that you're not proud of?",
-    options: [
-      "Betrayed someone's trust",
-      "Acted selfishly at someone else's expense",
-      "Failed to stand up for what's right",
-      "Judged someone unfairly"
-    ]
+    text: "What's your most scandalous social media confession?",
+    options: ["I have a secret account", "I post fake relationship drama", "I stalk my crush's ex", "I pretend to be someone else"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["social", "personal"]
   },
   {
     id: "gwia-15",
-    text: "If you could change one decision in your past, what would it be about?",
-    options: [
-      "Career choice or opportunity",
-      "Romantic relationship decision",
-      "Educational path",
-      "Family-related decision"
-    ]
-  },
-  {
-    id: "gwia-16",
-    text: "What's your biggest fear in your current or future relationship?",
-    options: [
-      "Being betrayed or cheated on",
-      "Growing apart over time",
-      "Not being enough for my partner",
-      "Losing my independence"
-    ]
-  },
-  {
-    id: "gwia-17",
-    text: "What sexual topic makes you most uncomfortable to discuss?",
-    options: [
-      "Personal preferences and desires",
-      "Past sexual experiences",
-      "Fantasies I'm curious about",
-      "Body insecurities"
-    ]
-  },
-  {
-    id: "gwia-18",
-    text: "How comfortable are you with your body right now?",
-    options: [
-      "Very comfortable - I love my body",
-      "Mostly comfortable with occasional insecurities",
-      "More uncomfortable than comfortable",
-      "Very uncomfortable - it affects my daily life"
-    ]
-  },
-  {
-    id: "gwia-19",
-    text: "What's the real reason your last relationship ended?",
-    options: [
-      "Incompatible values or life goals",
-      "Loss of attraction or passion",
-      "Trust issues or betrayal",
-      "We just grew apart over time"
-    ]
-  },
-  {
-    id: "gwia-20",
-    text: "What's the biggest lie you've ever told?",
-    options: [
-      "A lie to protect someone's feelings",
-      "A lie to get out of trouble",
-      "A lie to make myself look better",
-      "A lie that hurt someone else"
-    ]
+    text: "What's your most controversial opinion about modern romance?",
+    options: ["Romance is dead", "Love is a choice not a feeling", "Soulmates don't exist", "Marriage is outdated"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["relationships", "opinions"]
   }
 ];
 
 const hotTakesQuestions: GameQuestion[] = [
   {
     id: "ht-1",
-    text: "I often find myself overthinking texts before sending them",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Most people would rather be right than happy in an argument",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["relationships", "opinions"]
   },
   {
     id: "ht-2",
-    text: "I've pretended to like something just because someone I care about loves it",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Social media has made us more connected but less intimate",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["social", "technology"]
   },
   {
     id: "ht-3",
-    text: "I sometimes rehearse important conversations in my head beforehand",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Modern dating is more about convenience than connection",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["dating", "relationships"]
   },
   {
     id: "ht-4",
-    text: "Social media has had more negative than positive effects on society",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "People are more honest online than in person",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["social", "personal"]
   },
   {
     id: "ht-5",
-    text: "I believe people can fundamentally change who they are",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Friendships are more valuable than romantic relationships",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["relationships", "friendship"]
   },
   {
     id: "ht-6",
-    text: "Most people are doing their best with what they have",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Most people would cheat if they knew they wouldn't get caught",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["relationships", "morality"]
   },
   {
     id: "ht-7",
-    text: "I'd rather be honest and risk hurting someone than tell a comforting lie",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Dating apps have ruined the concept of romance",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["dating", "technology"]
   },
   {
     id: "ht-8",
-    text: "It's impossible to have a truly platonic friendship with someone you find attractive",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "People are more likely to be honest about their feelings when drunk",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["personal", "relationships"]
   },
   {
     id: "ht-9",
-    text: "People who post constantly on social media are typically less happy in real life",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Most relationships fail because of poor communication, not lack of love",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "communication"]
   },
   {
     id: "ht-10",
-    text: "In relationships, passionate love inevitably fades over time",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "People are more likely to be their true selves online than in person",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["social", "personal"]
   },
   {
     id: "ht-11",
-    text: "Dating apps have made dating worse, not better",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Most people have fantasized about someone they shouldn't have",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["relationships", "personal"]
   },
   {
     id: "ht-12",
-    text: "Most people would cheat in a relationship if they knew they wouldn't get caught",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Sexual compatibility is more important than emotional connection",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["relationships", "sex"]
   },
   {
     id: "ht-13",
-    text: "Watching adult content regularly affects your expectations in real relationships",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Most people have sent nudes at some point in their lives",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["relationships", "technology"]
   },
   {
     id: "ht-14",
-    text: "Sexual compatibility is just as important as emotional compatibility in relationships",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Open relationships are more honest than monogamous ones",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["relationships", "morality"]
   },
   {
     id: "ht-15",
-    text: "It's better to be alone than to settle for the wrong person",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
-  },
-  {
-    id: "ht-16",
-    text: "People who say they don't care what others think of them are usually lying",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
-  },
-  {
-    id: "ht-17",
-    text: "Most people would rather receive validation than honest criticism",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
-  },
-  {
-    id: "ht-18",
-    text: "Fantasizing about someone other than your partner is a form of cheating",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
-  },
-  {
-    id: "ht-19",
-    text: "Open relationships rarely work long-term",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
-  },
-  {
-    id: "ht-20",
-    text: "It's normal to occasionally check your partner's phone",
-    options: ["Strongly Agree", "Somewhat Agree", "Somewhat Disagree", "Strongly Disagree"]
+    text: "Most people have had a one-night stand they regret",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["relationships", "personal"]
   }
 ];
 
 const thisOrThatQuestions: GameQuestion[] = [
   {
     id: "tot-1",
-    text: "Would you rather...",
-    options: [
-      "Be completely honest but hurt someone",
-      "Tell a comforting lie"
-    ]
+    text: "Would you rather have a great career but be single forever, or have a perfect relationship but a mediocre career?",
+    options: ["Great career, single forever", "Perfect relationship, mediocre career"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["career", "relationships"]
   },
   {
     id: "tot-2",
-    text: "Would you rather...",
-    options: [
-      "Have all your private thoughts exposed for a day",
-      "Hear everyone else's thoughts for a day"
-    ]
+    text: "Would you rather know when you'll die or how you'll die?",
+    options: ["Know when", "Know how"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "philosophy"]
   },
   {
     id: "tot-3",
-    text: "Would you rather...",
-    options: [
-      "Relive your most embarrassing moment",
-      "Reveal your biggest insecurity"
-    ]
+    text: "Would you rather be too hot or too cold?",
+    options: ["Too hot", "Too cold"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "preferences"]
   },
   {
     id: "tot-4",
-    text: "Would you rather...",
-    options: [
-      "Never be able to use social media again",
-      "Only be able to communicate through social media"
-    ]
+    text: "Would you rather be famous or rich?",
+    options: ["Famous", "Rich"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "lifestyle"]
   },
   {
     id: "tot-5",
-    text: "Would you rather...",
-    options: [
-      "Know how and when you'll die",
-      "Never know and be surprised"
-    ]
+    text: "Would you rather have a great memory or be able to forget anything?",
+    options: ["Great memory", "Forget anything"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "abilities"]
   },
   {
     id: "tot-6",
-    text: "Would you rather...",
-    options: [
-      "Be able to read minds but not control when",
-      "Be able to teleport but never know exactly where you'll land"
-    ]
+    text: "Would you rather date someone who's amazing in bed but terrible in conversation, or great at conversation but terrible in bed?",
+    options: ["Amazing in bed", "Great at conversation"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["relationships", "sex"]
   },
   {
     id: "tot-7",
-    text: "Would you rather...",
-    options: [
-      "Have many acquaintances but no close friends",
-      "Have one best friend but no other social connections"
-    ]
+    text: "Would you rather have a partner who's always honest but sometimes hurtful, or always kind but sometimes dishonest?",
+    options: ["Always honest", "Always kind"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "morality"]
   },
   {
     id: "tot-8",
-    text: "Would you rather...",
-    options: [
-      "Have all your exes meet your current partner",
-      "Have your current partner meet all your secret crushes"
-    ]
+    text: "Would you rather know all your partner's secrets or have them know all of yours?",
+    options: ["Know theirs", "They know mine"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["relationships", "trust"]
   },
   {
     id: "tot-9",
-    text: "Would you rather...",
-    options: [
-      "Always know what your partner is thinking",
-      "Your partner always knows what you're thinking"
-    ]
+    text: "Would you rather have a partner who's always busy but successful, or always available but struggling?",
+    options: ["Busy but successful", "Available but struggling"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "lifestyle"]
   },
   {
     id: "tot-10",
-    text: "Would you rather...",
-    options: [
-      "Be with someone who's amazing in bed but boring otherwise",
-      "Be with someone who's amazing in every way but mediocre in bed"
-    ]
+    text: "Would you rather have a partner who's your best friend but not very romantic, or very romantic but not your best friend?",
+    options: ["Best friend", "Very romantic"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "friendship"]
   },
   {
     id: "tot-11",
-    text: "Would you rather...",
-    options: [
-      "Have an intense 2-year relationship that ends painfully",
-      "Have a comfortable 10-year relationship that slowly fades"
-    ]
+    text: "Would you rather have great sexual chemistry but argue constantly, or have no sexual chemistry but never argue?",
+    options: ["Great sex, constant arguments", "No sex, no arguments"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["relationships", "sex"]
   },
   {
     id: "tot-12",
-    text: "Would you rather...",
-    options: [
-      "Know exactly when and how your relationship will end",
-      "Be completely surprised when it happens"
-    ]
+    text: "Would you rather have a partner who's amazing in bed but cheats, or faithful but terrible in bed?",
+    options: ["Amazing but cheats", "Faithful but terrible"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["relationships", "sex"]
   },
   {
     id: "tot-13",
-    text: "Would you rather...",
-    options: [
-      "Be with someone who's extremely jealous but loyal",
-      "Be with someone who's completely trusting but might stray"
-    ]
+    text: "Would you rather know your partner's sexual history in detail, or have them know yours?",
+    options: ["Know theirs", "They know mine"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["relationships", "sex"]
   },
   {
     id: "tot-14",
-    text: "Would you rather...",
-    options: [
-      "Have a partner who's terrible with money but great with emotions",
-      "Have a partner who's financially responsible but emotionally distant"
-    ]
+    text: "Would you rather have a partner who's always initiating sex but not very emotional, or very emotional but never initiates sex?",
+    options: ["Always initiates", "Very emotional"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["relationships", "sex"]
   },
   {
     id: "tot-15",
-    text: "Would you rather...",
-    options: [
-      "Know every detail about your future relationship path right now",
-      "Experience it all as surprises, good and bad"
-    ]
-  },
-  {
-    id: "tot-16",
-    text: "Would you rather...",
-    options: [
-      "Have passionate love without friendship",
-      "Have deep friendship without passion"
-    ]
-  },
-  {
-    id: "tot-17",
-    text: "Would you rather...",
-    options: [
-      "Date someone who's consistently late to everything",
-      "Date someone who's always rushing you to be early"
-    ]
-  },
-  {
-    id: "tot-18",
-    text: "Would you rather...",
-    options: [
-      "Have great sexual chemistry but argue constantly",
-      "Have perfect emotional harmony but lackluster physical connection"
-    ]
-  },
-  {
-    id: "tot-19",
-    text: "Would you rather...",
-    options: [
-      "Know your partner's complete sexual history",
-      "Have them know all your private fantasies"
-    ]
-  },
-  {
-    id: "tot-20",
-    text: "Would you rather...",
-    options: [
-      "Be with someone everyone thinks is perfect for you but you have doubts",
-      "Be with someone nobody approves of but you feel is your soulmate"
-    ]
-  },
-  {
-    id: "tot-21",
-    text: "Would you rather...",
-    options: [
-      "Give up sex for a year to save your relationship",
-      "Give up all forms of digital communication with your partner for a month"
-    ]
-  },
-  {
-    id: "tot-22",
-    text: "Would you rather...",
-    options: [
-      "Always know when your partner is lying",
-      "Your partner always knows when you're lying"
-    ]
+    text: "Would you rather have a partner who's amazing in bed but has no other qualities, or has every quality but is terrible in bed?",
+    options: ["Amazing in bed", "Every other quality"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["relationships", "sex"]
   }
 ];
 
@@ -497,6 +380,17 @@ export const allQuestions: Record<GameMode, GameQuestion[]> = {
   "guess-who-i-am": guessWhoIAmQuestions,
   "hot-takes": hotTakesQuestions,
   "this-or-that": thisOrThatQuestions
+};
+
+export const getQuestionsByMode = (mode: GameMode, count: number = 5, nsfwLevel: number = 1): GameQuestion[] => {
+  const questionsPool = allQuestions[mode] || [];
+  
+  // Filter questions by NSFW level
+  const filteredQuestions = questionsPool.filter(q => q.nsfwRating <= nsfwLevel);
+  
+  // Shuffle and pick the first 'count' questions
+  const shuffled = [...filteredQuestions].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
 };
 
 export default getQuestionsByMode;

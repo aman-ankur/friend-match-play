@@ -1,73 +1,55 @@
-# Welcome to your Lovable project
+# Friend Match Play
 
-## Project info
+A real-time multiplayer web game where friends test how well they know each other by answering questions and predicting each other's responses.
 
-**URL**: https://lovable.dev/projects/95aa8ea3-1e37-4356-acc9-b35e94d8674a
+## Features
 
-## How can I edit this code?
+*   **Real-time Multiplayer:** Engage in live gameplay sessions with friends using WebSocket technology.
+*   **Multiple Game Modes:** Supports different styles of play, including a prediction mode where you guess your friends' answers.
+*   **Engaging Question Sets:** Answer a variety of questions designed to spark conversation and reveal interesting insights. Customize the game by selecting question packs that adjust the "spice" or interest level.
+*   **Dynamic Scoring:** Earn points based on correct answers and successful predictions.
+*   **Interactive Rounds:** Progress through multiple rounds with distinct phases for answering, predicting, and viewing results.
 
-There are several ways of editing your application.
+## Technology Stack
 
-**Use Lovable**
+This project is built with modern web technologies:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/95aa8ea3-1e37-4356-acc9-b35e94d8674a) and start prompting.
+*   **Frontend Framework:** React
+*   **Language:** TypeScript
+*   **Build Tool:** Vite
+*   **Styling:** Tailwind CSS
+*   **UI Components:** shadcn-ui
+*   **Real-time Communication:** WebSockets (via Socket.IO or similar)
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started / Local Development
 
-**Use your preferred IDE**
+To run this project locally, follow these steps:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+**Prerequisites:**
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+*   Node.js (v18 or later recommended)
+*   npm or yarn
 
-Follow these steps:
+**Setup:**
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 1. Clone the repository
+git clone <YOUR_GIT_REPOSITORY_URL>
+cd friend-match-play
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Install dependencies
+npm install
+# or
+# yarn install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 3. Start the development server
 npm run dev
+# or
+# yarn dev
 ```
 
-**Edit a file directly in GitHub**
+The application will typically be available at `http://localhost:5173` (or another port specified by Vite).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Contributing
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/95aa8ea3-1e37-4356-acc9-b35e94d8674a) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Contributions are welcome! Please refer to the contributing guidelines (if available) or open an issue to discuss potential changes.

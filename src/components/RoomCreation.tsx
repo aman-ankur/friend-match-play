@@ -1,25 +1,58 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import GameCard from './GameCard';
 import { useToast } from '@/components/ui/use-toast';
+import { useSocket } from '@/context/SocketContext';
+
+type GameMode = 'solo' | '2player';
 
 interface RoomCreationProps {
-  onRoomCreated: (roomId: string, playerName: string) => void;
+  onRoomCreated: (roomId: string, playerName: string, gameMode: GameMode, players: Player[]) => void;
 }
 
 const RoomCreation: React.FC<RoomCreationProps> = ({ onRoomCreated }) => {
   const [playerName, setPlayerName] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
+  const [gameMode, setGameMode] = useState<GameMode>('2player');
+  const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+  const { socket, isConnected } = useSocket();
 
-  const generateRoomId = () => {
-    // Generate a simple 6-character alphanumeric room ID
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return Array.from({ length: 6 }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
-  };
+  // Listener for roomCreated event (Creator only)
+  useEffect(() => {
+    if (!socket) return;
+    const handleRoomCreatedEvent = (data: { roomId: string }) => {
+      console.log('[Creator] Received roomCreated event:', data);
+      // For creator, pass empty initial player list (GameRoom will use placeholder)
+      onRoomCreated(data.roomId, playerName, gameMode, []); 
+      setIsProcessing(false);
+    };
+    socket.on('roomCreated', handleRoomCreatedEvent);
+    return () => { socket.off('roomCreated', handleRoomCreatedEvent); };
+  }, [socket, onRoomCreated, playerName, gameMode]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleErrorEvent = (data: { message: string }) => {
+        console.error('Server error:', data.message);
+        toast({
+            title: "Error",
+            description: data.message || "An error occurred.",
+            variant: "destructive"
+        });
+        setIsProcessing(false);
+    };
+
+    socket.on('error', handleErrorEvent);
+
+    return () => {
+        socket.off('error', handleErrorEvent);
+    };
+
+  }, [socket, toast]);
 
   const handleCreateRoom = () => {
     if (!playerName.trim()) {
@@ -30,52 +63,27 @@ const RoomCreation: React.FC<RoomCreationProps> = ({ onRoomCreated }) => {
       });
       return;
     }
-    
-    setIsCreating(true);
-    
-    // In a real app, we'd create the room on a server
-    // For now, we'll simulate it with a timeout
-    setTimeout(() => {
-      const roomId = generateRoomId();
-      onRoomCreated(roomId, playerName);
-      setIsCreating(false);
-    }, 800);
-  };
 
-  const handleJoinRoom = (roomId: string) => {
-    if (!playerName.trim()) {
+    if (!socket || !isConnected) {
       toast({
-        title: "Nickname Required",
-        description: "Please enter a nickname to join a room.",
+        title: "Not Connected",
+        description: "Cannot connect to the server. Please wait or refresh.",
         variant: "destructive"
       });
       return;
     }
-    
-    if (!roomId || roomId.length !== 6) {
-      toast({
-        title: "Invalid Room Code",
-        description: "Please enter a valid 6-character room code.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setIsCreating(true);
-    
-    // In a real app, we'd verify the room on a server
-    // For now, we'll simulate it with a timeout
-    setTimeout(() => {
-      onRoomCreated(roomId, playerName);
-      setIsCreating(false);
-    }, 800);
+
+    setIsProcessing(true);
+
+    console.log('Emitting createRoom:', { playerName, gameMode });
+    socket.emit('createRoom', { playerName: playerName.trim(), gameMode });
   };
 
   return (
     <div className="max-w-md w-full mx-auto animate-fade-in">
       <GameCard 
         title="Create or Join a Room" 
-        description="Start by entering your nickname below"
+        description="Start by entering your nickname and choosing a mode"
       >
         <div className="space-y-4">
           <div className="space-y-2">
@@ -89,19 +97,41 @@ const RoomCreation: React.FC<RoomCreationProps> = ({ onRoomCreated }) => {
             />
           </div>
           
+          <div className="space-y-2">
+            <Label>Game Mode</Label>
+            <RadioGroup
+              value={gameMode}
+              onValueChange={(value) => setGameMode(value as GameMode)}
+              className="flex space-x-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="2player" id="mode-2player" />
+                <Label htmlFor="mode-2player">2 Player</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="solo" id="mode-solo" />
+                <Label htmlFor="mode-solo">Solo</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          
           <div className="grid grid-cols-2 gap-4 pt-4">
             <Button
               onClick={handleCreateRoom}
-              disabled={isCreating}
+              disabled={isProcessing}
               className="bg-connection-primary hover:bg-connection-secondary"
             >
-              {isCreating ? "Creating..." : "Create Room"}
+              {isProcessing ? (gameMode === 'solo' ? 'Starting...' : 'Creating...') : (gameMode === 'solo' ? 'Start Solo' : 'Create Room')}
             </Button>
             
             <JoinRoomDialog 
               playerName={playerName}
-              onJoinRoom={handleJoinRoom}
-              isJoining={isCreating}
+              onRoomJoined={(roomId, players) => onRoomCreated(roomId, playerName, '2player', players)}
+              isProcessing={isProcessing}
+              setIsProcessing={setIsProcessing}
+              disabled={gameMode === 'solo'}
+              socket={socket}
+              isConnected={isConnected}
             />
           </div>
         </div>
@@ -112,25 +142,87 @@ const RoomCreation: React.FC<RoomCreationProps> = ({ onRoomCreated }) => {
 
 interface JoinRoomDialogProps {
   playerName: string;
-  onJoinRoom: (roomId: string) => void;
-  isJoining: boolean;
+  onRoomJoined: (roomId: string, players: Player[]) => void;
+  isProcessing: boolean;
+  setIsProcessing: (isProcessing: boolean) => void;
+  disabled?: boolean;
+  socket: Socket | null;
+  isConnected: boolean;
 }
 
-const JoinRoomDialog: React.FC<JoinRoomDialogProps> = ({ playerName, onJoinRoom, isJoining }) => {
+const JoinRoomDialog: React.FC<JoinRoomDialogProps> = ({ 
+    playerName, 
+    onRoomJoined,
+    isProcessing, 
+    setIsProcessing,
+    disabled, 
+    socket, 
+    isConnected 
+}) => {
   const [roomId, setRoomId] = useState('');
   const [showDialog, setShowDialog] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleJoinSuccess = (data: { roomId: string; players: Player[] }) => {
+      console.log('[Joiner] Received joinSuccess:', data);
+      const opponent = data.players.find(p => p.id !== socket.id);
+      toast({ 
+          title: "Joined Room!", 
+          description: `You joined ${data.roomId}. Opponent: ${opponent?.name || 'Unknown'}` 
+      });
+      onRoomJoined(data.roomId, data.players);
+      setIsProcessing(false);
+      setShowDialog(false);
+    };
+
+    socket.on('joinSuccess', handleJoinSuccess);
+
+    return () => {
+      socket.off('joinSuccess', handleJoinSuccess);
+    };
+  }, [socket, onRoomJoined, setIsProcessing, toast]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onJoinRoom(roomId.toUpperCase());
+
+    if (!playerName.trim()) {
+      toast({ title: "Nickname Required", description: "Please enter a nickname before joining.", variant: "destructive" });
+      return;
+    }
+    if (!roomId || roomId.length !== 6) {
+      toast({ title: "Invalid Room Code", description: "Please enter a valid 6-character room code.", variant: "destructive" });
+      return;
+    }
+    if (!socket || !isConnected) {
+      toast({ title: "Not Connected", description: "Cannot connect to the server. Please wait or refresh.", variant: "destructive" });
+      return;
+    }
+
+    setIsProcessing(true);
+
+    console.log('Emitting joinRoom:', { playerName, roomId });
+    socket.emit('joinRoom', { playerName: playerName.trim(), roomId: roomId.toUpperCase() });
+  };
+
+  const handleOpenDialog = () => {
+    if (!playerName.trim()) {
+      toast({ title: "Nickname Required", description: "Please enter a nickname before joining.", variant: "destructive" });
+      return;
+    }
+    setShowDialog(true);
+    setRoomId('');
   };
 
   return (
     <>
       <Button
         variant="outline"
-        onClick={() => setShowDialog(true)}
+        onClick={handleOpenDialog}
         className="border-connection-primary text-connection-primary hover:bg-connection-light"
+        disabled={disabled || !playerName.trim() || isProcessing}
       >
         Join Room
       </Button>
@@ -157,15 +249,16 @@ const JoinRoomDialog: React.FC<JoinRoomDialogProps> = ({ playerName, onJoinRoom,
                     type="button"
                     variant="outline"
                     onClick={() => setShowDialog(false)}
+                    disabled={isProcessing}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    disabled={isJoining}
+                    disabled={isProcessing || !roomId || roomId.length !== 6}
                     className="bg-connection-primary hover:bg-connection-secondary"
                   >
-                    {isJoining ? "Joining..." : "Join"}
+                    {isProcessing ? "Joining..." : "Join"}
                   </Button>
                 </div>
               </div>

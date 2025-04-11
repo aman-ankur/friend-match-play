@@ -1,104 +1,93 @@
 # Progress: Card Connection
 
-## 1. What Works (Partially / Inferred)
+## 1. What Works (As of Recent Updates)
 
-- **Core Frontend Setup:** Project initialized with React, TypeScript, Vite, and Tailwind CSS.
-- **UI Component Foundation:** Shadcn/ui is integrated, providing a base set of reusable UI elements (`src/components/ui/`).
-- **Basic Application Structure:**
-    - Entry point (`main.tsx`) and root component (`App.tsx`).
-    - Page structure (`src/pages/Index.tsx`, `src/pages/NotFound.tsx`).
-    - Component scaffolding for key UI areas:
-        - `RoomCreation.tsx`
-        - `GameRoom.tsx`
-        - `GuessWhoIAm.tsx`, `HotTakes.tsx`, `ThisOrThat.tsx`
-        - `ResultComparison.tsx`
-        - `GameCard.tsx`
-- **Type Definitions:** Basic game-related types defined in `src/types/game.ts`.
-- **Sample Content:** Initial game questions available in `src/utils/gameQuestions.ts`.
-- **Local Logic Hook:** A `useGameLogic.ts` hook exists, suggesting an attempt to encapsulate some game state or actions, likely for local testing or single-player simulation.
-- **Development Workflow:** Standard `dev` and `build` scripts are available via npm/bun.
+- **Core Frontend/Backend Setup:** Project structured with React/Vite frontend and Node.js/Express backend.
+- **Real-time Connection:** Frontend connects to backend via Socket.IO (`SocketContext`).
+- **Room Management:**
+    - Backend handles `createRoom` and `joinRoom` events.
+    - Backend maintains in-memory room state (players, game settings).
+    - Server emits `roomCreated`, `joinSuccess`, `roomReady` events.
+    - Clients handle these events to navigate and update player lists.
+- **Game Start Synchronization:**
+    - Creator selects game mode/style.
+    - Creator emits `startGame` event.
+    - Server validates, generates questions, updates room state.
+    - Server emits `gameStarted` to all clients.
+    - Clients receive event, update state, and render the correct game component.
+- **Basic Gameplay Synchronization (Reveal-Only):**
+    - Players emit `submitAnswer`.
+    - Server collects answers.
+    - When all answers are in, server emits `roundResults`.
+    - Clients receive results and display `ResultComparison`.
+    - Players emit `playerReady` when clicking continue.
+    - Server waits for all players to be ready.
+    - Server emits `newRound` or `gameOver`.
+    - Clients receive event and update round or display final scores.
+- **Disconnection Handling:** Server removes disconnected players and notifies the remaining player (`playerLeft` event).
+- **Solo Mode Path:** Basic flow for creating a solo game exists (skips waiting).
+- **UI Component Foundation:** Shadcn/ui components for UI elements.
+- **Type Definitions:** Shared types mostly consistent between frontend/backend (though potentially need a shared package).
 
-## 2. What's Left to Build (Major Gaps & Next Steps)
+## 2. What's Left to Build / Refine
 
-- **Real-time Backend Implementation:** **(Highest Priority)**
-    - Design and build a backend service (e.g., Node.js + Socket.IO, Firebase, Supabase) to handle:
-        - Unique game room creation and management.
-        - WebSocket connections for real-time communication between two players.
-        - Player state synchronization (joining, leaving, answers, predictions, scores, game phase).
-        - Broadcasting game events.
-- **Frontend-Backend Integration:**
-    - Implement client-side logic to connect to the WebSocket server.
-    - Send player actions (answers, predictions) to the backend.
-    - Receive and react to real-time updates from the backend to update the UI.
-- **Complete Game Logic & Flow:**
-    - Implement the full turn-based mechanics for each game mode, including phases (self-answer, prediction).
-    - Integrate game logic with the real-time backend for state updates.
-    - Implement accurate scoring based on PRD rules for each mode.
-    - Handle round progression and end-of-game conditions.
-- **Routing:**
-    - Implement client-side routing (e.g., using `react-router-dom`) to navigate between:
-        - Home/Landing Page (`/`)
-        - Game Room (`/room/:roomId`)
-        - Potentially separate views for game selection or results.
-- **State Management Strategy:**
-    - Define and implement a clear state management approach (React Context, Zustand, Redux Toolkit) suitable for managing shared real-time game state alongside local UI state. Refine or replace `useGameLogic` as needed to fit this strategy.
-- **Implement PRD Features:**
-    - Configurable number of rounds.
-    - Option to skip questions.
-    - Optional timed responses.
-    - Player avatars/nicknames display and input.
-    - UI for game mode selection within the room.
-    - End-of-game summary screen.
-    - "Play Again" / "Change Mode" functionality.
-    - Custom question deck creation (lower priority).
-- **UI Refinements & Animations:**
-    - Implement animations for card flips, reveals, transitions as specified in the PRD.
-    - Ensure clean, responsive UI across devices.
-    - Implement visual indicators for turns, scores, timing.
-- **Testing:**
-    - Implement unit tests for hooks and utility functions.
-    - Implement integration tests for component interactions.
-    - Consider end-to-end tests for the core game flow.
+- **Prediction Mode Logic:**
+    - Implement UI for prediction phase in game components.
+    - Add `submitPrediction` event/handler.
+    - Add server-side score calculation based on predictions and answers.
+    - Update `roundResults` and `gameOver` events to include scores.
+    - Update `ResultComparison` to display prediction results/scores.
+- **Solo Mode Gameplay:**
+    - Implement actual gameplay loop for solo mode (currently just lands on game selection).
+    - Decide if it's reflection-only or needs simple AI/logic.
+- **Data Persistence:** Implement database (e.g., Redis, Postgres) to store room/game state beyond server restarts.
+- **Error Handling:** Improve robustness of error handling on both client and server (more specific error events, better user feedback).
+- **"Play Again" Functionality:** Implement server/client logic for restarting a game with the same players.
+- **UI Refinements:**
+    - Indicate who has submitted an answer/is ready for the next round.
+    - Improve loading states.
+    - Copy-to-clipboard for room code.
+    - General polishing, animations.
+- **Routing:** Implement proper URL-based routing (`/room/:roomId`).
+- **Scalability Considerations:** Refactor if expecting high concurrency.
+- **Security:** Input validation, potential rate limiting.
+- **Testing:** Add unit/integration/E2E tests.
 
 ## 3. Current Status
 
-- **Foundation Laid:** The basic frontend project structure and UI component library are in place.
-- **Core Functionality Missing:** The application currently lacks the essential real-time backend and associated frontend integration required for its core purpose (two-player remote gameplay).
-- **Stage:** Early development. Significant work is required on the backend, real-time communication, and core game logic implementation.
+- **Core Multiplayer Flow Implemented:** Create, join, synchronized game start, reveal-only round progression, and game completion flow are functional using Socket.IO.
+- **Server Authoritative:** Backend manages the core game state.
+- **Key Missing Features:** Prediction mode logic, robust solo play, data persistence.
 
 ## 4. Known Issues / Blockers
 
-- **No Multi-player Capability:** The primary blocker is the absence of a real-time backend. The application cannot function as intended without it.
-- **Incomplete Game Logic:** Existing components likely contain placeholder or incomplete logic.
-- **Undefined State Management:** Lack of a clear, robust state management strategy for real-time data.
-- **Routing Not Implemented:** Navigation between different parts of the application is not yet functional.
+- Prediction mode is not implemented.
+- Solo mode doesn't have gameplay logic.
+- Game state is lost on server restart.
+- Limited error feedback to the user.
 
-## Completed Tasks
+## Completed Tasks (Recent)
 
-*   **Setup:** Initial project setup with Next.js, TypeScript, Tailwind CSS, Shadcn UI.
-*   **Core Types:** Defined basic types for `Player`, `GameQuestion`, `GameMode`, `GameStyle`.
-*   **Game Logic Hook (`useGameLogic`):** Implemented core logic for handling answers, predictions, calculating results, and managing round state (initial version).
-*   **Game Mode Components:** Created basic components for `GuessWhoIAm`, `HotTakes`, `ThisOrThat` using `useGameLogic`.
-*   **`GameRoom` Component:** Initial setup for managing game state (players, mode, rounds, status), rendering different game phases/components.
-*   **UI Components:** Created `GameCard`, `ResultComparison`, `NSFWSlider` (initial slider version).
-*   **Question Loading:** Implemented `getQuestionsByMode` utility.
-*   **Round Progression Fix:** Correctly passed and called `handleNextRound` from `GameRoom` via `useGameLogic` to update `currentRound` state.
-*   **Home Button:** Added a persistent Home button for navigation back to game selection.
-*   **NSFW Slider Redesign:** Replaced the slider with a segmented button control.
-*   **Timer Functionality:** Added timer duration selection (0s, 15s, 30s, 45s) and a visual timer widget during question phases.
-*   **Results Display Fix (Reveal-Only):** Ensured `ResultComparison` correctly displays both players' answers when `showPredictions` is false.
-*   **Results Display Fix (Prediction):** Resolved issue where the second player's prediction wasn't shown for the first player by using `useEffect` in `useGameLogic` to calculate results only after prediction state updates.
+*   **Project Name Change:** Updated project name references.
+*   **Solo/2P Mode Selection:** Added UI and state for choosing game mode.
+*   **Backend Setup:** Created Node.js/Express/Socket.IO server.
+*   **WebSocket Context:** Implemented `SocketContext` on frontend.
+*   **Server Room Management:** Added create/join logic, in-memory storage.
+*   **Client-Server Integration:** Wired up frontend to emit/listen for create/join events.
+*   **Game Start Sync:** Implemented server-side `startGame` and client-side `gameStarted` handling.
+*   **Answer Sync:** Implemented `submitAnswer` event and server logic.
+*   **Results Sync:** Implemented `roundResults` event and client handling.
+*   **Next Round Sync:** Implemented `playerReady` confirmation step and `newRound` event.
+*   **Game Over Sync:** Implemented `gameOver` event.
+*   **Disconnect Handling:** Basic cleanup and notification.
+*   **Numerous Bug Fixes:** Resolved issues related to `process.env`, import paths, prop mismatches, creator detection, race conditions, missing components, and question availability.
 
 ## Current Focus / Next Steps
 
-*   **Real-time Multiplayer:** Integrate WebSocket (e.g., Socket.IO) or a similar solution for real-time updates (player joining, answer/prediction synchronization, state changes).
-    *   Refactor state management (`GameRoom` state currently client-side only).
-    *   Implement server-side game logic.
-*   **Timer Timeout Logic:** Implement consequences for the timer running out (e.g., default answer, skip turn).
-*   **Error Handling & Edge Cases:** Add more robust error handling throughout the application.
-*   **UI Polishing:** Refine animations, transitions, and overall visual appeal based on `@ui-guidelines.md`.
-*   **Accessibility (a11y):** Review and improve accessibility.
-*   **Testing:** Implement unit and potentially integration tests (e.g., using Jest/React Testing Library).
+*   Implement Prediction Mode logic (server-side scoring, client-side prediction UI/events).
+*   Refine Solo Mode gameplay.
+*   Consider adding data persistence.
+*   Improve UI feedback (e.g., showing who is waiting).
 
 ## Potential Future Features
 

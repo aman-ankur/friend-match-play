@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { GameQuestion, Player } from '@/types/game';
+import { GameQuestion, Player, GameStyle } from '@/types/game';
 import GameCard from './GameCard';
 import ResultComparison from './ResultComparison';
 import useGameLogic from '@/hooks/useGameLogic';
@@ -13,6 +13,7 @@ interface GuessWhoIAmProps {
   totalRounds: number;
   onComplete: (finalScores: Record<string, number>) => void;
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
+  gameStyle: GameStyle;
 }
 
 const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
@@ -21,7 +22,8 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
   currentRound,
   totalRounds,
   onComplete,
-  onUpdateScore
+  onUpdateScore,
+  gameStyle
 }) => {
   const {
     currentPhase,
@@ -42,8 +44,9 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
     onComplete,
     onUpdateScore,
     answerSubmittedMessage: "All answers submitted!",
-    scorePerCorrectPrediction: 2,
-    scorePerMatchingAnswer: 1 // Only Guess Who I Am gives points for matching answers
+    scorePerCorrectPrediction: gameStyle === 'prediction' ? 2 : 0,
+    scorePerMatchingAnswer: gameStyle === 'prediction' ? 1 : 0,
+    gameStyle
   });
 
   // Render different phases
@@ -52,7 +55,8 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
       <ResultComparison 
         result={roundResult} 
         playerNames={getPlayerNameMap()} 
-        onContinue={handleContinue} 
+        onContinue={handleContinue}
+        showPredictions={gameStyle === 'prediction'}
       />
     );
   }

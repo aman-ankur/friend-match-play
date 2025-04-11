@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { GameQuestion, Answer, Prediction, RoundResult, Player } from '@/types/game';
+import { GameQuestion, Answer, Prediction, RoundResult, Player, GameStyle } from '@/types/game';
 import { useToast } from '@/components/ui/use-toast';
 
 interface UseGameLogicProps {
@@ -13,6 +13,7 @@ interface UseGameLogicProps {
   answerSubmittedMessage?: string;
   scorePerCorrectPrediction?: number;
   scorePerMatchingAnswer?: number;
+  gameStyle: GameStyle;
 }
 
 interface GameLogicState {
@@ -32,7 +33,8 @@ const useGameLogic = ({
   onUpdateScore,
   answerSubmittedMessage = "All answers submitted!",
   scorePerCorrectPrediction = 2,
-  scorePerMatchingAnswer = 1
+  scorePerMatchingAnswer = 1,
+  gameStyle = 'prediction'
 }: UseGameLogicProps) => {
   const [state, setState] = useState<GameLogicState>({
     currentPhase: 'answer',
@@ -61,7 +63,14 @@ const useGameLogic = ({
     }));
 
     if (state.currentPlayerIndex === players.length - 1) {
-      // All players have answered, move to prediction phase
+      // All players have answered
+      if (gameStyle === 'reveal-only') {
+        // In reveal-only mode, skip prediction phase and go straight to results
+        calculateResults(true);
+        return;
+      }
+      
+      // In prediction mode, move to prediction phase
       setState(prev => ({
         ...prev,
         currentPlayerIndex: 0,
@@ -107,7 +116,7 @@ const useGameLogic = ({
   };
 
   // Calculate round results
-  const calculateResults = () => {
+  const calculateResults = (skipPredictions: boolean = false) => {
     const result: RoundResult = {
       questionId: currentQuestion.id,
       players: []
@@ -115,21 +124,25 @@ const useGameLogic = ({
 
     for (const player of players) {
       const playerAnswer = state.answers.find(a => a.playerId === player.id)?.selectedOption || '';
-      const prediction = state.predictions.find(p => p.predictedForId === player.id)?.predictedOption || '';
+      const prediction = skipPredictions ? '' : state.predictions.find(p => p.predictedForId === player.id)?.predictedOption || '';
       const predictor = players.find(p => p.id !== player.id)!; // For 2 player game
 
       // Calculate points for correct prediction
       let pointsEarned = 0;
-      const isCorrect = prediction === playerAnswer;
+      let isCorrect = false;
       
-      if (isCorrect) {
-        pointsEarned += scorePerCorrectPrediction;
-        // Update predictor's score
-        onUpdateScore(predictor.id, scorePerCorrectPrediction);
+      if (!skipPredictions) {
+        isCorrect = prediction === playerAnswer;
+        
+        if (isCorrect) {
+          pointsEarned += scorePerCorrectPrediction;
+          // Update predictor's score
+          onUpdateScore(predictor.id, scorePerCorrectPrediction);
+        }
       }
       
       // Check if both players gave the same answer (bonus point for both)
-      // Only applicable in "Guess Who I Am" mode
+      // Only applicable if scorePerMatchingAnswer > 0
       if (scorePerMatchingAnswer > 0) {
         const otherPlayerAnswer = state.answers.find(a => a.playerId !== player.id)?.selectedOption;
         if (playerAnswer === otherPlayerAnswer) {

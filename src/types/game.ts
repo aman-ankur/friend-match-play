@@ -1,5 +1,6 @@
 
 export type GameMode = 'guess-who-i-am' | 'hot-takes' | 'this-or-that';
+export type GameStyle = 'prediction' | 'reveal-only';
 
 export interface GameQuestion {
   id: string;
@@ -18,6 +19,7 @@ export interface GameRoom {
   id: string;
   players: Player[];
   gameMode: GameMode;
+  gameStyle: GameStyle;
   currentRound: number;
   totalRounds: number;
   questions: GameQuestion[];

@@ -1,8 +1,8 @@
-# Product Context: FriendMatch Play
+# Product Context: Cards Against Maturity
 
 ## Core Concept
 
-FriendMatch Play is a web-based party game designed for two players to test how well they know each other's personalities, opinions, and preferences through various question-based game modes.
+Cards Against Maturity is a web-based party game designed for two players to test how well they know each other's personalities, opinions, and preferences through various question-based game modes.
 
 ## Target Audience
 

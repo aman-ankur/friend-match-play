@@ -23,7 +23,7 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
 }) => {
 
   // Safety check
-  if (!result || !result.players) {
+  if (!result || !result.players || result.players.length === 0) {
     console.error('[ResultComparison] Received invalid result prop:', result);
     return (
       <div className="w-full max-w-2xl mx-auto">
@@ -37,48 +37,53 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
   return (
     <div className="w-full max-w-2xl mx-auto animate-scale-in">
       <GameCard title={showPredictions ? "Round Results & Predictions" : "Answer Reveal"}>
-        <p className="text-center text-gray-600 mb-4 text-lg italic">"{questionText}"</p>
+        <p className="text-center text-gray-600 mb-6 text-lg italic">
+          {questionText}
+        </p>
         <div className="space-y-6">
-          {result.players.map((playerResult, index) => {
-            const playerName = playerNames[playerResult.playerId] || `Player ${index + 1}`;
-            console.log(`[ResultComparison] Player ${index}:`, playerResult, `showPredictions: ${showPredictions}`);
+          {result.players.map((playerResult) => {
+            const playerName = playerNames?.[playerResult.playerId] || playerResult.playerId;
+            
+            const otherPlayerResult = result.players.find(p => p.playerId !== playerResult.playerId);
+            
+            const otherPlayerName = otherPlayerResult ? (playerNames?.[otherPlayerResult.playerId] || otherPlayerResult.playerId) : "Unknown";
             
             return (
-              <div key={playerResult.playerId} className="border-b pb-6 last:border-b-0">
+              <div key={playerResult.playerId} className="border-b border-connection-light pb-6 last:border-b-0">
                 <div className="mb-4">
                   <h3 className="font-medium text-lg">
                     {playerName}'s Answer:
                   </h3>
                   <p className="text-xl mt-1 font-bold text-connection-tertiary">
-                    {playerResult.answer ? playerResult.answer : <span className="text-gray-400 italic">No answer recorded</span>}
+                    {playerResult.answer || <span className="text-gray-400 italic">No answer</span>}
                   </p>
                 </div>
                 
-                {showPredictions && (
+                {showPredictions && otherPlayerResult && (
                   <div className="mt-4 flex items-start gap-6">
                     <div>
                       <p className="text-sm text-gray-500 mb-1">
-                        {Object.keys(playerNames).find(id => id !== playerResult.playerId) 
-                          ? playerNames[Object.keys(playerNames).find(id => id !== playerResult.playerId)!] 
-                          : 'Friend'}'s prediction:
+                        {`${otherPlayerName}'s prediction:`}
                       </p>
                       <p className="font-medium">
-                        {playerResult.prediction ? playerResult.prediction : <span className="text-gray-400 italic">No prediction</span>}
+                        {otherPlayerResult.prediction || <span className="text-gray-400 italic">No prediction</span>}
                       </p>
                     </div>
                     
                     <div className="flex-1 text-right">
-                      {playerResult.isCorrect ? (
-                        <div className="inline-flex items-center gap-1 bg-green-100 px-2 py-1 rounded-md text-green-700">
-                          <Check size={16} />
-                          <span className="font-medium">Correct! +{playerResult.pointsEarned ?? 0} pts</span>
-                        </div>
-                      ) : (
-                        <div className="inline-flex items-center gap-1 bg-red-100 px-2 py-1 rounded-md text-red-700">
-                          <X size={16} />
-                          <span>Incorrect</span>
-                        </div>
-                      )}
+                       {otherPlayerResult.isCorrect !== undefined ? (
+                         otherPlayerResult.isCorrect ? (
+                           <div className="inline-flex items-center gap-1 bg-green-100 px-2 py-1 rounded-md text-green-700">
+                             <Check size={16} />
+                             <span className="font-medium">Predicted Correctly!</span> 
+                           </div>
+                         ) : (
+                           <div className="inline-flex items-center gap-1 bg-red-100 px-2 py-1 rounded-md text-red-700">
+                             <X size={16} />
+                             <span>Predicted Incorrectly</span>
+                           </div>
+                         )
+                       ) : ( <span className="text-xs text-gray-400">Prediction N/A</span> )}
                     </div>
                   </div>
                 )}

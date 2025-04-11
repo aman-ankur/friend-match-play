@@ -4,17 +4,30 @@ import { Server as SocketIOServer, Socket } from 'socket.io';
 import cors from 'cors';
 import { getQuestionsByMode, GameQuestion, GameMode as SpecificGameMode } from './gameUtils';
 
-// --- Basic Types (consider moving to a shared types file later) ---
+// --- Basic Types (Updated: Use nickname) ---
 interface Player {
   id: string; // Socket ID
-  name: string;
-  score: number; // Added score
-  // Add other player-specific state if needed (e.g., score)
+  nickname: string; // Changed from name
+  score: number;
 }
 
 type AppGameMode = 'solo' | '2player';
 type GameStyle = 'prediction' | 'reveal-only';
 type RoomStatus = 'waiting' | 'selecting' | 'playing' | 'completed';
+
+interface PlayerResult {
+  playerId: string;
+  answer: string;
+  prediction?: string; // Prediction made BY this player
+  predictedPlayerId?: string; // Player ID this player predicted FOR
+  isCorrect?: boolean; // Was the prediction correct?
+  pointsEarned: number;
+}
+
+interface RoundResult {
+  questionId: string;
+  players: PlayerResult[];
+}
 
 interface Room {
   id: string;
@@ -33,6 +46,8 @@ interface Room {
   readyForNextRound: Set<string>; // Track players ready for next round
   // Add state for answers/predictions per round if needed
   // roundData: Record<number, { answers: Record<string, string>, predictions?: Record<string, string> }>;
+  // Store predictions for the current round in prediction mode
+  currentPredictions?: Record<string, { predictedPlayerId: string, prediction: string }>; // { predictorId: { predictedPlayerId, prediction } }
 }
 
 // --- In-Memory Room Storage --- 
@@ -91,7 +106,7 @@ io.on('connection', (socket: Socket) => {
       return;
     }
     const roomId = generateRoomId();
-    const creator: Player = { id: socket.id, name: playerName, score: 0 };
+    const creator: Player = { id: socket.id, nickname: playerName, score: 0 };
     const newRoom: Room = {
       id: roomId,
       players: [creator],
@@ -107,7 +122,7 @@ io.on('connection', (socket: Socket) => {
     };
     rooms[roomId] = newRoom;
     socket.join(roomId);
-    console.log(`[${socket.id}] created room ${roomId} (Mode: ${gameMode})`);
+    console.log(`[${socket.id}] created room ${roomId} (Mode: ${gameMode}) - Creator: ${playerName}`);
     socket.emit('roomCreated', { roomId });
     
     if (gameMode === 'solo') {
@@ -153,8 +168,8 @@ io.on('connection', (socket: Socket) => {
         return;
     }
 
-    // Add player to room
-    const newPlayer: Player = { id: socket.id, name: playerName, score: 0 };
+    // Add player to room (Use nickname here)
+    const newPlayer: Player = { id: socket.id, nickname: playerName, score: 0 };
     room.players.push(newPlayer);
     socket.join(roomId);
     room.status = 'selecting';
@@ -164,13 +179,12 @@ io.on('connection', (socket: Socket) => {
     // Notify the joining player ONLY (Confirmation)
     socket.emit('joinSuccess', { 
         roomId: room.id, 
-        // Send the final player list upon successful join
         players: room.players 
     });
 
     // Notify EVERYONE in the room that it's ready
     io.to(roomId).emit('roomReady', { 
-        players: room.players // Send the updated player list
+        players: room.players 
     });
     console.log(`Emitted 'roomReady' to room ${roomId}`);
   });
@@ -226,6 +240,13 @@ io.on('connection', (socket: Socket) => {
     room.currentAnswers = {};
     room.readyForNextRound = new Set<string>();
     room.players.forEach(p => p.score = 0);
+    // Initialize predictions structure if in prediction mode
+    if (room.selectedGameStyle === 'prediction') {
+      room.currentPredictions = {};
+    } else {
+      // Ensure it's not present otherwise, making checks easier later
+      delete room.currentPredictions;
+    }
 
     console.log(`Game starting in room ${roomId}. Mode: ${gameMode}, Style: ${gameStyle}, Rounds: ${totalRounds}`);
 
@@ -259,25 +280,142 @@ io.on('connection', (socket: Socket) => {
     console.log(`[${playerId}] submitted answer for round ${room.currentRound} in room ${roomId}`);
 
     const activePlayers = room.players;
+    // Check if all players have submitted answers
     if (Object.keys(room.currentAnswers).length === activePlayers.length) {
       console.log(`All answers received for round ${room.currentRound} in room ${roomId}.`);
-      
-      // TODO: Calculate scores if prediction mode
-      
-      // Emit results 
+
+      // --- Prediction Mode Logic ---
+      if (room.selectedGameStyle === 'prediction') {
+        // Reset predictions structure for this round's prediction phase
+        room.currentPredictions = {}; 
+        // Emit event to tell clients to switch to prediction phase
+        io.to(roomId).emit('predictionPhase', { round: room.currentRound });
+        console.log(`Emitted 'predictionPhase' for round ${room.currentRound} to room ${roomId}`);
+        // DO NOT proceed to results yet, wait for predictions
+      } else {
+        // --- Reveal-Only Mode Logic ---
+        // Calculate basic results (no scoring in this example for reveal-only)
+        const results: RoundResult = {
+          questionId: room.questions[room.currentRound - 1]?.id || 'unknown',
+          players: room.players.map(p => ({
+            playerId: p.id,
+            answer: room.currentAnswers[p.id] || '',
+            pointsEarned: 0 
+            // No prediction data needed
+          }))
+        };
+
+        // Emit results
+        io.to(roomId).emit('roundResults', {
+          round: room.currentRound,
+          results: results
+        });
+        console.log(`Emitted 'roundResults' (Reveal) for round ${room.currentRound} to room ${roomId}`);
+        room.readyForNextRound.clear(); // Prepare for player ready signals
+      }
+    } else {
+      console.log(`Waiting for more answers in round ${room.currentRound} in room ${roomId} (${Object.keys(room.currentAnswers).length}/${activePlayers.length})`);
+    }
+  });
+
+  // --- Submit Prediction Handler (NEW) ---
+  socket.on('submitPrediction', (data: { roomId: string; prediction: string; predictedPlayerId: string }) => {
+    const { roomId, prediction, predictedPlayerId } = data;
+    const room = rooms[roomId];
+    const predictorId = socket.id;
+
+    // Validation
+    if (!room) return socket.emit('error', { message: `Room ${roomId} not found.` });
+    if (room.status !== 'playing') return socket.emit('error', { message: `Game not active.` });
+    if (room.selectedGameStyle !== 'prediction') return socket.emit('error', { message: `Game is not in prediction mode.` });
+    // Ensure currentPredictions exists (should have been initialized)
+    if (!room.currentPredictions) return socket.emit('error', { message: `Internal server error: Predictions not ready.` });
+    if (!room.players.some(p => p.id === predictorId)) return socket.emit('error', { message: `You are not in this game.` });
+    // Prevent double submission
+    if (room.currentPredictions[predictorId]) return socket.emit('error', { message: `You have already submitted your prediction for this round.` });
+    // Ensure the predicted player is actually in the room
+    if (!room.players.some(p => p.id === predictedPlayerId)) return socket.emit('error', { message: `Predicted player (${predictedPlayerId}) not found.` });
+    // Prevent predicting self
+    if (predictorId === predictedPlayerId) return socket.emit('error', { message: `You cannot predict your own answer.` });
+
+    // Store the prediction
+    room.currentPredictions[predictorId] = { predictedPlayerId, prediction };
+    console.log(`[${predictorId}] submitted prediction for ${predictedPlayerId} in round ${room.currentRound} in room ${roomId}`);
+
+    const activePlayers = room.players;
+    // Check if all players have submitted predictions
+    if (Object.keys(room.currentPredictions).length === activePlayers.length) {
+      console.log(`All predictions received for round ${room.currentRound} in room ${roomId}. Calculating results...`);
+
+      // --- Calculate Scores for Prediction Mode ---
+      const pointsForCorrectPrediction = 2; // Points for guessing the other player's answer correctly
+      // const pointsForMatchingAnswer = 1; // Optional: Points if your answer matched the other player's answer (independent of prediction)
+
+      const playerResults: PlayerResult[] = room.players.map(player => {
+        const playerId = player.id;
+        const answer = room.currentAnswers[playerId] || ''; // Player's own answer
+        const predictionData = room.currentPredictions![playerId]; // Prediction made *by* this player
+        
+        let pointsEarned = 0;
+        let isPredictionCorrect: boolean | undefined = undefined;
+
+        // Calculate points based on prediction
+        if (predictionData) {
+          const predictedPlayerId = predictionData.predictedPlayerId;
+          const predictedAnswer = predictionData.prediction;
+          const actualAnswerOfPredictedPlayer = room.currentAnswers[predictedPlayerId];
+
+          // Check if the prediction matches the predicted player's actual answer
+          if (actualAnswerOfPredictedPlayer !== undefined && predictedAnswer === actualAnswerOfPredictedPlayer) {
+            isPredictionCorrect = true;
+            pointsEarned += pointsForCorrectPrediction;
+            console.log(`[${playerId}] correctly predicted [${predictedPlayerId}]'s answer (${predictedAnswer}). +${pointsForCorrectPrediction} points.`);
+          } else {
+            isPredictionCorrect = false;
+            console.log(`[${playerId}] incorrectly predicted [${predictedPlayerId}]'s answer (Predicted: ${predictedAnswer}, Actual: ${actualAnswerOfPredictedPlayer}).`);
+          }
+        } else {
+           console.warn(`[${playerId}] missing prediction data for round ${room.currentRound}`);
+        }
+        
+        // Optional: Award points if players' *answers* match
+        // const otherPlayerId = room.players.find(p => p.id !== playerId)?.id;
+        // if (otherPlayerId && room.currentAnswers[playerId] === room.currentAnswers[otherPlayerId]) {
+            // console.log(`[${playerId}] and [${otherPlayerId}] had matching answers (${room.currentAnswers[playerId]}). +${pointsForMatchingAnswer} points (optional).`);
+            // pointsEarned += pointsForMatchingAnswer; 
+        // }
+
+        // Update player's total score in the room state
+        player.score += pointsEarned;
+
+        // Structure the result for this player
+        return {
+          playerId: playerId,
+          answer: answer,
+          prediction: predictionData ? predictionData.prediction : undefined,
+          predictedPlayerId: predictionData ? predictionData.predictedPlayerId : undefined,
+          isCorrect: isPredictionCorrect,
+          pointsEarned: pointsEarned
+        };
+      });
+
+      // Structure the overall round result
+      const results: RoundResult = {
+        questionId: room.questions[room.currentRound - 1]?.id || 'unknown',
+        players: playerResults
+      };
+
+      // Emit results including predictions and scores
       io.to(roomId).emit('roundResults', {
         round: room.currentRound,
-        answers: room.currentAnswers,
-        // scores: room.players.map(p => ({ id: p.id, score: p.score })) // Send updated scores later if calculated
+        results: results
       });
-      console.log(`Emitted 'roundResults' for round ${room.currentRound} to room ${roomId}`);
-
-      // --- DO NOT advance round automatically --- 
-      // --- Clear ready set for the next round's confirmation --- 
-      room.readyForNextRound.clear();
-
+      console.log(`Emitted 'roundResults' (Prediction) for round ${room.currentRound} to room ${roomId}`);
+      // Reset ready state for the next round confirmation
+      room.readyForNextRound.clear(); 
     } else {
-      console.log(`Waiting for more answers in round ${room.currentRound} in room ${roomId}`);
+      // Wait for more predictions
+      console.log(`Waiting for more predictions in round ${room.currentRound} in room ${roomId} (${Object.keys(room.currentPredictions).length}/${activePlayers.length})`);
     }
   });
 
@@ -288,15 +426,25 @@ io.on('connection', (socket: Socket) => {
     const playerId = socket.id;
 
     // Validation
-    if (!room) { return socket.emit('error', { message: `Room ${roomId} not found.` }); }
-    // Allow ready signal only when results are showing (or maybe playing state is enough?)
-    // Let's allow if playing, as results screen is part of playing state conceptually.
-    if (room.status !== 'playing') { return socket.emit('error', { message: `Game not active.` }); }
-    if (!room.players.some(p => p.id === playerId)) { return socket.emit('error', { message: `You are not in room ${roomId}.` }); }
-    if (Object.keys(room.currentAnswers).length !== room.players.length) {
-      // This shouldn't happen if UI only shows Continue after results
-      return socket.emit('error', { message: `Not all players have answered yet.` });
+    if (!room) return socket.emit('error', { message: `Room ${roomId} not found.` });
+    if (room.status !== 'playing') return socket.emit('error', { message: `Game not active.` });
+    if (!room.players.some(p => p.id === playerId)) return socket.emit('error', { message: `You are not in room ${roomId}.` });
+    
+    // --- Check if results have been sent for the current round ---
+    // This implies that answers (and predictions if applicable) have been processed.
+    const answersComplete = Object.keys(room.currentAnswers).length === room.players.length;
+    const predictionsComplete = room.selectedGameStyle === 'prediction' 
+        ? (room.currentPredictions && Object.keys(room.currentPredictions).length === room.players.length) 
+        : true; // Predictions are always considered "complete" in reveal mode
+    
+    // We should only allow 'playerReady' *after* the 'roundResults' for the current round have been emitted.
+    // The client UI should disable the 'Continue' button until results are shown.
+    // The check for answers/predictions completion prevents advancing *before* results are calculated/sent.
+    if (!answersComplete || !predictionsComplete) {
+      console.warn(`[${playerId}] tried to ready up in room ${roomId} before round results were processed (Answers: ${answersComplete}, Predictions: ${predictionsComplete})`);
+      return socket.emit('error', { message: `Round results are not yet available. Please wait.` });
     }
+
     if (room.readyForNextRound.has(playerId)) {
         console.log(`[${playerId}] already marked as ready in room ${roomId}`);
         return; // Already marked ready
@@ -309,12 +457,19 @@ io.on('connection', (socket: Socket) => {
     if (room.readyForNextRound.size === room.players.length) {
         console.log(`All players ready in room ${roomId}. Proceeding...`);
         
-        // --- Advance Round Logic (Moved here from submitAnswer) ---
+        // --- Advance Round Logic ---
         room.currentRound++;
-        room.currentAnswers = {}; // Clear answers
-        room.readyForNextRound.clear(); // Clear ready set
+        // Clear data for the new round
+        room.currentAnswers = {}; 
+        if (room.selectedGameStyle === 'prediction') {
+          // Reset predictions structure for the new round
+          room.currentPredictions = {}; 
+        }
+        // Clear ready set for the new round
+        room.readyForNextRound.clear(); 
 
         if (room.currentRound > room.totalRounds) {
+            // --- Game Over --- 
             console.log(`Game ended in room ${roomId}`);
             room.status = 'completed';
             io.to(roomId).emit('gameOver', { 
@@ -343,11 +498,11 @@ io.on('connection', (socket: Socket) => {
       const playerIndex = room.players.findIndex(p => p.id === socket.id);
       if (playerIndex !== -1) {
         const leavingPlayer = room.players.splice(playerIndex, 1)[0];
-        console.log(`Player ${leavingPlayer.name} (${socket.id}) removed from room ${roomId}`);
+        console.log(`Player ${leavingPlayer.nickname} (${socket.id}) removed from room ${roomId}`);
         
         if (room.players.length > 0 && room.status !== 'waiting') {
-            io.to(roomId).emit('playerLeft', { playerId: socket.id, playerName: leavingPlayer.name });
-            console.log(`Notified room ${roomId} that player ${leavingPlayer.name} left`);
+            io.to(roomId).emit('playerLeft', { playerId: socket.id, playerName: leavingPlayer.nickname });
+            console.log(`Notified room ${roomId} that player ${leavingPlayer.nickname} left`);
         } else if (room.players.length === 0) {
             console.log(`Room ${roomId} is empty, deleting.`);
             delete rooms[roomId];

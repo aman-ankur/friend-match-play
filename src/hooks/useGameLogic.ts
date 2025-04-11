@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { GameQuestion, Answer, Prediction, RoundResult, Player, GameStyle } from '@/types/game';
 import { useToast } from '@/components/ui/use-toast';
 import { useSocket } from '@/context/SocketContext';
@@ -22,6 +22,7 @@ interface GameLogicState {
   predictions: Record<string, string>;
   roundResult: RoundResult | null;
   hasSubmittedAnswer: boolean;
+  hasSubmittedPrediction: boolean;
   hasClickedContinue: boolean;
 }
 
@@ -44,59 +45,72 @@ const useGameLogic = ({
     predictions: {},
     roundResult: null,
     hasSubmittedAnswer: false,
+    hasSubmittedPrediction: false,
     hasClickedContinue: false,
   });
   const { toast } = useToast();
+
+  const { currentPlayer, otherPlayer } = useMemo(() => {
+    const current = players.find(p => p.id === currentPlayerId);
+    const other = players.length === 2 ? players.find(p => p.id !== currentPlayerId) : undefined;
+    console.log('[useGameLogic] Recalculated players:', { currentPlayerId, current, other });
+    return { currentPlayer: current, otherPlayer: other };
+  }, [players, currentPlayerId]);
 
   useEffect(() => {
     console.log(`[useGameLogic] Round changed to ${currentRound}. Resetting local state.`);
     setState(prev => ({
       ...prev,
-      currentPhase: prev.currentPhase === 'results' ? 'results' : 'answer',
+      currentPhase: prev.currentPhase === 'results' ? 'answer' : prev.currentPhase,
       answers: {},
       predictions: {},
+      roundResult: null,
       hasSubmittedAnswer: false,
+      hasSubmittedPrediction: false,
       hasClickedContinue: false,
     }));
-    if (state.currentPhase === 'results') {
-        const timer = setTimeout(() => {
-            setState(prev => ({ ...prev, roundResult: null, currentPhase: 'answer' }));
-        }, 500);
-        return () => clearTimeout(timer);
-    }
   }, [currentRound]);
 
   const currentQuestion = questions[currentRound - 1];
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !currentQuestion) return;
 
-    const handleRoundResults = (data: { round: number; answers: Record<string, string>; }) => {
+    const handleRoundResults = (data: {
+      round: number;
+      results: RoundResult;
+    }) => {
       if (data.round === currentRound) {
-        console.log(`[useGameLogic] Received roundResults for round ${data.round}:`, data.answers);
-        
-        const formattedResult: RoundResult = {
-          questionId: currentQuestion?.id ?? 'unknown',
-          players: players.map(p => ({
-            playerId: p.id,
-            answer: data.answers[p.id] || '',
-            prediction: '',
-            isCorrect: false,
-            pointsEarned: 0
-          }))
-        };
-
+        console.log(`[useGameLogic] Received roundResults for round ${data.round}:`, data.results);
         setState(prev => ({
           ...prev,
-          roundResult: formattedResult,
+          roundResult: data.results,
           currentPhase: 'results',
           hasClickedContinue: false
         }));
+        data.results.players.forEach(playerResult => {
+          if (playerResult.pointsEarned > 0) {
+            onUpdateScore(playerResult.playerId, playerResult.pointsEarned);
+          }
+        });
       }
+    };
+    
+    const handlePredictionPhase = (data: { round: number }) => {
+        if (data.round === currentRound && gameStyle === 'prediction') {
+            console.log(`[useGameLogic] Received predictionPhase for round ${data.round}`);
+            setState(prev => ({
+                ...prev,
+                currentPhase: 'prediction',
+                hasSubmittedAnswer: false,
+                hasSubmittedPrediction: false
+            }));
+        }
     };
 
     const handleNewRound = (data: { currentRound: number }) => {
       console.log(`[useGameLogic] Received newRound event: ${data.currentRound}`);
+      onNextRound();
     };
 
     const handleGameOver = (data: { finalScores: Record<string, number> }) => {
@@ -105,18 +119,20 @@ const useGameLogic = ({
     };
 
     socket.on('roundResults', handleRoundResults);
+    socket.on('predictionPhase', handlePredictionPhase);
     socket.on('newRound', handleNewRound);
     socket.on('gameOver', handleGameOver);
 
     return () => {
       socket.off('roundResults', handleRoundResults);
+      socket.off('predictionPhase', handlePredictionPhase);
       socket.off('newRound', handleNewRound);
       socket.off('gameOver', handleGameOver);
     };
-  }, [socket, currentRound, currentQuestion?.id, players, onComplete]);
+  }, [socket, currentRound, currentQuestion, players, onComplete, onUpdateScore, onNextRound, gameStyle]);
 
   const handleAnswerSelect = useCallback((option: string) => {
-    if (!socket || !currentQuestion || !currentPlayerId || state.hasSubmittedAnswer) {
+    if (!socket || !currentQuestion || !currentPlayerId || state.hasSubmittedAnswer || state.currentPhase !== 'answer') {
       return;
     }
 
@@ -126,9 +142,47 @@ const useGameLogic = ({
     setState(prev => ({
       ...prev,
       hasSubmittedAnswer: true,
+      answers: { ...prev.answers, [currentPlayerId]: option },
       currentPhase: 'waiting'
     }));
-  }, [socket, roomId, currentQuestion, currentPlayerId, state.hasSubmittedAnswer]);
+  }, [socket, roomId, currentQuestion, currentPlayerId, state.hasSubmittedAnswer, state.currentPhase]);
+  
+  const handlePredictionSelect = useCallback((option: string) => {
+    console.log('[useGameLogic] handlePredictionSelect called. Current State:', {
+      phase: state.currentPhase,
+      submittedAnswer: state.hasSubmittedAnswer,
+      submittedPrediction: state.hasSubmittedPrediction,
+      currentQ: !!currentQuestion,
+      socket: !!socket,
+      cpId: currentPlayerId,
+      op: !!otherPlayer
+    });
+    
+    if (!socket || !currentQuestion || !currentPlayerId || !otherPlayer || state.hasSubmittedPrediction) {
+      console.warn('[useGameLogic] Prediction blocked:', { 
+        socket: !!socket, 
+        currentQuestion: !!currentQuestion, 
+        currentPlayerId, 
+        otherPlayer: !!otherPlayer, 
+        submittedPrediction: state.hasSubmittedPrediction,
+        phase: state.currentPhase 
+      });
+      return;
+    }
+
+    console.log(`[useGameLogic] Emitting submitPrediction for ${otherPlayer.id}: ${option}`);
+    socket.emit('submitPrediction', { 
+        roomId, 
+        prediction: option,
+        predictedPlayerId: otherPlayer.id
+    });
+
+    setState(prev => ({
+      ...prev,
+      hasSubmittedPrediction: true,
+      predictions: { ...prev.predictions, [currentPlayerId]: option },
+    }));
+  }, [socket, roomId, currentQuestion, currentPlayerId, otherPlayer, state.hasSubmittedPrediction]);
 
   const handleContinue = useCallback(() => {
     if (state.currentPhase === 'results' && !state.hasClickedContinue && socket) {
@@ -150,15 +204,19 @@ const useGameLogic = ({
 
   return {
     currentPhase: state.currentPhase,
-    currentPlayer: players.find(p => p.id === currentPlayerId),
+    currentPlayer,
+    otherPlayer,
     currentQuestion,
     roundResult: state.roundResult,
     hasSubmittedAnswer: state.hasSubmittedAnswer,
+    hasSubmittedPrediction: state.hasSubmittedPrediction,
     hasClickedContinue: state.hasClickedContinue,
     handleAnswerSelect,
+    handlePredictionSelect,
     handleContinue,
     getPlayerNameMap,
     answers: state.answers,
+    predictions: state.predictions,
   };
 };
 

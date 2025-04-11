@@ -11,7 +11,6 @@ interface UseGameLogicProps {
   totalRounds: number;
   onComplete: (finalScores: Record<string, number>) => void;
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
-  onNextRound: () => void;
   gameStyle: GameStyle;
   currentPlayerId: string | null;
 }
@@ -34,7 +33,6 @@ const useGameLogic = ({
   totalRounds,
   onComplete,
   onUpdateScore,
-  onNextRound,
   gameStyle,
   currentPlayerId
 }: UseGameLogicProps) => {
@@ -108,11 +106,6 @@ const useGameLogic = ({
         }
     };
 
-    const handleNewRound = (data: { currentRound: number }) => {
-      console.log(`[useGameLogic] Received newRound event: ${data.currentRound}`);
-      onNextRound();
-    };
-
     const handleGameOver = (data: { finalScores: Record<string, number> }) => {
       console.log('[useGameLogic] Received gameOver event:', data.finalScores);
       onComplete(data.finalScores);
@@ -120,16 +113,14 @@ const useGameLogic = ({
 
     socket.on('roundResults', handleRoundResults);
     socket.on('predictionPhase', handlePredictionPhase);
-    socket.on('newRound', handleNewRound);
     socket.on('gameOver', handleGameOver);
 
     return () => {
       socket.off('roundResults', handleRoundResults);
       socket.off('predictionPhase', handlePredictionPhase);
-      socket.off('newRound', handleNewRound);
       socket.off('gameOver', handleGameOver);
     };
-  }, [socket, currentRound, currentQuestion, players, onComplete, onUpdateScore, onNextRound, gameStyle]);
+  }, [socket, currentRound, currentQuestion, players, onComplete, onUpdateScore, gameStyle]);
 
   const handleAnswerSelect = useCallback((option: string) => {
     if (!socket || !currentQuestion || !currentPlayerId || state.hasSubmittedAnswer || state.currentPhase !== 'answer') {

@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -106,7 +105,16 @@ export default {
 				'card-flip': 'card-flip 0.6s ease-in-out',
 				'fade-in': 'fade-in 0.3s ease-out',
 				'scale-in': 'scale-in 0.2s ease-out'
-			}
+			},
+			// Add custom glass and blur effects
+			backdropBlur: {
+				xs: '2px',
+			 },
+			 boxShadow: {
+				'neon': '0 0 5px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3)',
+				'neon-red': '0 0 5px rgba(239, 68, 68, 0.5), 0 0 20px rgba(239, 68, 68, 0.3)',
+				'neon-yellow': '0 0 5px rgba(234, 179, 8, 0.5), 0 0 20px rgba(234, 179, 8, 0.3)',
+			 }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

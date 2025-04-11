@@ -1,4 +1,4 @@
-# Friend Match Play
+# Cards Against Humanity
 
 A real-time multiplayer web game where friends test how well they know each other by answering questions and predicting each other's responses.
 

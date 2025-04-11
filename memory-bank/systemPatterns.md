@@ -59,7 +59,7 @@ graph TD
 
 # System Design Patterns & Architecture
 
-This document outlines key architectural patterns and design choices used in the FriendMatch Play application.
+This document outlines key architectural patterns and design choices used in the Cards Against Maturity application.
 
 ## Frontend Architecture
 

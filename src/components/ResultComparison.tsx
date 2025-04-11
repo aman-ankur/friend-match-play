@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import GameCard from './GameCard';
@@ -20,12 +19,11 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
 }) => {
   return (
     <div className="w-full max-w-2xl mx-auto animate-scale-in">
-      <GameCard title="Round Results">
+      <GameCard title={showPredictions ? "Round Results & Predictions" : "Answer Reveal"}>
         <div className="space-y-6">
-          {result.players.map(playerResult => {
-            const playerName = playerNames[playerResult.playerId] || 'Player';
-            const predictorId = Object.keys(playerNames).find(id => id !== playerResult.playerId);
-            const predictorName = predictorId ? playerNames[predictorId] : 'Friend';
+          {result.players.map((playerResult, index) => {
+            const playerName = playerNames[playerResult.playerId] || `Player ${index + 1}`;
+            console.log(`[ResultComparison] Player ${index}:`, playerResult, `showPredictions: ${showPredictions}`);
             
             return (
               <div key={playerResult.playerId} className="border-b pb-6 last:border-b-0">
@@ -34,18 +32,20 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
                     {playerName}'s Answer:
                   </h3>
                   <p className="text-xl mt-1 font-bold text-connection-tertiary">
-                    {playerResult.answer}
+                    {playerResult.answer ? playerResult.answer : <span className="text-gray-400 italic">No answer recorded</span>}
                   </p>
                 </div>
                 
                 {showPredictions && (
-                  <div className="flex items-start gap-6">
+                  <div className="mt-4 flex items-start gap-6">
                     <div>
                       <p className="text-sm text-gray-500 mb-1">
-                        {predictorName}'s prediction:
+                        {Object.keys(playerNames).find(id => id !== playerResult.playerId) 
+                          ? playerNames[Object.keys(playerNames).find(id => id !== playerResult.playerId)!] 
+                          : 'Friend'}'s prediction:
                       </p>
                       <p className="font-medium">
-                        {playerResult.prediction}
+                        {playerResult.prediction ? playerResult.prediction : <span className="text-gray-400 italic">No prediction</span>}
                       </p>
                     </div>
                     
@@ -53,7 +53,7 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
                       {playerResult.isCorrect ? (
                         <div className="inline-flex items-center gap-1 bg-green-100 px-2 py-1 rounded-md text-green-700">
                           <Check size={16} />
-                          <span className="font-medium">Correct! +{playerResult.pointsEarned} pts</span>
+                          <span className="font-medium">Correct! +{playerResult.pointsEarned ?? 0} pts</span>
                         </div>
                       ) : (
                         <div className="inline-flex items-center gap-1 bg-red-100 px-2 py-1 rounded-md text-red-700">

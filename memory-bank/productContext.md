@@ -1,35 +1,46 @@
-# Product Context: Card Connection
+# Product Context: FriendMatch Play
 
-## 1. Purpose & Vision
+## Core Concept
 
-Card Connection aims to deepen relationships between friends by providing engaging, structured ways to learn more about each other. In an increasingly digital world, it offers a dedicated space for meaningful, fun, and insightful interactions that go beyond typical social media exchanges. The vision is to be the go-to platform for friends seeking lighthearted yet revealing ways to connect remotely.
+FriendMatch Play is a web-based party game designed for two players to test how well they know each other's personalities, opinions, and preferences through various question-based game modes.
 
-## 2. Problem Solved
+## Target Audience
 
-- **Surface-Level Interactions:** Many online interactions lack depth. Card Connection provides prompts and game mechanics designed to encourage vulnerability and genuine sharing.
-- **Difficulty Connecting Remotely:** Maintaining close friendships at a distance can be challenging. The platform offers a shared activity that facilitates connection regardless of physical location.
-- **Awkwardness in Deeper Conversations:** Initiating personal conversations can sometimes feel forced. The game formats provide a natural and fun context for exploring personal beliefs, preferences, and experiences.
+*   Friends, couples, or pairs looking for a fun, interactive way to connect and learn more about each other.
+*   Users seeking simple, engaging online games for two players.
 
-## 3. Target Audience
+## Key Features
 
-- Friends (especially long-distance)
-- Couples
-- Individuals looking for fun, non-traditional ways to get to know others better.
+1.  **Multiple Game Modes:**
+    *   **Guess Who I Am:** Players answer personal questions and predict their friend's answers.
+    *   **Hot Takes:** Players share opinions on controversial topics and predict their friend's stance.
+    *   **This or That:** Players choose between two options in dilemma-style questions and predict their friend's choice.
+2.  **Gameplay Styles:**
+    *   **Prediction Mode:** Players earn points by correctly predicting their friend's answers (and potentially for matching answers, depending on the mode). Competitive.
+    *   **Reveal-only Mode:** Players answer questions, and answers are simply revealed for comparison and discussion. No scoring.
+3.  **NSFW/Spice Level Control:**
+    *   Users can adjust the "spice level" of questions using a segmented button control (Mild, Medium, Spicy, Hot, Wild) before starting.
+    *   This filters the question pool to match the desired intensity.
+4.  **Answer Timer (Optional):**
+    *   Players can optionally select a timer duration (15s, 30s, 45s) for answering each question.
+    *   A visual timer widget is displayed during the answering phase if a duration is chosen.
+5.  **Real-time (Planned):** The ultimate goal is a real-time experience where players join a room and see updates instantly.
+6.  **Simple Room Joining:** Players join via a shared room code (currently simulated).
+7.  **Clear Results Display:** Shows each player's answer and, in prediction mode, the predictions made and points earned.
+8.  **Easy Navigation:** Includes a persistent "Home" button to return to the game selection screen and an "Exit" button.
 
-## 4. Core User Experience Goals
+## User Flow
 
-- **Engaging & Fun:** Gameplay should feel light, enjoyable, and keep players invested. Animations and visual feedback are key.
-- **Insightful:** Players should feel they've learned something new or gained a deeper understanding of their friend by the end of a game.
-- **Simple & Intuitive:** The user interface must be clean, easy to navigate, and require minimal learning curve. Joining a game should be seamless via a shared link.
-- **Visually Appealing:** A modern, minimalist, card-based aesthetic enhances the experience.
-- **Accessible:** Responsive design ensures usability across desktop and mobile devices.
-- **Safe & Comfortable:** Features like skipping questions allow players to maintain comfort levels.
-
-## 5. How It Should Work (High-Level)
-
-1.  **Initiation:** One player initiates a game, creating a unique virtual room.
-2.  **Joining:** The initiator shares a unique link with a friend, who uses it to join the room.
-3.  **Game Selection:** Once both players are present, they collaboratively choose one of the three game modes ("Guess Who I Am", "Hot Takes", "This or That").
-4.  **Gameplay:** Players proceed through rounds according to the selected mode's rules, involving self-reflection, prediction, and comparison. The system provides real-time feedback and scoring.
-5.  **Conclusion:** After the set number of rounds, a summary screen displays final scores and potentially highlights interesting results.
-6.  **Continuation:** Players have the option to play the same game again, choose a different mode, or end the session.
+1.  Player 1 creates/joins a room, gets a room code.
+2.  Player 2 joins using the room code (currently simulated auto-join).
+3.  Players select a Game Mode (Guess Who I Am, Hot Takes, This or That).
+4.  Players select a Game Style (Prediction or Reveal-only) and optionally an Answer Timer duration.
+5.  Players adjust the NSFW/Spice Level.
+6.  Game starts.
+7.  **Round Loop (Repeats `totalRounds` times):**
+    *   **Answer Phase:** Each player answers the current question (timer shown if selected).
+    *   **Prediction Phase (Prediction Mode Only):** Each player predicts the other's answer (timer shown if selected).
+    *   **Results Phase:** Answers (and predictions/scores if applicable) are revealed.
+    *   Players click "Continue".
+8.  **Game End:** Final scores (if applicable) are displayed. Options to "Play Again" or "Exit".
+9.  Players can use the "Home" button at any point after joining to return to the game selection screen.

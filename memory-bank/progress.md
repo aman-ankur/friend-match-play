@@ -72,3 +72,44 @@
 - **Incomplete Game Logic:** Existing components likely contain placeholder or incomplete logic.
 - **Undefined State Management:** Lack of a clear, robust state management strategy for real-time data.
 - **Routing Not Implemented:** Navigation between different parts of the application is not yet functional.
+
+## Completed Tasks
+
+*   **Setup:** Initial project setup with Next.js, TypeScript, Tailwind CSS, Shadcn UI.
+*   **Core Types:** Defined basic types for `Player`, `GameQuestion`, `GameMode`, `GameStyle`.
+*   **Game Logic Hook (`useGameLogic`):** Implemented core logic for handling answers, predictions, calculating results, and managing round state (initial version).
+*   **Game Mode Components:** Created basic components for `GuessWhoIAm`, `HotTakes`, `ThisOrThat` using `useGameLogic`.
+*   **`GameRoom` Component:** Initial setup for managing game state (players, mode, rounds, status), rendering different game phases/components.
+*   **UI Components:** Created `GameCard`, `ResultComparison`, `NSFWSlider` (initial slider version).
+*   **Question Loading:** Implemented `getQuestionsByMode` utility.
+*   **Round Progression Fix:** Correctly passed and called `handleNextRound` from `GameRoom` via `useGameLogic` to update `currentRound` state.
+*   **Home Button:** Added a persistent Home button for navigation back to game selection.
+*   **NSFW Slider Redesign:** Replaced the slider with a segmented button control.
+*   **Timer Functionality:** Added timer duration selection (0s, 15s, 30s, 45s) and a visual timer widget during question phases.
+*   **Results Display Fix (Reveal-Only):** Ensured `ResultComparison` correctly displays both players' answers when `showPredictions` is false.
+*   **Results Display Fix (Prediction):** Resolved issue where the second player's prediction wasn't shown for the first player by using `useEffect` in `useGameLogic` to calculate results only after prediction state updates.
+
+## Current Focus / Next Steps
+
+*   **Real-time Multiplayer:** Integrate WebSocket (e.g., Socket.IO) or a similar solution for real-time updates (player joining, answer/prediction synchronization, state changes).
+    *   Refactor state management (`GameRoom` state currently client-side only).
+    *   Implement server-side game logic.
+*   **Timer Timeout Logic:** Implement consequences for the timer running out (e.g., default answer, skip turn).
+*   **Error Handling & Edge Cases:** Add more robust error handling throughout the application.
+*   **UI Polishing:** Refine animations, transitions, and overall visual appeal based on `@ui-guidelines.md`.
+*   **Accessibility (a11y):** Review and improve accessibility.
+*   **Testing:** Implement unit and potentially integration tests (e.g., using Jest/React Testing Library).
+
+## Potential Future Features
+
+*   Different question packs/themes.
+*   User accounts and saving game history.
+*   Custom game modes or rules.
+*   Spectator mode.
+*   More sophisticated scoring options.
+
+## Blockers / Issues
+
+*   ~~Game doesn't progress to the next round after results.~~ (Resolved)
+*   ~~Friend's prediction is not shown on the results screen in Prediction mode.~~ (Resolved)
+*   Client-side state management needs to be replaced for true multiplayer.

@@ -2,111 +2,90 @@
 
 ## 1. Architecture Overview
 
-Card Connection is architected as a **Single Page Application (SPA)** built using **React** and **TypeScript**. It leverages a component-based architecture, likely facilitated by **Vite** for development and bundling.
+Card Connection is architected as a **Client-Server application**. 
+
+- The **Frontend** is a Single Page Application (SPA) built using React and TypeScript, served by Vite.
+- The **Backend** is a Node.js server using Express and TypeScript, responsible for managing game state and facilitating real-time communication via Socket.IO.
 
 ```mermaid
 graph TD
-    User[User Browser] --> SPA[React SPA]
-    SPA -->|Renders| UI[UI Components]
-    UI -->|Uses| Hooks[Custom Hooks (e.g., useGameLogic)]
-    UI -->|Uses| Utils[Utility Functions (e.g., gameQuestions)]
-    UI -->|Interacts With| State[Component/Global State]
-
-    subgraph Frontend Application
+    subgraph Frontend Application (Browser 1)
         direction LR
-        SPA
-        UI
-        Hooks
-        Utils
-        State
+        User1[User 1] --> C1_SPA[React SPA]
+        C1_SPA --> C1_UI[UI Components]
+        C1_UI --> C1_SocketContext[Socket Context]
+        C1_SocketContext -->|WebSocket| Backend
     end
 
-    %% Potentially a backend for real-time communication, not yet confirmed
-    %% SPA -->|WebSocket?| Backend[Signaling/Game State Server]
-    %% Backend --> SPA
+    subgraph Frontend Application (Browser 2)
+        direction LR
+        User2[User 2] --> C2_SPA[React SPA]
+        C2_SPA --> C2_UI[UI Components]
+        C2_UI --> C2_SocketContext[Socket Context]
+        C2_SocketContext -->|WebSocket| Backend
+    end
+    
+    subgraph Backend Server (Node.js)
+        direction TB
+        Backend[Express + Socket.IO Server]
+        Backend -->|Manages| GameState[In-Memory Game State (Rooms)]
+        GameState -->|Updates/Reads| GameUtils[Game Utilities]
+    end
+
+    Backend -->|Emits Events| C1_SocketContext
+    Backend -->|Emits Events| C2_SocketContext
+
 ```
 
-## 2. Key Technical Decisions (Inferred)
+## 2. Key Technical Decisions
 
-- **Frontend Framework:** React with TypeScript for type safety and modern JavaScript features.
-- **Build Tool:** Vite for fast development server and optimized builds.
-- **Styling:** Tailwind CSS (indicated by `tailwind.config.ts`, `postcss.config.js`, `src/index.css`) for utility-first CSS. Likely combined with a UI component library (`src/components/ui` suggests Shadcn/ui or similar).
-- **State Management:** Currently unclear. Could be using React Context, Zustand, Redux Toolkit, or component-local state. The `useGameLogic` hook suggests encapsulating game state logic.
-- **Routing:** Likely using a client-side router (e.g., React Router) to handle navigation between views like room creation, game lobby, and game modes, although specific routing files aren't immediately obvious in the top level. `src/pages/Index.tsx` and `src/pages/NotFound.tsx` suggest page-based routing.
-- **Real-time Communication:** For a two-player remote game, a real-time communication mechanism (e.g., WebSockets via libraries like Socket.IO or a BaaS like Firebase Realtime Database/Firestore) will be necessary for sharing game state, answers, and predictions. *This aspect is not yet evident in the file structure and needs implementation.*
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS, Shadcn/ui.
+- **Backend:** Node.js, Express, TypeScript, Socket.IO.
+- **Communication:** WebSockets managed by Socket.IO for real-time client-server interaction.
+- **State Management:** 
+    - **Frontend:** React Context (`SocketContext`) for socket connection, component-local state (`useState`) for UI, and props for passing game state received from the server. `useGameLogic` hook encapsulates client-side *reaction* to server events during gameplay.
+    - **Backend:** Server holds the **authoritative game state** (rooms, players, scores, current round, answers) in-memory (`server.ts`). This is the single source of truth.
+- **Routing (Client):** Likely React Router for frontend page navigation.
+- **Data Persistence:** **None currently.** Game state is lost on server restart. Requires a database (e.g., Redis, Postgres) for production.
 
 ## 3. Design Patterns
 
-- **Component-Based Architecture:** UI is broken down into reusable components (e.g., `GameCard`, `GameRoom`, UI elements).
-- **Container/Presentational Components (Likely):** Pages (`src/pages`) likely act as containers fetching data and managing state, while components (`src/components`) handle presentation.
-- **Custom Hooks:** Encapsulating reusable logic and stateful behavior (e.g., `useGameLogic`, `use-mobile`).
-- **Utility Functions:** Separating pure functions for tasks like fetching questions (`src/utils/gameQuestions.ts`) or general utilities (`src/lib/utils.ts`).
-- **Type Safety:** Using TypeScript (`src/types/game.ts`) to define data structures and ensure consistency.
+- **Client-Server Architecture:** Clear separation between frontend presentation/interaction and backend logic/state management.
+- **Event-Driven (via WebSockets):** Client actions (create/join room, submit answer, ready) trigger events sent to the server. The server processes these, updates state, and emits events back to relevant clients (`roomCreated`, `roomReady`, `gameStarted`, `roundResults`, `newRound`, `gameOver`, `playerLeft`, `error`) to synchronize UI.
+- **Component-Based Architecture (Frontend):** Standard React practice.
+- **Custom Hooks (Frontend):** `useSocket` for context access, `useGameLogic` for managing the client-side response to server game events.
+- **Context API (Frontend):** `SocketContext` provides global access to the WebSocket connection.
+- **In-Memory Database (Backend):** Simple object (`rooms`) used for storing server state during development. **Needs replacement for production.**
+- **Single Source of Truth (Backend):** The server maintains the definitive game state.
 
-## 4. Component Relationships (High-Level)
+## 4. Component Relationships & Data Flow (Simplified)
 
-- `App.tsx`: Likely the root component, setting up routing and global layout.
-- `main.tsx`: Entry point, rendering the `App` component into the DOM.
-- `src/pages/Index.tsx`: Main landing page or entry point for game creation/joining.
-- `src/components/RoomCreation.tsx`: Handles the UI for creating a new game room.
-- `src/components/GameRoom.tsx`: Represents the lobby or active game area once players are connected.
-- `src/components/[GameMode].tsx` (e.g., `GuessWhoIAm.tsx`): Specific components rendering the UI and logic for each game mode.
-- `src/components/ResultComparison.tsx`: Displays the comparison of answers/predictions.
-- `src/components/ui/`: Reusable low-level UI elements (buttons, cards, etc.).
-- `src/hooks/useGameLogic.ts`: Centralizes core game state management and actions.
+1.  **Connection:** `SocketProvider` establishes connection. `useSocket` provides access.
+2.  **Create/Join (`RoomCreation.tsx`):** 
+    - User enters info -> emits `createRoom` or `joinRoom` event.
+    - Listens for `roomCreated` or `joinSuccess` -> calls `onRoomCreated` prop (in `Index.tsx`).
+3.  **Game Setup (`GameRoom.tsx`):**
+    - Renders based on props from `Index.tsx` (including `initialPlayersData` for joiners).
+    - Creator: Renders game selection UI.
+    - Joiner: Initially renders game selection UI (state set by `initialPlayersData`).
+    - Listens for `roomReady` (for creator waiting).
+    - Creator selects game mode -> UI changes locally (`style-selecting` status).
+    - Creator configures style/timer/NSFW -> emits `startGame`.
+    - Listens for `gameStarted` -> updates local state (questions, round, etc.) from server data -> Renders specific game component (e.g., `ThisOrThat.tsx`).
+4.  **Gameplay (`ThisOrThat.tsx` + `useGameLogic.ts`):
+    - Receives game state props (`currentRound`, `questions`) from `GameRoom`.
+    - Player selects answer -> `handleAnswerSelect` emits `submitAnswer` -> Sets local `hasSubmittedAnswer` state.
+    - Listens for `roundResults` -> updates local state to show results (`ResultComparison.tsx`).
+    - Player clicks continue -> `handleContinue` emits `playerReady` -> sets local `hasClickedContinue`.
+    - Listens for `newRound` -> `GameRoom` updates `currentRound` prop -> `useGameLogic` resets local state via `useEffect`.
+    - Listens for `gameOver` -> Calls `onComplete` prop.
+5.  **Disconnection:** `disconnect` event on server removes player, emits `playerLeft`, clients show toast/update UI.
 
-*(Note: This is based on initial analysis. Deeper code review is needed to confirm state management, routing details, and the absence/presence of backend communication.)*
+## 5. Future Considerations / Refinements
 
-# System Design Patterns & Architecture
-
-This document outlines key architectural patterns and design choices used in the Cards Against Maturity application.
-
-## Frontend Architecture
-
-*   **Framework:** Next.js (React)
-*   **Language:** TypeScript
-*   **Styling:** Tailwind CSS with Shadcn UI components.
-*   **State Management:** Primarily React component state (`useState`) and prop drilling. Global state management (like Zustand or Redux) is not yet implemented but will be necessary for real-time features.
-*   **Component Structure:** Organized by feature/view (e.g., `GameRoom`, `GuessWhoIAm`) within the `src/components` directory.
-*   **Routing:** Handled by Next.js file-based routing (though currently minimal).
-
-## Key Design Patterns
-
-1.  **Custom Hooks (`useGameLogic`):**
-    *   **Purpose:** Encapsulates reusable game state logic (handling answers, predictions, results, phase transitions) shared across different game mode components (`GuessWhoIAm`, `HotTakes`, `ThisOrThat`).
-    *   **Benefits:** Promotes code reuse, separates concerns (logic vs. presentation), makes game components simpler.
-    *   **Considerations:** Assumes a two-player game structure currently. Might need adaptation for more players or complex state interactions.
-
-2.  **Component Composition:**
-    *   Standard React pattern. Components like `GameCard`, `ResultComparison`, `NSFWSlider`, `TimerWidget` are used within larger view components (`GameRoom`, game modes).
-    *   **Benefits:** Reusability, maintainability.
-
-3.  **Conditional Rendering:**
-    *   Used extensively in `GameRoom` to display different UI sections based on the game `status` (waiting, selecting, playing, completed).
-    *   Also used within game components to show answer/prediction phases and results.
-    *   **Benefits:** Manages complex UI flows within a single component structure.
-
-4.  **Centralized Game Settings (`GameRoom`):**
-    *   The `GameRoom` component holds the state for core game settings like the selected game mode, game style, NSFW level, and timer duration.
-    *   These settings are configured before the main gameplay loop begins and passed down as props.
-    *   **Benefits:** Single source of truth for game configuration during a session.
-
-5.  **Asynchronous State Updates & Effects (`useEffect`):**
-    *   **Pattern:** When an action depends on the result of an asynchronous state update (e.g., calculating results *after* the final prediction is saved), use `useEffect` hooked to the state variable being updated.
-    *   **Example:** In `useGameLogic`, the results calculation is triggered by a `useEffect` watching the `predictions` array, ensuring it runs only after the state reflects all submitted predictions.
-    *   **Benefits:** Avoids race conditions and ensures calculations use the latest state.
-    *   **Caution:** Be mindful of dependency arrays to prevent infinite loops or unnecessary executions.
-
-## Data Flow
-
-*   **Game Setup:** User selects game mode, style, timer duration in `GameRoom`. Questions are loaded via `getQuestionsByMode`.
-*   **Gameplay:** State managed largely within `useGameLogic` based on props from `GameRoom` (players, questions, round, settings). User interactions (button clicks) call handlers in the hook (`handleAnswerSelect`, `handlePredictionSelect`).
-*   **Results:** `useGameLogic` calculates `RoundResult`, sets it in state. `ResultComparison` component displays this.
-*   **Progression:** `handleContinue` in `useGameLogic` calls `onNextRound` (passed from `GameRoom`) to update the parent `currentRound` state.
-*   **Navigation:** `handleGoHome` in `GameRoom` resets state variables to return to the selection view.
-
-## Future Considerations
-
-*   **Real-time State Sync:** Transitioning from client-side state in `GameRoom` to a server-authoritative model using WebSockets is the highest priority for multiplayer.
-*   **State Management Library:** Introduce Zustand or similar for managing global UI state and potentially caching server data.
-*   **API Layer:** Define a clear API for communication between frontend and a potential backend.
+- **Database Integration:** Replace in-memory `rooms` storage.
+- **Error Handling:** More specific error events and client-side handling.
+- **Prediction Mode:** Implement server-side logic and client-side UI/state for predictions.
+- **Scalability:** Consider stateless server design if scaling becomes necessary (storing session state externally, e.g., Redis).
+- **Security:** Input validation, rate limiting, authentication (if users are added).
+- **Testing:** Unit/Integration tests for backend logic, E2E tests for frontend flows.

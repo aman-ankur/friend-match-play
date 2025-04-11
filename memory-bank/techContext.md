@@ -3,48 +3,63 @@
 ## 1. Core Technologies
 
 - **Language:** TypeScript (`tsconfig.json`, `.ts`, `.tsx` files)
-- **Framework:** React (`package.json`, `.tsx` files)
-- **Build Tool / Dev Server:** Vite (`vite.config.ts`)
-- **Package Manager:** Likely npm (due to `package-lock.json`) or Bun (due to `bun.lockb`). Need to confirm primary usage, but both lockfiles exist. `package.json` will list scripts runnable by either.
+- **Framework:** 
+    - Frontend: React (`friend-match-play/package.json`, `.tsx` files)
+    - Backend: Node.js with Express (`server/package.json`, `server/src/server.ts`)
+- **Build Tool / Dev Server:** 
+    - Frontend: Vite (`friend-match-play/vite.config.ts`)
+    - Backend: `ts-node-dev` for development (`server/package.json`)
+- **Real-time Communication:** Socket.IO (`server/src/server.ts`, `friend-match-play/src/context/SocketContext.tsx`)
+- **Package Manager:** npm (`package-lock.json` in both `/` and `server/`)
 - **Styling:**
-    - Tailwind CSS (`tailwind.config.ts`, `postcss.config.js`, `src/index.css`)
-    - CSS Modules or standard CSS (`src/App.css`) might be used for component-specific styles not covered by Tailwind.
-- **UI Component Library:** Shadcn/ui (Strongly inferred from `src/components/ui/` structure, `components.json`, and common Shadcn component names like `button.tsx`, `card.tsx`, etc.)
-- **Linting/Formatting:** ESLint (`eslint.config.js`), Prettier (often used with Tailwind/React, though no explicit config file listed, might be in `package.json` or integrated via ESLint).
+    - Tailwind CSS (`friend-match-play/tailwind.config.ts`, `friend-match-play/postcss.config.js`, `friend-match-play/src/index.css`)
+    - CSS Modules or standard CSS (`friend-match-play/src/App.css`) might be used.
+- **UI Component Library:** Shadcn/ui (`friend-match-play/src/components/ui/`, `friend-match-play/components.json`)
+- **Linting/Formatting:** ESLint (`friend-match-play/eslint.config.js`), Prettier likely used.
 
 ## 2. Development Environment
 
-- **Setup:** Standard Node.js environment required. Clone repository, install dependencies using `npm install` or `bun install`.
-- **Running Locally:** Use `npm run dev` or `bun run dev` (defined in `package.json` scripts, powered by Vite) to start the development server.
-- **Building for Production:** Use `npm run build` or `bun run build` (defined in `package.json` scripts, powered by Vite and `tsc`).
+- **Setup:** Standard Node.js environment. Clone repo, run `npm install` in root (`friend-match-play/`) and in `server/`.
+- **Running Locally:** 
+    - Start Backend: `cd server && npm run dev` (runs on port 3001 by default)
+    - Start Frontend: `npm run dev` in root (`friend-match-play/`) (runs on port 5173 by default)
+- **Building for Production:** 
+    - Frontend: `npm run build` in root (`friend-match-play/`)
+    - Backend: `npm run build` (requires adding a build script to `server/package.json` using `tsc`) and then run with `node dist/server.js`.
 
-## 3. Key Dependencies (Inferred/Confirmed)
+## 3. Key Dependencies (Confirmed)
 
-- `react`, `react-dom`: Core React libraries.
-- `typescript`: Language support.
-- `vite`: Build tool and development server.
-- `tailwindcss`: Utility-first CSS framework.
-- `@radix-ui/*`: Underlying primitives for Shadcn/ui components.
-- `clsx`, `tailwind-merge`: Utilities for conditional and merged Tailwind classes (common with Shadcn/ui, likely via `src/lib/utils.ts`).
-- `lucide-react`: Icon library often used with Shadcn/ui.
-- *Potential Routing Library:* `react-router-dom` (Needs confirmation by inspecting `package.json` or code usage).
-- *Potential State Management Library:* Zustand, Redux Toolkit, etc. (Needs confirmation).
-- *Potential Real-time Communication Library:* `socket.io-client`, Firebase SDK, etc. (Needs implementation and confirmation).
+- **Frontend:**
+    - `react`, `react-dom`, `typescript`, `vite`
+    - `tailwindcss`, `@radix-ui/*`, `clsx`, `tailwind-merge`
+    - `lucide-react` (icons)
+    - `socket.io-client` (WebSocket communication)
+    - `react-router-dom` (Likely, needs final check in App.tsx/main.tsx)
+- **Backend:**
+    - `express`, `socket.io`, `cors`, `typescript`
+    - `@types/*` for corresponding libraries
+    - `ts-node-dev` (dev dependency)
 
 ## 4. Technical Constraints & Considerations
 
-- **Browser Compatibility:** Primarily targets modern web browsers supporting ES Modules and modern CSS. Specific targets might be defined in Vite/Babel/PostCSS configs if needed.
-- **Responsiveness:** Must work effectively on both desktop and mobile viewports (as per PRD). Tailwind and responsive design practices are crucial.
-- **Real-time Backend:** **CRITICAL MISSING PIECE.** A backend service with real-time capabilities (e.g., WebSockets) is required for multi-player functionality (sharing game state, answers, presence). This needs to be designed and implemented. Options include Node.js + Socket.IO, Firebase, Supabase Realtime, or other BaaS/WebSocket solutions.
-- **State Synchronization:** Complex state (game progress, player answers, scores, timers) needs reliable synchronization between the two players via the backend.
-- **Unique Room Links:** Requires a mechanism (likely backend) to generate unique room IDs and associate them with game sessions.
+- **Browser Compatibility:** Modern browsers.
+- **Responsiveness:** Required.
+- **Real-time Backend:** Implemented using Node.js + Socket.IO. State is currently **in-memory** on the server (`server/src/server.ts`), meaning rooms and game state are lost on server restart. **For production persistence, a database (e.g., Redis for session data, Postgres/Mongo for user data) is recommended.**
+- **State Synchronization:** Managed via Socket.IO events between clients and the server. The server is the source of truth for game state.
+- **Unique Room Links:** Room IDs are generated on the server. Frontend needs to handle sharing/using these (e.g., copy-to-clipboard button, URL parameters).
 
 ## 5. Code Structure Conventions
 
-- **Components:** Located in `src/components/`, with reusable UI elements in `src/components/ui/`. Game-specific components are at the top level of `src/components/`.
-- **Pages/Views:** Located in `src/pages/`.
-- **Hooks:** Custom React hooks in `src/hooks/`.
-- **Utilities:** General helper functions in `src/lib/` and potentially `src/utils/`.
-- **Types:** TypeScript type definitions in `src/types/`.
-- **Static Assets:** Public assets in `public/`.
-- **Styling:** Global styles in `src/index.css`, potentially component-specific styles alongside components or in `src/`.
+- **Frontend (`friend-match-play/src/`):**
+    - `components/`: React components (`ui/` for Shadcn).
+    - `pages/`: Top-level view components.
+    - `hooks/`: Custom React hooks (e.g., `useGameLogic`).
+    - `context/`: React Context providers (e.g., `SocketContext`).
+    - `lib/`, `utils/`: Helper functions.
+    - `types/`: Shared TypeScript types.
+    - `main.tsx`: Application entry point.
+    - `App.tsx`: Root component, likely includes routing.
+- **Backend (`server/src/`):**
+    - `server.ts`: Main server setup, Socket.IO logic.
+    - `gameUtils.ts`: Game-specific logic (e.g., question data).
+    - (Potentially add more structure later, e.g., routes, controllers, services).

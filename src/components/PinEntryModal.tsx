@@ -42,15 +42,12 @@ const PinEntryModal: React.FC<PinEntryModalProps> = ({
   if (!isOpen) return null;
 
   const handlePinChange = (index: number, value: string) => {
-    // Only allow one digit
+    // Only allow one character
     if (value.length > 1) {
       value = value.charAt(value.length - 1);
     }
     
-    // Only allow digits
-    if (value && !/^\d$/.test(value)) {
-      return;
-    }
+    // Removed digit-only validation to allow alphanumeric PIN
 
     const newPin = [...pin];
     newPin[index] = value;

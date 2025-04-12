@@ -1195,6 +1195,247 @@ const thisOrThatQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 11,
     categories: ["macabre", "psychology"]
+  },
+  // Adding new questions from questions_11_2.txt
+  {
+    id: "tot-new-801",
+    text: "Would you rather join a threesome where your partner picks the third or pick the third yourself but they watch you two first?",
+    options: ["Partner picks", "You pick, they watch"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "threesome"]
+  },
+  {
+    id: "tot-new-802",
+    text: "Would you rather jerk off to an ex-lover's old sexts or fantasize about your current partner's ex while you're with them?",
+    options: ["Ex's sexts", "Partner's ex"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past", "masturbation"]
+  },
+  {
+    id: "tot-new-803",
+    text: "Would you rather play out a CNC scene where you're the prey or the predator with your partner?",
+    options: ["Be prey", "Be predator"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "CNC"]
+  },
+  {
+    id: "tot-new-804",
+    text: "Would you rather get caught fingering someone at a swinger's party or have someone catch you being fingered in a public bathroom?",
+    options: ["Caught fingering", "Caught being fingered"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "exhibitionism"]
+  },
+  {
+    id: "tot-new-805",
+    text: "Would you rather watch your partner get creampied by a stranger or be the one creampied while they watch?",
+    options: ["Watch them", "They watch you"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "cuckolding"]
+  },
+  {
+    id: "tot-new-806",
+    text: "Would you rather suck your partner's nipples in a crowded club or have them fondle your boobs under a restaurant table?",
+    options: ["Suck nipples", "Boobs fondled"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "exhibitionism"]
+  },
+  {
+    id: "tot-new-807",
+    text: "Would you rather peg your partner in a femdom scene or be pegged by them while they degrade you?",
+    options: ["Peg them", "Be pegged"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "femdom"]
+  },
+  {
+    id: "tot-new-808",
+    text: "Would you rather admit you've masturbated to a coworker's voice or that you've gotten off to a friend's workout video?",
+    options: ["Coworker's voice", "Friend's video"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past", "masturbation"]
+  },
+  {
+    id: "tot-new-809",
+    text: "Would you rather have sex in a room where you know you're being filmed or where you know someone's hiding and watching?",
+    options: ["Filmed", "Watched live"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "voyeurism"]
+  },
+  {
+    id: "tot-new-810",
+    text: "Would you rather role-play a rape-fantasy where you're pinned down or where you're the one pinning?",
+    options: ["Pinned down", "Pinning"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "CNC"]
+  },
+  {
+    id: "tot-new-811",
+    text: "Would you rather share your partner with their ex for a night or let your ex join you two for a threesome?",
+    options: ["Share with their ex", "Your ex joins"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "threesome", "ex-lovers"]
+  },
+  {
+    id: "tot-new-812",
+    text: "Would you rather try doggy style in front of a mirror to see yourself or missionary while blindfolded to feel everything?",
+    options: ["Doggy with mirror", "Missionary blindfolded"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "positions"]
+  },
+  {
+    id: "tot-new-813",
+    text: "Would you rather jerk off to a fantasy of your partner pregnant or to them dominating you in a dungeon?",
+    options: ["Pregnant fantasy", "Dungeon domination"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish"]
+  },
+  {
+    id: "tot-new-814",
+    text: "Would you rather have your partner catch you sexting a swinger couple or overhear you describing a threesome you want?",
+    options: ["Caught sexting", "Overheard threesome"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past"]
+  },
+  {
+    id: "tot-new-815",
+    text: "Would you rather try exhibitionism by fucking on a balcony or voyeurism by spying on a couple in a hotel?",
+    options: ["Balcony sex", "Spy on couple"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "exhibitionism", "voyeurism"]
+  },
+  {
+    id: "tot-new-816",
+    text: "Would you rather admit you've gotten off to a same-sex fantasy or that you've fantasized about a partner's sibling?",
+    options: ["Same-sex fantasy", "Partner's sibling"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past", "sexual-preference"]
+  },
+  {
+    id: "tot-new-817",
+    text: "Would you rather have your partner ride you in a car while people pass or let them finger you in a movie theater?",
+    options: ["Car ride", "Theater fingering"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "exhibitionism"]
+  },
+  {
+    id: "tot-new-818",
+    text: "Would you rather try a cuckolding scene where you're tied up watching or one where you're the bull for another couple?",
+    options: ["Tied up watching", "Be the bull"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "cuckolding"]
+  },
+  {
+    id: "tot-new-819",
+    text: "Would you rather masturbate to a memory of your first hookup or to a fantasy of your partner's boss?",
+    options: ["First hookup", "Partner's boss"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past", "masturbation"]
+  },
+  {
+    id: "tot-new-820",
+    text: "Would you rather let your partner pick a swinger party for you to join or pick one yourself but they set the rules?",
+    options: ["They pick party", "You pick, they rule"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "swingers"]
+  },
+  {
+    id: "tot-new-821",
+    text: "Would you rather try a position where you're bent over in front of strangers or one where you're spread-eagle on display?",
+    options: ["Bent over", "Spread-eagle"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "positions", "exhibitionism"]
+  },
+  {
+    id: "tot-new-822",
+    text: "Would you rather have your partner whisper about sharing you with a friend or admit you've dreamed of sharing them with yours?",
+    options: ["They whisper", "You dream"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "sharing"]
+  },
+  {
+    id: "tot-new-823",
+    text: "Would you rather get off while being watched by a silent stranger or while your partner narrates every move?",
+    options: ["Silent stranger", "Partner narrates"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "exhibitionism"]
+  },
+  {
+    id: "tot-new-824",
+    text: "Would you rather try a femdom scene where you're spanked publicly or a CNC scene where you're chased privately?",
+    options: ["Public spanking", "Private chase"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "femdom"]
+  },
+  {
+    id: "tot-new-825",
+    text: "Would you rather admit you've fantasized about a creampie during pregnancy or about dominating an ex in a revenge fuck?",
+    options: ["Pregnancy creampie", "Revenge fuck"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "past"]
+  },
+  {
+    id: "tot-new-901",
+    text: "Would you rather plan a threesome with your partner where you both seduce a stranger together or one where you watch them seduce the stranger alone first?",
+    options: ["Seduce together", "Watch them seduce"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "threesome", "couple"]
+  },
+  {
+    id: "tot-new-902",
+    text: "Would you rather try a CNC role-play with your partner where you're the aggressor in a dark alley scene or the one being chased through a fake 'break-in' at home?",
+    options: ["Be aggressor", "Be chased"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "CNC", "couple"]
+  },
+  {
+    id: "tot-new-903",
+    text: "Would you rather have you and your partner masturbate together in a parked car while strangers pass by or take turns pleasuring each other on a balcony with neighbors watching?",
+    options: ["Car masturbation", "Balcony pleasure"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "exhibitionism", "masturbation", "couple"]
+  },
+  {
+    id: "tot-new-904",
+    text: "Would you rather let your partner pick a swinger couple for you both to swap with or agree to a femdom scene where they peg you while you're blindfolded?",
+    options: ["Swinger swap", "Pegged blindfolded"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "swingers", "femdom", "couple"]
+  },
+  {
+    id: "tot-new-905",
+    text: "Would you rather share a fantasy with your partner about you both being watched while you fuck in a club or one where you're both fingering each other under a table at a friend's dinner party?",
+    options: ["Club watching", "Dinner party fingering"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "exhibitionism", "sharing", "couple"]
   }
 ];
 

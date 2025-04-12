@@ -5,7 +5,7 @@ import cors from 'cors';
 import { getQuestionsByMode, GameQuestion, GameMode as SpecificGameMode } from './gameUtils';
 
 // Fixed constants
-const EXCLUSIVE_MODE_PIN = "1234"; // Static PIN for exclusive mode access
+const EXCLUSIVE_MODE_PIN = "s3xy"; // Static PIN for exclusive mode access
 
 // --- Basic Types (Updated: Use nickname) ---
 interface Player {
@@ -489,6 +489,53 @@ io.on('connection', (socket: Socket) => {
     console.log(`[${roomId}] Creator ended exclusive mode. Ending game.`);
     // End the game
     endGame(room);
+  });
+
+  // --- Reset Room Handler ---
+  socket.on('resetRoom', (data: { roomId: string }) => {
+    const { roomId } = data;
+    const room = rooms[roomId];
+    
+    // Validation
+    if (!room) {
+      socket.emit('error', { message: `Room ${roomId} not found.` });
+      return;
+    }
+    
+    // Only creator can reset room
+    if (room.players[0]?.id !== socket.id) {
+      socket.emit('error', { message: 'Only the room creator can reset the room.' });
+      return;
+    }
+
+    // Check that the room is in a state that can be reset
+    if (room.status !== 'completed') {
+      console.log(`[${roomId}] Room reset requested but room is not completed (status: ${room.status}). Proceeding anyway.`);
+    }
+    
+    // Reset the room state
+    room.status = 'selecting';
+    room.selectedGameMode = undefined;
+    room.isExclusiveModeActive = false;
+    room.exclusiveQuestionQueue = undefined;
+    room.currentRound = 0;
+    room.questions = [];
+    room.currentAnswers = {};
+    room.readyForNextRound.clear();
+    if (room.currentPredictions) {
+      room.currentPredictions = {};
+    }
+    
+    // Reset player scores
+    room.players.forEach(p => p.score = 0);
+    
+    console.log(`[${roomId}] Room reset to 'selecting' state.`);
+    
+    // Notify all clients in the room
+    io.to(roomId).emit('roomReset', {
+      status: 'selecting',
+      players: room.players
+    });
   });
 
   // --- Player Ready for Next Round Handler ---

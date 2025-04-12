@@ -382,6 +382,30 @@ const GameRoom: React.FC<GameRoomProps> = ({
     socket.on('exclusiveModeSuccess', handleExclusiveModeSuccess);
     socket.on('exclusiveModeFailed', handleExclusiveModeFailed);
 
+    // Add handler for room reset
+    const handleRoomReset = (data: { status: GameRoomStatus, players: Player[] }) => {
+      console.log('[GameRoom] Received roomReset event');
+      // Only update state if not already in selecting state
+      if (status !== 'selecting') {
+        setStatus(data.status);
+        setPlayers(data.players);
+        setSelectedGameMode(null);
+        setSelectedGameStyle('reveal-only');
+        setQuestions([]);
+        setCurrentRound(1);
+        setFinalScores(null);
+        setIsExclusiveModeActive(false);
+        
+        toast({
+          title: "Room Reset",
+          description: "The game room has been reset.",
+          duration: 2000
+        });
+      }
+    };
+    
+    socket.on('roomReset', handleRoomReset);
+
     // Cleanup listeners and timer interval
     return () => {
       socket.off('roomReady', handleRoomReady);
@@ -397,6 +421,9 @@ const GameRoom: React.FC<GameRoomProps> = ({
       socket.off('exclusiveModeActivated', handleExclusiveModeActivated);
       socket.off('exclusiveModeSuccess', handleExclusiveModeSuccess);
       socket.off('exclusiveModeFailed', handleExclusiveModeFailed);
+      
+      // Cleanup room reset listener
+      socket.off('roomReset', handleRoomReset);
       
       stopTimer(); // Ensure timer stops on component unmount or effect re-run
     };
@@ -487,7 +514,10 @@ const GameRoom: React.FC<GameRoomProps> = ({
   
   // Renamed to reflect it's the creator action
   const handleCreatorStartGame = () => {
+    console.log('[GameRoom] handleCreatorStartGame called');
+    
     if (!socket) {
+        console.error('[GameRoom] Cannot start game: Socket not connected');
         toast({ 
             title: "Error", 
             description: "Not connected to server.", 
@@ -497,6 +527,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
         return;
     }
     if (!selectedGameMode) {
+        console.error('[GameRoom] Cannot start game: No game mode selected');
         toast({ 
             title: "Error", 
             description: "Please select a game mode.", 
@@ -508,6 +539,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
     // Validation - Only creator can start
     // Server also validates, but good to prevent unnecessary emits
     if (gameMode === '2player' && !isCreator) {
+        console.error('[GameRoom] Cannot start game: Not the creator');
         toast({ 
             title: "Wait", 
             description: "Only the room creator can start the game.", 
@@ -521,7 +553,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
     const finalTimerDuration = gameMode === 'solo' ? null : roundTimeLimitSelection;
 
-    console.log('Emitting startGame with settings:', { 
+    const gameSettings = { 
         roomId, 
         gameMode: selectedGameMode, 
         gameStyle: selectedGameStyle, 
@@ -529,17 +561,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
         timerDuration: finalTimerDuration, // Send the selected time limit 
         totalRounds,
         isExclusiveModeActive // Include exclusive mode status
-    });
+    };
     
-    socket.emit('startGame', { 
-        roomId,
-        gameMode: selectedGameMode, 
-        gameStyle: selectedGameStyle,
-        nsfwLevel: nsfwLevel,
-        timerDuration: finalTimerDuration, // Send the CREATOR'S chosen time limit 
-        totalRounds: totalRounds,
-        isExclusiveModeActive // Include exclusive mode status
-    });
+    console.log('[GameRoom] Emitting startGame with settings:', gameSettings);
+    
+    socket.emit('startGame', gameSettings);
 
     // --- Remove client-side state setting - wait for server 'gameStarted' event --- 
     // const selectedQuestions = getQuestionsByMode(selectedGameMode!, totalRounds, nsfwLevel);
@@ -560,7 +586,21 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const handlePlayAgain = () => {
     stopTimer(); // Stop timer
     setTimeLeft(null); // Reset time left
-    // Reset state for a new game selection phase
+    
+    // First, send event to server to reset room status from 'completed' to 'selecting'
+    if (socket) {
+      console.log('[GameRoom] Emitting resetRoom to server');
+      socket.emit('resetRoom', { roomId });
+      
+      // Show feedback to user
+      toast({ 
+        title: "Setting up new game", 
+        description: "Resetting game room...",
+        duration: 2000
+      });
+    }
+    
+    // Reset client state for a new game selection phase
     setStatus('selecting');
     setSelectedGameMode(null);
     setSelectedGameStyle('reveal-only');
@@ -568,21 +608,19 @@ const GameRoom: React.FC<GameRoomProps> = ({
     setQuestions([]);
     setCurrentRound(1);
     setFinalScores(null);
-    // Maybe emit an event? Or wait for creator to start again?
-    // For now, just resetting client state
-    console.log('Resetting game state for play again...');
-    // If creator, they can re-initiate startGame
+    setIsExclusiveModeActive(false); // Reset exclusive mode state
+    
+    console.log('[GameRoom] Resetting game state for play again...');
+    
     // If joiner, they wait for creator
-     if (!isCreator && socket) {
-         // Perhaps notify server player wants to play again?
-         // socket.emit('requestPlayAgain', { roomId });
-         toast({ 
-             title: "Play Again?", 
-             description: `Waiting for ${creatorName} to start a new game.`,
-             duration: 3000,
-             className: "compact-toast"
-         });
-     }
+    if (!isCreator && socket) {
+      toast({ 
+        title: "Play Again?", 
+        description: `Waiting for ${creatorName} to start a new game.`,
+        duration: 3000,
+        className: "compact-toast"
+      });
+    }
   };
   
   const handleUpdateScore = (playerId: string, pointsAdded: number) => {

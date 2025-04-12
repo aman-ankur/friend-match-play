@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,7 +62,7 @@ const GameCard = ({
       {(title || description) && (
         <CardHeader className={getHeaderClass()}>
           {title && <CardTitle className={getTitleClass()}>{title}</CardTitle>}
-          {description && <CardDescription>{description}</CardDescription>}
+          {description && <CardDescription className="whitespace-normal break-words">{description}</CardDescription>}
         </CardHeader>
       )}
       <CardContent className="p-6">

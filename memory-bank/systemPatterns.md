@@ -57,6 +57,7 @@ graph TD
 - **Context API (Frontend):** `SocketContext` provides global access to the WebSocket connection.
 - **In-Memory Database (Backend):** Simple object (`rooms`) used for storing server state during development. **Needs replacement for production.**
 - **Single Source of Truth (Backend):** The server maintains the definitive game state.
+- **State Synchronization Issues (Client):** Recent timer fixes highlighted complexities in managing client-side state derived from server events, especially involving `useEffect` dependencies and state updates (`isTimerRunning`, `timeLeft`). Required careful management of dependencies and state reset logic.
 
 ## 4. Component Relationships & Data Flow (Simplified)
 

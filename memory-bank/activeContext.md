@@ -12,6 +12,10 @@ The primary focus is establishing the initial Memory Bank documentation based on
     - Server now emits `roundComplete` when both players answer.
     - Client handles `roundComplete` to stop the timer.
     - Fixed timer not restarting or counting down correctly between rounds by correcting `useEffect` dependencies and state management logic in `GameRoom.tsx`.
+- **UI Improvements (Apr 2024):** Fixed text wrapping issues in game selection cards.
+    - Implemented comprehensive solution for proper text wrapping in the game selection grid
+    - Added appropriate CSS classes at multiple container levels to ensure proper overflow handling, width constraints, and word breaking
+    - Enhanced user experience by ensuring game descriptions display properly within their containers
 
 ## 3. Next Steps
 

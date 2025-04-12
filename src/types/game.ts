@@ -5,6 +5,7 @@ export interface GameQuestion {
   id: string;
   text: string;
   options: string[];
+  score: number;
   nsfwRating: number; // 1-10, where 10 is "unhinged"
   categories: string[]; // e.g. ["life", "romance", "sex", "career", "friends", "hobby"]
 }

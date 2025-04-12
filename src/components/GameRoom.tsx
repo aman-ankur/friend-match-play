@@ -15,6 +15,8 @@ import { useToast } from '@/components/ui/use-toast';
 import TimerWidget from './TimerWidget';
 import { cn } from '@/lib/utils';
 import { useSocket } from '@/context/SocketContext';
+import PinEntryModal from './PinEntryModal';
+import ConfirmationModal from './ConfirmationModal';
 
 // Define the game mode type locally or import if defined globally
 type AppGameMode = 'solo' | '2player';
@@ -37,6 +39,7 @@ interface PlayerResult {
 interface ResultsData {
   questionId: string;
   players: PlayerResult[];
+  questionText: string;
 }
 
 interface GameRoomProps {
@@ -107,6 +110,13 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const [roundTimeLimitSelection, setRoundTimeLimitSelection] = useState<RoundTimeLimit>(null); 
   const [roundResults, setRoundResults] = useState<ResultsData | null>(null);
   const [hasClickedContinueThisRound, setHasClickedContinueThisRound] = useState(false);
+  // Add state for exclusive mode
+  const [isExclusiveModeActive, setIsExclusiveModeActive] = useState(false);
+  // Add state for PIN entry modal
+  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
+  const [pinEntryMode, setPinEntryMode] = useState<'activate' | 'config'>('activate');
+  // Add state for confirmation modal
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   // Determine if the current player is the creator using the derived currentPlayerId
   const isCreator = gameMode === 'solo' || 
@@ -163,6 +173,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
         totalRounds: number;
         questions: GameQuestion[];
         currentRound: number;
+        isExclusiveModeActive?: boolean; // Add this field
     }) => {
         console.log('[GameRoom] Received gameStarted event:', data);
         stopTimer(); // Stop any previous timer
@@ -177,12 +188,18 @@ const GameRoom: React.FC<GameRoomProps> = ({
         setStatus('playing'); 
         setIsProcessing(false);
         
+        // Set exclusive mode state if it's included in the data
+        if (data.isExclusiveModeActive !== undefined) {
+          setIsExclusiveModeActive(data.isExclusiveModeActive);
+        }
+        
         // --- Debugging Log --- 
         console.log(`[GameRoom] State AFTER set in handleGameStarted:`, { 
             status: 'playing',
             selectedGameMode: data.gameMode, // Log the value we just set
             selectedGameStyle: data.gameStyle,
-            currentRound: data.currentRound 
+            currentRound: data.currentRound,
+            isExclusiveModeActive: data.isExclusiveModeActive
         });
         // --- End Debugging Log ---
         
@@ -209,7 +226,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
     };
 
     // --- Listener for New Round --- 
-    const handleNewRound = (data: { currentRound: number; question: GameQuestion; timerDuration: number }) => { 
+    const handleNewRound = (data: { currentRound: number; question: GameQuestion; timerDuration: number; isExclusiveModeActive?: boolean }) => {
         console.log(`[GameRoom] Received newRound event for round: ${data.currentRound}. Setting state.`);
         stopTimer(); // Stop timer for the previous round
         setCurrentRound(data.currentRound);
@@ -217,10 +234,16 @@ const GameRoom: React.FC<GameRoomProps> = ({
         setHasClickedContinueThisRound(false); // Reset continue button state
         setStatus('playing'); // <<< Set status back to playing
 
-        // Note: We assume the full question list was received on gameStarted.
-        // We only use data.currentRound to know which question index to use.
-        // The `data.question` sent by the server isn't strictly necessary with the current client logic,
-        // but included in type for correctness.
+        // In exclusive mode, we need to update the questions array with the new question
+        if (data.isExclusiveModeActive && data.question) {
+            // Add the new question to the questions array at the current round index
+            setQuestions(prevQuestions => {
+                const newQuestions = [...prevQuestions];
+                newQuestions[data.currentRound - 1] = data.question;
+                return newQuestions;
+            });
+            console.log(`[GameRoom] Updated questions array with new exclusive question: ${data.question.id}`);
+        }
 
         // Restart timer if a duration is set for the game
         // Use timerDuration from the event data if provided, otherwise fallback to selectedTimerDuration
@@ -258,7 +281,18 @@ const GameRoom: React.FC<GameRoomProps> = ({
     const handleRoundResults = (data: ResultsData) => {
         console.log('[GameRoom] Received roundResults event:', data);
         stopTimer(); // Ensure timer is stopped
-        setRoundResults(data);
+        
+        // Store the current question's text before we lose it
+        const currentQuestionText = 
+          questions[currentRound - 1]?.text || 
+          "Question text unavailable";
+        
+        // Store both the results and current question text
+        setRoundResults({
+          ...data,
+          questionText: currentQuestionText // Add the text directly to results
+        });
+        
         setStatus('results'); // Change status to show results
     };
 
@@ -310,6 +344,68 @@ const GameRoom: React.FC<GameRoomProps> = ({
     socket.on('gameOver', handleGameOver); // Add listener
     socket.on('roundResults', handleRoundResults); // <<< Add listener here
 
+    // Add exclusive mode event listeners
+    const handleExclusiveModeActivated = (data: { isExclusiveModeActive: boolean }) => {
+      console.log('[GameRoom] Exclusive mode activated');
+      setIsExclusiveModeActive(data.isExclusiveModeActive);
+      
+      // Show toast for all players
+      toast({
+        title: "Exclusive Mode Activated",
+        description: "Exclusive questions mode is now active!",
+        duration: 3000
+      });
+    };
+    
+    const handleExclusiveModeSuccess = (data: { message: string }) => {
+      // Additional feedback just for the creator
+      console.log('[GameRoom] Exclusive mode success:', data.message);
+      toast({
+        title: "PIN Accepted",
+        description: data.message,
+        variant: "default",
+        duration: 2000
+      });
+    };
+    
+    const handleExclusiveModeFailed = (data: { message: string }) => {
+      console.log('[GameRoom] Exclusive mode failed:', data.message);
+      toast({
+        title: "PIN Incorrect",
+        description: data.message,
+        variant: "destructive",
+        duration: 3000
+      });
+    };
+    
+    socket.on('exclusiveModeActivated', handleExclusiveModeActivated);
+    socket.on('exclusiveModeSuccess', handleExclusiveModeSuccess);
+    socket.on('exclusiveModeFailed', handleExclusiveModeFailed);
+
+    // Add handler for room reset
+    const handleRoomReset = (data: { status: GameRoomStatus, players: Player[] }) => {
+      console.log('[GameRoom] Received roomReset event');
+      // Only update state if not already in selecting state
+      if (status !== 'selecting') {
+        setStatus(data.status);
+        setPlayers(data.players);
+        setSelectedGameMode(null);
+        setSelectedGameStyle('reveal-only');
+        setQuestions([]);
+        setCurrentRound(1);
+        setFinalScores(null);
+        setIsExclusiveModeActive(false);
+        
+        toast({
+          title: "Room Reset",
+          description: "The game room has been reset.",
+          duration: 2000
+        });
+      }
+    };
+    
+    socket.on('roomReset', handleRoomReset);
+
     // Cleanup listeners and timer interval
     return () => {
       socket.off('roomReady', handleRoomReady);
@@ -320,6 +416,15 @@ const GameRoom: React.FC<GameRoomProps> = ({
       socket.off('roundComplete', handleRoundComplete); // Cleanup listener
       socket.off('gameOver', handleGameOver); // Cleanup listener
       socket.off('roundResults', handleRoundResults); // <<< Add cleanup here
+      
+      // Cleanup exclusive mode event listeners
+      socket.off('exclusiveModeActivated', handleExclusiveModeActivated);
+      socket.off('exclusiveModeSuccess', handleExclusiveModeSuccess);
+      socket.off('exclusiveModeFailed', handleExclusiveModeFailed);
+      
+      // Cleanup room reset listener
+      socket.off('roomReset', handleRoomReset);
+      
       stopTimer(); // Ensure timer stops on component unmount or effect re-run
     };
     // Add 'status' back to dependency array
@@ -409,7 +514,10 @@ const GameRoom: React.FC<GameRoomProps> = ({
   
   // Renamed to reflect it's the creator action
   const handleCreatorStartGame = () => {
+    console.log('[GameRoom] handleCreatorStartGame called');
+    
     if (!socket) {
+        console.error('[GameRoom] Cannot start game: Socket not connected');
         toast({ 
             title: "Error", 
             description: "Not connected to server.", 
@@ -419,6 +527,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
         return;
     }
     if (!selectedGameMode) {
+        console.error('[GameRoom] Cannot start game: No game mode selected');
         toast({ 
             title: "Error", 
             description: "Please select a game mode.", 
@@ -430,6 +539,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
     // Validation - Only creator can start
     // Server also validates, but good to prevent unnecessary emits
     if (gameMode === '2player' && !isCreator) {
+        console.error('[GameRoom] Cannot start game: Not the creator');
         toast({ 
             title: "Wait", 
             description: "Only the room creator can start the game.", 
@@ -443,23 +553,19 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
     const finalTimerDuration = gameMode === 'solo' ? null : roundTimeLimitSelection;
 
-    console.log('Emitting startGame with settings:', { 
+    const gameSettings = { 
         roomId, 
         gameMode: selectedGameMode, 
         gameStyle: selectedGameStyle, 
         nsfwLevel, 
         timerDuration: finalTimerDuration, // Send the selected time limit 
-        totalRounds 
-    });
+        totalRounds,
+        isExclusiveModeActive // Include exclusive mode status
+    };
     
-    socket.emit('startGame', { 
-        roomId,
-        gameMode: selectedGameMode, 
-        gameStyle: selectedGameStyle,
-        nsfwLevel: nsfwLevel,
-        timerDuration: finalTimerDuration, // Send the CREATOR'S chosen time limit 
-        totalRounds: totalRounds,
-    });
+    console.log('[GameRoom] Emitting startGame with settings:', gameSettings);
+    
+    socket.emit('startGame', gameSettings);
 
     // --- Remove client-side state setting - wait for server 'gameStarted' event --- 
     // const selectedQuestions = getQuestionsByMode(selectedGameMode!, totalRounds, nsfwLevel);
@@ -480,7 +586,21 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const handlePlayAgain = () => {
     stopTimer(); // Stop timer
     setTimeLeft(null); // Reset time left
-    // Reset state for a new game selection phase
+    
+    // First, send event to server to reset room status from 'completed' to 'selecting'
+    if (socket) {
+      console.log('[GameRoom] Emitting resetRoom to server');
+      socket.emit('resetRoom', { roomId });
+      
+      // Show feedback to user
+      toast({ 
+        title: "Setting up new game", 
+        description: "Resetting game room...",
+        duration: 2000
+      });
+    }
+    
+    // Reset client state for a new game selection phase
     setStatus('selecting');
     setSelectedGameMode(null);
     setSelectedGameStyle('reveal-only');
@@ -488,21 +608,19 @@ const GameRoom: React.FC<GameRoomProps> = ({
     setQuestions([]);
     setCurrentRound(1);
     setFinalScores(null);
-    // Maybe emit an event? Or wait for creator to start again?
-    // For now, just resetting client state
-    console.log('Resetting game state for play again...');
-    // If creator, they can re-initiate startGame
+    setIsExclusiveModeActive(false); // Reset exclusive mode state
+    
+    console.log('[GameRoom] Resetting game state for play again...');
+    
     // If joiner, they wait for creator
-     if (!isCreator && socket) {
-         // Perhaps notify server player wants to play again?
-         // socket.emit('requestPlayAgain', { roomId });
-         toast({ 
-             title: "Play Again?", 
-             description: `Waiting for ${creatorName} to start a new game.`,
-             duration: 3000,
-             className: "compact-toast"
-         });
-     }
+    if (!isCreator && socket) {
+      toast({ 
+        title: "Play Again?", 
+        description: `Waiting for ${creatorName} to start a new game.`,
+        duration: 3000,
+        className: "compact-toast"
+      });
+    }
   };
   
   const handleUpdateScore = (playerId: string, pointsAdded: number) => {
@@ -556,6 +674,63 @@ const GameRoom: React.FC<GameRoomProps> = ({
       // REMOVED: setRoundResults(null); 
       // REMOVED: setStatus('playing');
     }
+  };
+  
+  // Function to handle activating exclusive mode
+  const handleActivateExclusiveMode = () => {
+    // Check if socket exists
+    if (!socket) {
+      toast({
+        title: "Error",
+        description: "Not connected to server.",
+        variant: "destructive",
+        duration: 3000
+      });
+      return;
+    }
+    
+    // Open the PIN entry modal
+    setPinEntryMode(status === 'playing' ? 'activate' : 'config');
+    setIsPinModalOpen(true);
+  };
+  
+  // Function to handle PIN submission
+  const handlePinSubmit = (pin: string) => {
+    console.log('[GameRoom] Attempting to activate exclusive mode');
+    setIsPinModalOpen(false);
+    
+    // If we're in configuration mode, we need to pass the selected game mode
+    if (status === 'style-selecting') {
+      socket.emit('attemptExclusiveMode', { 
+        roomId, 
+        pin,
+        selectedGameMode: 'this-or-that' // Explicitly set for configuration phase
+      });
+    } else {
+      // During gameplay, the server already knows the game mode
+      socket.emit('attemptExclusiveMode', { roomId, pin });
+    }
+  };
+
+  // Function to handle ending exclusive mode
+  const handleEndExclusiveMode = () => {
+    if (!socket) {
+      toast({
+        title: "Error",
+        description: "Not connected to server.",
+        variant: "destructive",
+        duration: 3000
+      });
+      return;
+    }
+    
+    // Open confirmation modal
+    setIsConfirmModalOpen(true);
+  };
+  
+  // Function to confirm ending exclusive mode
+  const confirmEndExclusiveMode = () => {
+    socket.emit('endExclusiveMode', { roomId });
   };
 
   const renderHeader = () => {
@@ -701,6 +876,44 @@ const GameRoom: React.FC<GameRoomProps> = ({
                           <NSFWSlider value={nsfwLevel} onValueChange={handleNsfwLevelChange} />
                       </div>
 
+                      {/* Exclusive Mode Option - Only for This or That */}
+                      {selectedGameMode === 'this-or-that' && (
+                          <div className="space-y-3 mt-4 p-4 border border-pink-200 rounded-md bg-pink-50">
+                              <Label className="text-lg font-medium flex items-center text-pink-800">
+                                  <Zap className="mr-2 h-5 w-5 text-pink-600" /> Exclusive Mode
+                              </Label>
+                              <div className="flex items-center">
+                                  {!isExclusiveModeActive ? (
+                                      <Button
+                                          variant="outline"
+                                          onClick={handleActivateExclusiveMode}
+                                          className="bg-white border-pink-300 text-pink-800 hover:bg-pink-100"
+                                      >
+                                          🔥 Activate Exclusive Mode
+                                      </Button>
+                                  ) : (
+                                      <div className="flex items-center space-x-3">
+                                          <div className="flex items-center">
+                                              <div className="w-2 h-2 bg-pink-500 rounded-full mr-2 animate-pulse"></div>
+                                              <span className="text-pink-800 font-medium">Exclusive Mode Active</span>
+                                          </div>
+                                          <Button
+                                              variant="outline"
+                                              onClick={handleEndExclusiveMode}
+                                              className="bg-white border-pink-300 text-pink-800 hover:bg-pink-100 ml-2"
+                                              size="sm"
+                                          >
+                                              Deactivate
+                                          </Button>
+                                      </div>
+                                  )}
+                              </div>
+                              <p className="text-sm text-pink-700">
+                                  Activate exclusive mode for spicier questions. Requires a PIN.
+                              </p>
+                          </div>
+                      )}
+
                       {/* Round Time Limit - Only for 2 Player */}
                       {gameMode === '2player' && (
                           <div className="space-y-3">
@@ -791,17 +1004,57 @@ const GameRoom: React.FC<GameRoomProps> = ({
         );
       case 'this-or-that':
         return (
-          <ThisOrThat
-            roomId={roomId}
-            players={players}
-            currentPlayerId={currentPlayerId!} 
-            questions={questions}
-            currentRound={currentRound}
-            totalRounds={totalRounds}
-            gameStyle={selectedGameStyle}
-            onUpdateScore={handleUpdateScore}
-            onComplete={handleGameComplete} // Pass dummy prop
-          />
+          <div className="relative w-full">
+            {/* Exclusive Mode Indicator */}
+            {isExclusiveModeActive && (
+              <div className="absolute top-0 left-0 right-0 flex justify-center z-10">
+                <div className="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-medium">
+                  Exclusive Mode Active
+                </div>
+              </div>
+            )}
+            
+            {/* Activate Exclusive Mode Button (only for creator during this-or-that games) */}
+            {isCreator && 
+             selectedGameMode === 'this-or-that' && 
+             status === 'playing' && 
+             !isExclusiveModeActive && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleActivateExclusiveMode}
+                className="absolute top-2 right-2 z-10 bg-pink-100 text-pink-800 border-pink-300 hover:bg-pink-200 font-medium"
+              >
+                🔥 Exclusive Mode
+              </Button>
+            )}
+            
+            {/* End Exclusive Mode Button (only for creator when exclusive mode is active) */}
+            {isCreator && 
+             isExclusiveModeActive && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={handleEndExclusiveMode}
+                className="absolute top-2 right-2 z-10"
+              >
+                End Round
+              </Button>
+            )}
+            
+            <ThisOrThat
+              roomId={roomId}
+              players={players}
+              currentPlayerId={currentPlayerId!} 
+              questions={questions}
+              currentRound={currentRound}
+              totalRounds={totalRounds}
+              gameStyle={selectedGameStyle}
+              onUpdateScore={handleUpdateScore}
+              onComplete={handleGameComplete}
+              isExclusiveModeActive={isExclusiveModeActive}
+            />
+          </div>
         );
       default:
         return <div>Error: Game mode not recognized.</div>; 
@@ -833,15 +1086,23 @@ const GameRoom: React.FC<GameRoomProps> = ({
         return renderStyleAndSettingsSelection(); 
       case 'playing':
         if (!selectedGameMode) return <div>Error: Game mode not set.</div>;
-        // Show the waiting screen *if* results aren't ready yet
-        if (!roundResults && selectedGameStyle === 'reveal-only') {
-            // Determine if the *current* player has submitted
-            // This requires passing submission state down to the game component
-            // OR managing it within the game component itself (like ThisOrThat seems to do)
-            // For now, let's assume the game component handles its own internal 'waiting' display
-            // after submission.
-        }
-        return renderGameComponent();
+        
+        // Modify the title/header for ThisOrThat in exclusive mode
+        const gameTitle = isExclusiveModeActive 
+          ? "Exclusive Mode - Unlimited Questions" 
+          : `Round ${currentRound}/${totalRounds}`;
+          
+        return (
+          <div className="w-full">
+            {/* Optional round counter */}
+            <div className="text-center mb-2">
+              <span className="text-sm font-medium text-gray-600">
+                {gameTitle}
+              </span>
+            </div>
+            {renderGameComponent()}
+          </div>
+        );
       case 'results':
         if (!roundResults) return <div>Loading results...</div>; // Should be brief
 
@@ -851,15 +1112,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
             return acc;
         }, {} as Record<string, string>);
 
-        // Find the current question text
-        const currentQuestion = questions.find(q => q.id === roundResults.questionId);
-        const questionText = currentQuestion ? currentQuestion.text : "Question not found";
-
         return (
           <ResultComparison 
              result={roundResults} 
              playerNames={playerNamesMap}
-             questionText={questionText}
+             questionText={roundResults.questionText || "Question not available"}
              showPredictions={selectedGameStyle === 'prediction'}
              hasClickedContinue={hasClickedContinueThisRound}
              onContinue={handleContinueClick}
@@ -897,6 +1154,28 @@ const GameRoom: React.FC<GameRoomProps> = ({
     <div className="container mx-auto px-4 py-8 max-w-4xl animate-fade-in">
       {renderHeader()}
       {renderContent()}
+      
+      {/* PIN Entry Modal */}
+      <PinEntryModal
+        isOpen={isPinModalOpen}
+        onClose={() => setIsPinModalOpen(false)}
+        onSubmit={handlePinSubmit}
+        title="Enter Exclusive Mode PIN"
+        message={pinEntryMode === 'activate' 
+          ? "Enter the 4-digit PIN to activate exclusive mode"
+          : "Enter the 4-digit PIN to configure exclusive mode"}
+      />
+      
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmEndExclusiveMode}
+        title="End Exclusive Mode"
+        message="Are you sure you want to end the exclusive questions round? This will end the current game."
+        confirmText="End Mode"
+        cancelText="Cancel"
+      />
     </div>
   );
 };

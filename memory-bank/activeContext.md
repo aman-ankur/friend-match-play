@@ -16,6 +16,11 @@ The primary focus is establishing the initial Memory Bank documentation based on
     - Implemented comprehensive solution for proper text wrapping in the game selection grid
     - Added appropriate CSS classes at multiple container levels to ensure proper overflow handling, width constraints, and word breaking
     - Enhanced user experience by ensuring game descriptions display properly within their containers
+- **Deployment (Apr 2024):** Successfully deployed the application.
+    - Frontend hosted on Vercel.
+    - Node.js/Socket.IO backend hosted on Render.
+    - Resolved build issues related to TypeScript paths and shared types.
+    - Configured CORS and environment variables for cross-platform communication.
 
 ## 3. Next Steps
 

@@ -63,3 +63,32 @@
     - `server.ts`: Main server setup, Socket.IO logic.
     - `gameUtils.ts`: Game-specific logic (e.g., question data).
     - (Potentially add more structure later, e.g., routes, controllers, services).
+
+## 6. Deployment
+
+- **Frontend:**
+    - **Platform:** Vercel
+    - **Configuration:** Deployed from the root (`friend-match-play/`) directory.
+    - **Build Command:** `npm run build` (implicit via Vite framework detection)
+    - **Environment Variable:** 
+        - `VITE_SOCKET_URL`: Set to the public URL of the deployed Render backend service (e.g., `https://your-service-name.onrender.com`). This allows the frontend to connect to the correct backend.
+    - **Domain:** (Add your actual Vercel app URL here)
+
+- **Backend:**
+    - **Platform:** Render
+    - **Service Type:** Web Service
+    - **Configuration:** Deployed from the `server/` subdirectory.
+    - **Runtime:** Node
+    - **Build Command:** `npm install && npm run build` (Installs dependencies and compiles TypeScript from `server/src` to `server/dist`)
+    - **Start Command:** `npm start` (Runs `node dist/server.js`)
+    - **Environment Variables:**
+        - `VITE_SOCKET_URL`: Set to the public URL of the **deployed Vercel frontend** (e.g., `https://your-vercel-app.vercel.app`). This is used by the backend's CORS configuration to allow connections from the frontend.
+        - `PORT`: Automatically assigned by Render.
+    - **CORS:** Configured in `server/src/server.ts` to allow requests from the URL specified in the `VITE_SOCKET_URL` environment variable and `localhost:5173`.
+    - **Domain:** (Add your actual Render service URL here)
+
+- **Deployment Process Notes:**
+    - Backend (`server/`) build copies shared types from `../src/types` into `server/src/types` before compiling to resolve TS6059 build errors.
+    - Backend uses `process.env.PORT` for listening.
+    - Frontend uses `import.meta.env.VITE_SOCKET_URL` to connect to the backend.
+    - Ensure environment variables are set correctly on both Vercel and Render for the respective target URLs.

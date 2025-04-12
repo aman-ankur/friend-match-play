@@ -162,6 +162,15 @@ const GameRoom: React.FC<GameRoomProps> = ({
         setStatus('playing'); 
         setIsProcessing(false);
         
+        // --- Debugging Log --- 
+        console.log(`[GameRoom] State AFTER set in handleGameStarted:`, { 
+            status: 'playing',
+            selectedGameMode: data.selectedGameMode, // Log the value we just set
+            selectedGameStyle: data.selectedGameStyle,
+            currentRound: data.currentRound 
+        });
+        // --- End Debugging Log ---
+        
         // Start timer if duration is set
         if (data.timerDuration > 0) {
           // Reset initialization for clean start
@@ -701,6 +710,56 @@ const GameRoom: React.FC<GameRoomProps> = ({
       );
   };
 
+  const renderGameComponent = () => {
+    // --- Debugging Log ---
+    console.log(`[GameRoom] Rendering game component. selectedGameMode:`, selectedGameMode);
+    // --- End Debugging Log ---
+
+    switch (selectedGameMode) {
+      case 'guess-who-i-am':
+        return (
+          <GuessWhoIAm
+            roomId={roomId}
+            players={players}
+            currentPlayerId={currentPlayerId!} // Assert non-null as game is playing
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            gameStyle={selectedGameStyle}
+            onUpdateScore={handleUpdateScore} // Pass score updater
+          />
+        );
+      case 'hot-takes':
+        return (
+          <HotTakes
+            roomId={roomId}
+            players={players}
+            currentPlayerId={currentPlayerId!} // Assert non-null as game is playing
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            gameStyle={selectedGameStyle}
+            onUpdateScore={handleUpdateScore} // Pass score updater
+          />
+        );
+      case 'this-or-that':
+        return (
+          <ThisOrThat
+            roomId={roomId}
+            players={players}
+            currentPlayerId={currentPlayerId!} // Assert non-null as game is playing
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            gameStyle={selectedGameStyle}
+            onUpdateScore={handleUpdateScore} // Pass score updater
+          />
+        );
+      default:
+        return <div>Error: Game mode not recognized.</div>;
+    }
+  };
+
   const renderContent = () => {
     switch (status) {
       case 'waiting':
@@ -727,42 +786,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
       case 'playing':
         if (!selectedGameMode) return <div>Error: Game mode not set.</div>;
         
-        // Use kebab-case keys to match the selectedGameMode state value
-        const CurrentGameComponent = {
-          'guess-who-i-am': GuessWhoIAm, // Kebab-case key
-          'hot-takes': HotTakes,         // Kebab-case key
-          'this-or-that': ThisOrThat,    // Kebab-case key
-        }[selectedGameMode];
-
-        // Add a check in case the component lookup fails unexpectedly
-        if (!CurrentGameComponent) {
-            console.error(`[GameRoom] Error: Could not find component for game mode: ${selectedGameMode}`);
-            // Provide feedback to the user and potentially allow resetting
-            return (
-                <GameCard title="Game Error" description={`Failed to load the selected game mode (${selectedGameMode}).`}>
-                    <div className="text-center mt-4">
-                        <Button variant="destructive" onClick={handleGoHome}>Exit Room</Button>
-                    </div>
-                </GameCard>
-            );
-        }
-
-        return (
-          <CurrentGameComponent
-            roomId={roomId}
-            players={players}
-            currentPlayerId={currentPlayerId!} // Assert non-null as game is playing
-            questions={questions}
-            currentRound={currentRound}
-            totalRounds={totalRounds}
-            gameStyle={selectedGameStyle}
-            // Pass timer info if needed by specific game components
-            // timerDuration={selectedTimerDuration} 
-            // timeLeft={timeLeft}
-            onUpdateScore={handleUpdateScore} // Pass score updater
-            // Removed onGameComplete, server handles via gameOver event
-          />
-        );
+        return renderGameComponent();
       case 'completed':
         return (
           <GameCard title="Game Over!" description="Here are the final scores:">

@@ -5,7 +5,7 @@ import cors from 'cors';
 import { getQuestionsByMode, GameQuestion, GameMode as SpecificGameMode } from './gameUtils';
 
 // Fixed constants
-const EXCLUSIVE_MODE_PIN = "s3xy"; // Static PIN for exclusive mode access
+const EXCLUSIVE_MODE_PIN = "1234"; // Static PIN for exclusive mode access (numeric only)
 
 // --- Basic Types (Updated: Use nickname) ---
 interface Player {

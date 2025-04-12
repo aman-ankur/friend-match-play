@@ -837,10 +837,10 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
         return (
           <ResultComparison 
-             results={roundResults} 
-             playerNames={playerNamesMap} // Pass the map
-             questionText={questionText}  // Pass the question text
-             showPredictions={selectedGameStyle === 'prediction'} // Show based on style
+             result={roundResults} 
+             playerNames={playerNamesMap}
+             questionText={questionText}
+             showPredictions={selectedGameStyle === 'prediction'}
              // hasClickedContinue={...} // TODO: Add state to track if current player clicked continue
              onContinue={() => {
                 if (socket) {

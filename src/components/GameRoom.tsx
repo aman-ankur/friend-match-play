@@ -26,6 +26,22 @@ interface Player {
   score: number;
 }
 
+// Add a type for the results data
+interface ResultsData {
+  questionId: string;
+  players: PlayerResult[]; // Assuming PlayerResult is defined based on server structure
+}
+
+// Define PlayerResult if not already present (adjust based on actual server structure if needed)
+interface PlayerResult {
+  playerId: string;
+  answer: string;
+  prediction?: string;
+  predictedPlayerId?: string;
+  isCorrect?: boolean;
+  pointsEarned: number;
+}
+
 interface GameRoomProps {
   roomId: string;
   playerName: string;
@@ -92,6 +108,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   // Add state for creator's selection before starting
   const [roundTimeLimitSelection, setRoundTimeLimitSelection] = useState<RoundTimeLimit>(null); 
+  const [roundResults, setRoundResults] = useState<ResultsData | null>(null);
 
   // Determine if the current player is the creator using the derived currentPlayerId
   const isCreator = gameMode === 'solo' || 
@@ -233,6 +250,14 @@ const GameRoom: React.FC<GameRoomProps> = ({
         setStatus('completed'); 
     };
 
+    // --- Add Listener for Round Results --- 
+    const handleRoundResults = (data: ResultsData) => {
+        console.log('[GameRoom] Received roundResults event:', data);
+        stopTimer(); // Ensure timer is stopped
+        setRoundResults(data);
+        setStatus('results'); // Change status to show results
+    };
+
     // General Error Listener
     const handleErrorEvent = (data: { message: string }) => {
         console.error('[GameRoom] Server error:', data.message);
@@ -279,6 +304,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
     socket.on('newRound', handleNewRound); // Add listener
     socket.on('roundComplete', handleRoundComplete); // Add listener for round completion
     socket.on('gameOver', handleGameOver); // Add listener
+    socket.on('roundResults', handleRoundResults); // <<< Add listener here
 
     // Cleanup listeners and timer interval
     return () => {
@@ -289,6 +315,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
       socket.off('newRound', handleNewRound); // Cleanup listener
       socket.off('roundComplete', handleRoundComplete); // Cleanup listener
       socket.off('gameOver', handleGameOver); // Cleanup listener
+      socket.off('roundResults', handleRoundResults); // <<< Add cleanup here
       stopTimer(); // Ensure timer stops on component unmount or effect re-run
     };
     // Re-evaluate if socket, gameMode, status, or currentPlayerId (derived) changes
@@ -785,8 +812,49 @@ const GameRoom: React.FC<GameRoomProps> = ({
         return renderStyleAndSettingsSelection(); 
       case 'playing':
         if (!selectedGameMode) return <div>Error: Game mode not set.</div>;
-        
+        // Show the waiting screen *if* results aren't ready yet
+        if (!roundResults && selectedGameStyle === 'reveal-only') {
+            // Determine if the *current* player has submitted
+            // This requires passing submission state down to the game component
+            // OR managing it within the game component itself (like ThisOrThat seems to do)
+            // For now, let's assume the game component handles its own internal 'waiting' display
+            // after submission.
+        }
         return renderGameComponent();
+      case 'results':
+        if (!roundResults) return <div>Loading results...</div>; // Should be brief
+
+        // Create playerNames map
+        const playerNamesMap: Record<string, string> = players.reduce((acc, player) => {
+            acc[player.id] = player.nickname;
+            return acc;
+        }, {} as Record<string, string>);
+
+        // Find the current question text
+        const currentQuestion = questions.find(q => q.id === roundResults.questionId);
+        const questionText = currentQuestion ? currentQuestion.text : "Question not found";
+
+        return (
+          <ResultComparison 
+             results={roundResults} 
+             playerNames={playerNamesMap} // Pass the map
+             questionText={questionText}  // Pass the question text
+             showPredictions={selectedGameStyle === 'prediction'} // Show based on style
+             // hasClickedContinue={...} // TODO: Add state to track if current player clicked continue
+             onContinue={() => {
+                if (socket) {
+                    console.log('[GameRoom] Emitting playerReady');
+                    socket.emit('playerReady', { roomId });
+                    // TODO: Update local state to show "Waiting for opponent..."
+                    // e.g., setHasClickedContinue(true);
+                    setRoundResults(null); // Clear results for next round
+                    // Consider a smoother transition state instead of jumping back to 'playing' immediately
+                    // setStatus('waiting-next-round'); 
+                    setStatus('playing'); 
+                }
+             }}
+          />
+        );
       case 'completed':
         return (
           <GameCard title="Game Over!" description="Here are the final scores:">

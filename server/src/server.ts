@@ -4,6 +4,9 @@ import { Server as SocketIOServer, Socket } from 'socket.io';
 import cors from 'cors';
 import { getQuestionsByMode, GameQuestion, GameMode as SpecificGameMode } from './gameUtils';
 
+// Fixed constants
+const EXCLUSIVE_MODE_PIN = "1234"; // Static PIN for exclusive mode access
+
 // --- Basic Types (Updated: Use nickname) ---
 interface Player {
   id: string; // Socket ID
@@ -48,6 +51,9 @@ interface Room {
   // roundData: Record<number, { answers: Record<string, string>, predictions?: Record<string, string> }>;
   // Store predictions for the current round in prediction mode
   currentPredictions?: Record<string, { predictedPlayerId: string, prediction: string }>; // { predictorId: { predictedPlayerId, prediction } }
+  // Added for exclusive question mode
+  isExclusiveModeActive?: boolean;
+  exclusiveQuestionQueue?: GameQuestion[];
 }
 
 // --- In-Memory Room Storage --- 
@@ -75,7 +81,8 @@ const httpServer = http.createServer(app);
 // --- CORS Configuration --- 
 const allowedOrigins = [
     process.env.VITE_SOCKET_URL, // Dynamically read Vercel Frontend URL from env var set on Render
-    'http://localhost:5173'     // Local development frontend
+    'http://localhost:5173',     // Local development frontend
+    'http://localhost:8081'      // Adding additional local development frontend
 ].filter(Boolean); // Filter out undefined/null if VITE_SOCKET_URL isn't set
 
 const corsOptions = {
@@ -210,8 +217,9 @@ io.on('connection', (socket: Socket) => {
       nsfwLevel: number;
       timerDuration: number;
       totalRounds: number;
+      isExclusiveModeActive?: boolean;
   }) => {
-    const { roomId, gameMode, gameStyle, nsfwLevel, timerDuration, totalRounds } = data;
+    const { roomId, gameMode, gameStyle, nsfwLevel, timerDuration, totalRounds, isExclusiveModeActive } = data;
     const room = rooms[roomId];
 
     // Validation
@@ -240,6 +248,39 @@ io.on('connection', (socket: Socket) => {
         console.error(`Failed to get enough questions for room ${roomId}, mode ${gameMode}, count ${totalRounds}, nsfw ${nsfwLevel}`);
         return;
     }
+    
+    // Handle exclusive mode if requested
+    let exclusiveQuestions: GameQuestion[] = [];
+    let firstExclusiveQuestion: GameQuestion | undefined;
+    if (isExclusiveModeActive && gameMode === 'this-or-that') {
+      console.log(`[${roomId}] Starting game with exclusive mode requested`);
+      exclusiveQuestions = getQuestionsByMode('this-or-that', 0, 0, true);
+      console.log(`[${roomId}] Exclusive questions loaded: ${exclusiveQuestions.length}`);
+      
+      if (!exclusiveQuestions || exclusiveQuestions.length === 0) {
+        // If no exclusive questions, notify but continue with regular game
+        console.log(`[${roomId}] ERROR: No exclusive questions found`);
+        socket.emit('exclusiveModeFailed', { message: 'No exclusive questions are available, starting regular game instead.' });
+        room.isExclusiveModeActive = false;
+      } else {
+        room.isExclusiveModeActive = true;
+        // Get the first question for immediate use, and store the rest in the queue
+        firstExclusiveQuestion = exclusiveQuestions[0];
+        room.exclusiveQuestionQueue = exclusiveQuestions.slice(1); // Store all EXCEPT the first one
+        console.log(`[${roomId}] Starting with exclusive mode activated (${exclusiveQuestions.length} questions)`);
+        
+        // Log the first 3 questions for debugging
+        if (exclusiveQuestions.length > 0) {
+          console.log(`[${roomId}] First exclusive question: ${exclusiveQuestions[0].id} - ${exclusiveQuestions[0].text.substring(0, 40)}...`);
+          if (exclusiveQuestions.length > 1) {
+            console.log(`[${roomId}] Second exclusive question: ${exclusiveQuestions[1].id} - ${exclusiveQuestions[1].text.substring(0, 40)}...`);
+          }
+        }
+      }
+    } else {
+      console.log(`[${roomId}] Starting game without exclusive mode (requested=${isExclusiveModeActive}, gameMode=${gameMode})`);
+      room.isExclusiveModeActive = false;
+    }
 
     // Update Room State
     room.status = 'playing';
@@ -261,7 +302,7 @@ io.on('connection', (socket: Socket) => {
       delete room.currentPredictions;
     }
 
-    console.log(`Starting game in room ${roomId}: Mode=${gameMode}, Style=${gameStyle}, Rounds=${totalRounds}, Timer=${timerDuration ?? 'None'}`);
+    console.log(`Starting game in room ${roomId}: Mode=${gameMode}, Style=${gameStyle}, Rounds=${totalRounds}, Timer=${timerDuration ?? 'None'}, Exclusive=${room.isExclusiveModeActive}`);
 
     // Emit 'gameStarted' to all clients in the room
     io.to(roomId).emit('gameStarted', {
@@ -270,10 +311,20 @@ io.on('connection', (socket: Socket) => {
       currentRound: room.currentRound,
       totalRounds: room.totalRounds,
       players: room.players,
-      questions: room.questions,
-      timerDuration: room.timerDuration
+      questions: room.isExclusiveModeActive && firstExclusiveQuestion ? 
+        // If exclusive mode is active, use the exclusive questions
+        [firstExclusiveQuestion] : // Send only the first exclusive question
+        room.questions,
+      timerDuration: room.timerDuration,
+      isExclusiveModeActive: room.isExclusiveModeActive
     });
-    console.log(`[${roomId}] Emitted gameStarted with ${room.questions.length} questions.`);
+    
+    // Log appropriate message based on exclusive mode
+    if (room.isExclusiveModeActive && firstExclusiveQuestion) {
+      console.log(`[${roomId}] Emitted gameStarted with exclusive question. First question: ${firstExclusiveQuestion.id}`);
+    } else {
+      console.log(`[${roomId}] Emitted gameStarted with ${room.questions.length} standard questions.`);
+    }
   });
 
   // --- Submit Answer Handler ---
@@ -340,6 +391,106 @@ io.on('connection', (socket: Socket) => {
     }
   });
 
+  // --- Attempt Exclusive Mode Handler ---
+  socket.on('attemptExclusiveMode', (data: { roomId: string; pin: string; selectedGameMode?: SpecificGameMode }) => {
+    const { roomId, pin, selectedGameMode } = data;
+    const room = rooms[roomId];
+
+    // Validation
+    if (!room) {
+      socket.emit('error', { message: `Room ${roomId} not found.` });
+      return;
+    }
+    
+    // Only creator can activate exclusive mode
+    if (room.players[0]?.id !== socket.id) {
+      socket.emit('error', { message: 'Only the room creator can activate exclusive mode.' });
+      return;
+    }
+    
+    // Determine if we're activating during setup or gameplay
+    const isConfigPhase = room.status === 'selecting';
+    const isGamePlay = room.status === 'playing';
+    
+    // During setup, check if This or That is selected
+    if (isConfigPhase) {
+      // For configuration phase, we rely on the data provided in the call
+      if (selectedGameMode !== 'this-or-that') {
+        socket.emit('error', { message: 'Exclusive mode is only available in This or That.' });
+        return;
+      }
+    } else if (isGamePlay) {
+      // During gameplay, check the room's selected mode
+      if (room.selectedGameMode !== 'this-or-that') {
+        socket.emit('error', { message: 'Exclusive mode is only available in This or That.' });
+        return;
+      }
+    } else {
+      // Neither in config nor playing
+      socket.emit('error', { message: 'Game must be in setup or playing to activate exclusive mode.' });
+      return;
+    }
+    
+    // Not already active
+    if (room.isExclusiveModeActive) {
+      socket.emit('error', { message: 'Exclusive mode is already active.' });
+      return;
+    }
+    
+    // Check PIN
+    if (pin !== EXCLUSIVE_MODE_PIN) {
+      socket.emit('exclusiveModeFailed', { message: 'Incorrect PIN. Try again.' });
+      return;
+    }
+    
+    // Load exclusive questions (nsfwRating = 11)
+    const exclusiveQuestions = getQuestionsByMode('this-or-that', 0, 0, true);
+    
+    // If no exclusive questions available
+    if (!exclusiveQuestions || exclusiveQuestions.length === 0) {
+      socket.emit('exclusiveModeFailed', { message: 'No exclusive questions are available.' });
+      return;
+    }
+    
+    // Activate exclusive mode
+    room.isExclusiveModeActive = true;
+    room.exclusiveQuestionQueue = exclusiveQuestions;
+    console.log(`[${roomId}] Exclusive mode activated with ${exclusiveQuestions.length} questions.`);
+    
+    // Notify the room
+    io.to(roomId).emit('exclusiveModeActivated', { isExclusiveModeActive: true });
+    // Notify the creator specifically (for UI feedback)
+    socket.emit('exclusiveModeSuccess', { message: 'Exclusive mode activated!' });
+  });
+
+  // --- End Exclusive Mode Handler ---
+  socket.on('endExclusiveMode', (data: { roomId: string }) => {
+    const { roomId } = data;
+    const room = rooms[roomId];
+    
+    // Validation
+    if (!room) {
+      socket.emit('error', { message: `Room ${roomId} not found.` });
+      return;
+    }
+    
+    // Only creator can end exclusive mode
+    if (room.players[0]?.id !== socket.id) {
+      socket.emit('error', { message: 'Only the room creator can end exclusive mode.' });
+      return;
+    }
+    
+    // Only if exclusive mode is active
+    if (!room.isExclusiveModeActive) {
+      socket.emit('error', { message: 'Exclusive mode is not active.' });
+      return;
+    }
+    
+    console.log(`[${roomId}] Creator ended exclusive mode. Ending game.`);
+    // End the game
+    endGame(room);
+  });
+
   // --- Player Ready for Next Round Handler ---
   socket.on('playerReady', (data: { roomId: string }) => {
     const { roomId } = data;
@@ -354,13 +505,16 @@ io.on('connection', (socket: Socket) => {
 
     if (allPlayersReady) {
       console.log(`[${roomId}] All players ready. Proceeding to next round or game over.`);
-      // Move to the next round or end the game
+      // Move to the next round
       room.currentRound++;
-      if (room.currentRound > room.totalRounds) {
-        // Game Over
+      
+      // In exclusive mode, continue until the queue is empty
+      // Only check totalRounds if NOT in exclusive mode
+      if (!room.isExclusiveModeActive && room.currentRound > room.totalRounds) {
+        // Game Over (standard mode)
         endGame(room);
       } else {
-        // Start Next Round
+        // Start Next Round 
         startNextRound(room);
       }
     }
@@ -423,22 +577,40 @@ io.on('connection', (socket: Socket) => {
   // --- Disconnect Handler --- 
   socket.on('disconnect', (reason) => {
     console.log(`Client disconnected: ${socket.id}, Reason: ${reason}`);
-    // Find which room the player was in
-    let roomIdToRemoveFrom: string | null = null;
-    let disconnectedPlayerName: string | null = null;
-    for (const roomId in rooms) {
+    
+    // Find the room this socket was in (if any)
+    for (let roomId in rooms) {
       const room = rooms[roomId];
       const playerIndex = room.players.findIndex(p => p.id === socket.id);
+      
       if (playerIndex !== -1) {
-        roomIdToRemoveFrom = roomId;
-        disconnectedPlayerName = room.players[playerIndex].nickname;
+        // Player found in this room
+        const isCreator = playerIndex === 0; // First player is the creator
+        const disconnectedPlayerName = room.players[playerIndex].nickname;
+        
+        // Remove player from room
         room.players.splice(playerIndex, 1);
         
-        // Check if room is now empty or if the game should end
+        // Remove player from ready set and answers
+        room.readyForNextRound.delete(socket.id);
+        delete room.currentAnswers[socket.id];
+        if (room.currentPredictions) {
+          delete room.currentPredictions[socket.id];
+        }
+        
+        console.log(`Removed player ${socket.id} from room ${roomId}`);
+        
+        // If room is now empty, clean it up
         if (room.players.length === 0) {
-          console.log(`Room ${roomId} is empty, deleting.`);
+          console.log(`Room ${roomId} is now empty, deleting it.`);
           delete rooms[roomId];
-        } else if (room.gameMode === '2player' && room.status !== 'waiting' && room.status !== 'selecting') {
+        }
+        else if (isCreator && room.isExclusiveModeActive) {
+          // If creator disconnects during exclusive mode, end the game
+          console.log(`[${roomId}] Creator left during exclusive mode. Ending game.`);
+          endGame(room, true); // true indicates player disconnect
+        }
+        else if (room.gameMode === '2player' && room.status !== 'waiting' && room.status !== 'selecting') {
           // If game was in progress and a player left
           console.log(`Player left ongoing game in room ${roomId}. Ending game.`);
           // Notify remaining player
@@ -446,15 +618,6 @@ io.on('connection', (socket: Socket) => {
           // Reset room state or end game
           // Option 1: End the game immediately
            endGame(room, true); // Pass flag indicating abrupt end
-          
-          // Option 2: Reset to selecting state (if you want the remaining player to wait/restart)
-          // room.status = 'selecting';
-          // room.currentRound = 0;
-          // room.questions = [];
-          // room.currentAnswers = {};
-          // room.readyForNextRound.clear();
-          // // Notify remaining player about the reset
-          // io.to(roomId).emit('roomStateReset', { players: room.players, status: room.status });
         } else {
            // If waiting or selecting, just notify others player left
             io.to(roomId).emit('playerLeft', { playerId: socket.id, playerName: disconnectedPlayerName || 'Player' });
@@ -552,13 +715,38 @@ function startNextRound(room: Room) {
   if (room.currentPredictions) room.currentPredictions = {};
   room.readyForNextRound.clear();
 
-  const nextQuestion = room.questions[room.currentRound - 1]; // currentRound is already incremented
+  let nextQuestion: GameQuestion | undefined;
+  
+  console.log(`[${room.id}] Starting round ${room.currentRound}. isExclusiveModeActive=${room.isExclusiveModeActive}`);
+  
+  // Use exclusive questions if active
+  if (room.isExclusiveModeActive && room.exclusiveQuestionQueue && room.exclusiveQuestionQueue.length > 0) {
+    console.log(`[${room.id}] Exclusive mode is active with ${room.exclusiveQuestionQueue.length} questions in queue`);
+    // Get the next question from the exclusive queue
+    nextQuestion = room.exclusiveQuestionQueue.shift();
+    console.log(`[${room.id}] Using exclusive question for round ${room.currentRound}: ${nextQuestion?.id} - ${nextQuestion?.text.substring(0, 40)}...`);
+  } else if (room.isExclusiveModeActive && (!room.exclusiveQuestionQueue || room.exclusiveQuestionQueue.length === 0)) {
+    // No more exclusive questions, end the game
+    console.log(`[${room.id}] No more exclusive questions. Ending game.`);
+    endGame(room);
+    return;
+  } else {
+    // Use normal question selection logic
+    console.log(`[${room.id}] Using standard question for round ${room.currentRound}/${room.totalRounds}`);
+    nextQuestion = room.questions[room.currentRound - 1];
+    if (!nextQuestion) {
+      console.log(`[${room.id}] ERROR: No question found at index ${room.currentRound - 1}. Total questions: ${room.questions.length}`);
+    } else {
+      console.log(`[${room.id}] Standard question selected: ${nextQuestion.id} - ${nextQuestion.text.substring(0, 40)}...`);
+    }
+  }
 
   console.log(`[${room.id}] Starting round ${room.currentRound} / ${room.totalRounds}`);
   io.to(room.id).emit('newRound', {
     currentRound: room.currentRound,
     question: nextQuestion,
-    timerDuration: room.timerDuration // Send timer duration again for the new round
+    timerDuration: room.timerDuration, // Send timer duration again for the new round
+    isExclusiveModeActive: room.isExclusiveModeActive // Add this to the newRound event
   });
    console.log(`[${room.id}] Emitted newRound with Q: ${nextQuestion?.id}`);
 }

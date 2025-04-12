@@ -994,6 +994,207 @@ const thisOrThatQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 10,
     categories: ["sex", "privacy"]
+  },
+  // === Exclusive Questions (nsfwRating: 11) ===
+  {
+    id: "tot-new-201",
+    text: "Would you rather jerk off to a close friend's nudes you accidentally saw or fantasize about a same-sex hookup you'll never admit to?",
+    options: ["Friend's nudes", "Same-sex fantasy"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past", "secrets"]
+  },
+  {
+    id: "tot-new-202",
+    text: "Would you rather watch your partner get it on with a stranger while you're cuckolded or join a threesome where you're the odd one out?",
+    options: ["Cuckolded watching", "Threesome odd one out"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "cuckolding", "threesome"]
+  },
+  {
+    id: "tot-new-203",
+    text: "Would you rather role-play a CNC scene where you're the aggressor or the one being 'taken' with zero control?",
+    options: ["Be the aggressor", "Be taken"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "CNC"]
+  },
+  {
+    id: "tot-new-204",
+    text: "Would you rather secretly watch a couple hook up in a hotel room or have someone watch you and your partner without you knowing?",
+    options: ["Watch a couple", "Be watched"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "voyeurism"]
+  },
+  {
+    id: "tot-new-205",
+    text: "Would you rather admit to getting off to your partner's sibling or to a teacher you had a crush on?",
+    options: ["Partner's sibling", "Teacher crush"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past", "taboo"]
+  },
+  {
+    id: "tot-new-206",
+    text: "Would you rather have a threesome with two strangers who know your kinks or two friends who don't suspect a thing?",
+    options: ["Strangers with kinks", "Unsuspecting friends"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "threesome"]
+  },
+  {
+    id: "tot-new-207",
+    text: "Would you rather confess you've masturbated in a public place or that you've used someone else's sex toy without telling them?",
+    options: ["Public masturbation", "Used their toy"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past"]
+  },
+  {
+    id: "tot-new-208",
+    text: "Would you rather your partner peg you in a dominance scene or you peg them while they beg for mercy?",
+    options: ["Get pegged", "Peg them"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "domination"]
+  },
+  {
+    id: "tot-new-209",
+    text: "Would you rather fantasize about cuckolding your partner with their best friend or being cuckolded by them with yours?",
+    options: ["Cuckold them", "Be cuckolded"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "cuckolding", "fantasy"]
+  },
+  {
+    id: "tot-new-210",
+    text: "Would you rather admit to getting turned on by a furry convention or a BDSM dungeon party you stumbled into?",
+    options: ["Furry convention", "BDSM dungeon"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "past"]
+  },
+  {
+    id: "tot-new-211",
+    text: "Would you rather have your partner film you in a solo kink session or star in a couples' tape that's strictly for their eyes?",
+    options: ["Solo kink film", "Couples' tape"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "exhibitionism"]
+  },
+  {
+    id: "tot-new-212",
+    text: "Would you rather confess you've gotten off to a coworker's social media or to a random stranger you saw once?",
+    options: ["Coworker's socials", "Random stranger"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past"]
+  },
+  {
+    id: "tot-new-213",
+    text: "Would you rather try a group orgy where you're blindfolded or one where you're the only one giving commands?",
+    options: ["Blindfolded orgy", "Giving commands"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "group"]
+  },
+  {
+    id: "tot-new-214",
+    text: "Would you rather your partner catch you sniffing their worn clothes or overhear you describing a fetish to a friend?",
+    options: ["Sniffing clothes", "Describing fetish"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "secrets"]
+  },
+  {
+    id: "tot-new-215",
+    text: "Would you rather role-play a taboo teacher-student scene or a doctor-patient one with your partner?",
+    options: ["Teacher-student", "Doctor-patient"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "roleplay"]
+  },
+  {
+    id: "tot-new-216",
+    text: "Would you rather admit you've fantasized about a gangbang or that you've gotten off to porn you're ashamed of?",
+    options: ["Gangbang fantasy", "Shameful porn"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fantasy", "past"]
+  },
+  {
+    id: "tot-new-217",
+    text: "Would you rather have a voyeur secretly record you during sex or be the voyeur recording someone else?",
+    options: ["Be recorded", "Record someone"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "voyeurism"]
+  },
+  {
+    id: "tot-new-218",
+    text: "Would you rather confess to a foot fetish you've acted on or a watersports fantasy you've kept buried?",
+    options: ["Foot fetish acted on", "Watersports fantasy"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish"]
+  },
+  {
+    id: "tot-new-219",
+    text: "Would you rather your partner dominate you with a leash and collar or you dominate them with verbal humiliation?",
+    options: ["Leash and collar", "Verbal humiliation"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "domination"]
+  },
+  {
+    id: "tot-new-220",
+    text: "Would you rather admit you've sexted someone while in a relationship or that you've gotten off thinking about your partner's ex?",
+    options: ["Sexted someone", "Thought of their ex"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "past", "secrets"]
+  },
+  {
+    id: "tot-new-301",
+    text: "Would you rather confess you've gotten off to the idea of your partner being gangbanged by strangers or that you've fantasized about leading the gangbang yourself?",
+    options: ["Their gangbang", "Lead the gangbang"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fantasy", "group"]
+  },
+  {
+    id: "tot-new-302",
+    text: "Would you rather admit you've masturbated in a graveyard or that you've gotten aroused at a funeral?",
+    options: ["Graveyard masturbation", "Funeral arousal"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "macabre", "past"]
+  },
+  {
+    id: "tot-new-303",
+    text: "Would you rather try a role-play where you're a cult leader seducing your partner or a sacrifice being offered to them?",
+    options: ["Cult leader", "Sacrifice"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "roleplay"]
+  },
+  {
+    id: "tot-new-304",
+    text: "Would you rather have your partner find your secret stash of extreme fetish porn or catch you practicing a humiliation kink alone?",
+    options: ["Fetish porn stash", "Humiliation practice"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["sex", "fetish", "secrets"]
+  },
+  {
+    id: "tot-new-305",
+    text: "Would you rather spend a night dissecting a cadaver with your partner or confessing every morbid thought you've ever had?",
+    options: ["Dissect cadaver", "Confess morbid thoughts"],
+    score: 1,
+    nsfwRating: 11,
+    categories: ["macabre", "psychology"]
   }
 ];
 
@@ -1004,11 +1205,25 @@ const allQuestions: Record<GameMode, GameQuestion[]> = {
 };
 
 // --- Function to get questions (Exported for server use) ---
-export const getQuestionsByMode = (mode: GameMode, count: number = 5, nsfwLevel: number = 1): GameQuestion[] => {
+export const getQuestionsByMode = (mode: GameMode, count: number = 5, nsfwLevel: number = 1, includeExclusive: boolean = false): GameQuestion[] => {
   const questionsPool = allQuestions[mode] || [];
+  
+  console.log(`[getQuestionsByMode] Called with: mode=${mode}, count=${count}, nsfwLevel=${nsfwLevel}, includeExclusive=${includeExclusive}`);
+  console.log(`[getQuestionsByMode] Total questions in pool for ${mode}: ${questionsPool.length}`);
 
   // Filter questions by NSFW level
-  const filteredQuestions = questionsPool.filter(q => q.nsfwRating <= nsfwLevel);
+  const filteredQuestions = includeExclusive
+    ? questionsPool.filter(q => q.nsfwRating === 11) // Only get exclusive questions (rating 11)
+    : questionsPool.filter(q => q.nsfwRating <= nsfwLevel); // Standard filtering (up to specified level)
+    
+  console.log(`[getQuestionsByMode] Filtered questions: ${filteredQuestions.length} (includeExclusive=${includeExclusive})`);
+  if (includeExclusive) {
+    console.log(`[getQuestionsByMode] NSFW Rating 11 questions found: ${filteredQuestions.length}`);
+    // Log the first 3 questions to verify they're correct
+    if (filteredQuestions.length > 0) {
+      console.log(`[getQuestionsByMode] First exclusive question: ${filteredQuestions[0].id} - ${filteredQuestions[0].text.substring(0, 40)}...`);
+    }
+  }
 
   // Shuffle and pick the first 'count' questions
   // Basic Fisher-Yates shuffle
@@ -1018,5 +1233,13 @@ export const getQuestionsByMode = (mode: GameMode, count: number = 5, nsfwLevel:
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
 
-  return shuffled.slice(0, count);
+  // For exclusive mode, return all questions (or up to count if specified)
+  if (includeExclusive && count === 0) {
+    console.log(`[getQuestionsByMode] Returning all ${shuffled.length} exclusive questions`);
+    return shuffled;
+  }
+
+  const result = shuffled.slice(0, count);
+  console.log(`[getQuestionsByMode] Returning ${result.length} questions`);
+  return result;
 }; 

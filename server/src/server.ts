@@ -270,10 +270,10 @@ io.on('connection', (socket: Socket) => {
       currentRound: room.currentRound,
       totalRounds: room.totalRounds,
       players: room.players,
-      question: room.questions[0], // Send the first question
-      timerDuration: room.timerDuration // Send timer duration
+      questions: room.questions,
+      timerDuration: room.timerDuration
     });
-    console.log(`[${roomId}] Emitted gameStarted with Q: ${room.questions[0]?.id}`);
+    console.log(`[${roomId}] Emitted gameStarted with ${room.questions.length} questions.`);
   });
 
   // --- Submit Answer Handler ---

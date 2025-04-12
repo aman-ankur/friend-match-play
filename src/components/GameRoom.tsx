@@ -322,8 +322,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
       socket.off('roundResults', handleRoundResults); // <<< Add cleanup here
       stopTimer(); // Ensure timer stops on component unmount or effect re-run
     };
-    // Re-evaluate if socket, gameMode, status, or currentPlayerId (derived) changes
-  }, [socket, gameMode, status, currentPlayerId, toast, selectedTimerDuration]); // Add selectedTimerDuration dependency
+    // Add 'status' back to dependency array
+  }, [socket, gameMode, status, currentPlayerId, toast, selectedTimerDuration]);
 
   // Effect for Timer Countdown Logic
   useEffect(() => {

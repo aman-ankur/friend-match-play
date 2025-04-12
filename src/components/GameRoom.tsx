@@ -570,20 +570,20 @@ const GameRoom: React.FC<GameRoomProps> = ({
     return (
       <div className="space-y-8 animate-fade-in">
         <GameCard title="Choose Your Game" description="Select a game mode to play.">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-full">
             {(Object.keys(GAME_DESCRIPTIONS) as SpecificGameMode[]).map((mode) => (
               <Button
                 key={mode}
                 variant={selectedGameMode === mode ? "default" : "outline"}
                 onClick={() => handleGameModeSelect(mode)}
                 className={cn(
-                  "h-auto p-4 flex flex-col items-start text-left transition-all min-h-[180px] overflow-hidden",
+                  "h-auto p-4 flex flex-col items-start text-left transition-all min-w-0 max-w-full overflow-hidden",
                   selectedGameMode === mode ? "bg-connection-primary text-white" : "hover:border-connection-primary hover:bg-connection-light"
                 )}
               >
-                <div className="w-full flex flex-col h-full">
-                  <h3 className="font-semibold text-lg mb-2">{GAME_DESCRIPTIONS[mode].title}</h3>
-                  <p className="text-sm text-muted-foreground break-words">{GAME_DESCRIPTIONS[mode].description}</p>
+                <div className="w-full flex flex-col h-full min-w-0 max-w-full overflow-hidden">
+                  <h3 className="font-semibold text-lg mb-2 whitespace-normal break-words">{GAME_DESCRIPTIONS[mode].title}</h3>
+                  <p style={{ wordWrap: 'break-word', hyphens: 'auto' }} className="text-sm text-muted-foreground whitespace-normal w-full">{GAME_DESCRIPTIONS[mode].description}</p>
                 </div>
               </Button>
             ))}

@@ -87,6 +87,11 @@
     - Fixed timer not restarting correctly between rounds.
     - Corrected timer countdown logic and dependencies in `GameRoom.tsx`.
     - Ensured `stopTimer` fully resets timer state.
+*   **UI Text Wrapping Fixes:**
+    - Fixed text overflow issue in game selection cards by implementing proper text wrapping
+    - Applied comprehensive solution with `min-w-0`, `max-w-full`, and `overflow-hidden` at multiple container levels
+    - Added explicit `whitespace-normal` and `break-words` classes to text elements
+    - Implemented inline `wordWrap: 'break-word'` and `hyphens: 'auto'` styles for optimal word breaking
 
 ## Current Focus / Next Steps
 

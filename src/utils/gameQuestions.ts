@@ -16,6 +16,7 @@ export const GAME_DESCRIPTIONS: Record<GameMode, { title: string; description: s
   }
 };
 
+// --- Question Data --- 
 const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-1",
@@ -256,6 +257,78 @@ const guessWhoIAmQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 10,
     categories: ["relationships", "secrets"]
+  },
+  {
+    id: "gwia-new-1",
+    text: "What's the one thing you'd secretly love to do if nobody was judging you?",
+    options: ["Sing opera in public", "Wear a full superhero costume all day", "Eat dessert for breakfast daily", "Dance like nobody's watching at a bus stop"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["personal", "fantasy"]
+  },
+  {
+    id: "gwia-new-2",
+    text: "What's your go-to snack you'd eat way too much of if calories didn't exist?",
+    options: ["Nacho cheese Doritos", "Gummy bears", "French fries", "Chocolate chip cookies"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["food", "personal"]
+  },
+  {
+    id: "gwia-new-3",
+    text: "What's the pettiest thing that gets you irrationally annoyed?",
+    options: ["People who clap at movies", "Misplaced grocery carts", "Using 'literally' wrong", "Loud phone notifications"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["personal", "preferences"]
+  },
+  {
+    id: "gwia-new-4",
+    text: "What's the flirtiest thing you'd do to get someone's attention at a bar?",
+    options: ["Send them a drink with a wink", "Bust out a cheesy pick-up line", "Pretend to 'accidentally' bump into them", "Challenge them to a silly bet"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["dating", "personal"]
+  },
+  {
+    id: "gwia-new-5",
+    text: "What's the weirdest thing you'd admit to finding kinda hot?",
+    options: ["Someone explaining math passionately", "Clumsy dancing", "Arguing about pizza toppings", "Wearing mismatched socks"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["attraction", "personal"]
+  },
+  {
+    id: "gwia-new-6",
+    text: "What's your secret social media guilty pleasure?",
+    options: ["Watching dog reels for hours", "Liking every post from a crush", "Reading petty comment fights", "Following weird niche meme pages"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["social", "personal"]
+  },
+  {
+    id: "gwia-new-7",
+    text: "What's the naughtiest thing you'd consider doing if you knew it'd stay a secret?",
+    options: ["Sneak into a VIP club", "Send a risky text to a crush", "Try a blindfolded taste test date", "Crash a stranger's party"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["personal", "fantasy"]
+  },
+  {
+    id: "gwia-new-8",
+    text: "What's your go-to move to spice things up in the bedroom?",
+    options: ["Whisper something flirty", "Break out a blindfold", "Play a sexy playlist", "Suggest a new position"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "relationships"]
+  },
+  {
+    id: "gwia-new-9",
+    text: "What's the most unhinged thing you'd want to try in a relationship just to see what happens?",
+    options: ["Plan a fake proposal for laughs", "Go to a couples' retreat with no prep", "Swap phones for a day", "Try a 24-hour no-talking challenge"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["relationships", "fantasy"]
   }
 ];
 
@@ -499,6 +572,78 @@ const hotTakesQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 10,
     categories: ["social", "politics", "sex"]
+  },
+  {
+    id: "ht-new-1",
+    text: "Fast food is better than home-cooked meals for pure vibe.",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["food", "opinions"]
+  },
+  {
+    id: "ht-new-2",
+    text: "Socks with sandals are a fashion statement, not a crime.",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "opinions"]
+  },
+  {
+    id: "ht-new-3",
+    text: "Group chats are more stressful than work meetings.",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["social", "opinions"]
+  },
+  {
+    id: "ht-new-4",
+    text: "It's fine to flirt with someone's partner if it's just for fun.",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["relationships", "morality"]
+  },
+  {
+    id: "ht-new-5",
+    text: "Posting gym selfies is thirstier than posting beach pics.",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["social", "opinions"]
+  },
+  {
+    id: "ht-new-6",
+    text: "Texting 'k' is ruder than ghosting someone.",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["communication", "opinions"]
+  },
+  {
+    id: "ht-new-7",
+    text: "Dirty talk is overrated and mostly cringey.",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "opinions"]
+  },
+  {
+    id: "ht-new-8",
+    text: "Everyone's secretly into at least one weird fetish.",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "psychology"]
+  },
+  {
+    id: "ht-new-9",
+    text: "Monogamy is just peer pressure with extra paperwork.",
+    options: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["relationships", "opinions"]
   }
 ];
 
@@ -782,6 +927,78 @@ const thisOrThatQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 10,
     categories: ["sex", "privacy", "social"]
+  },
+  {
+    id: "tot-new-1",
+    text: "Would you rather have every meal taste like candy or every song sound like your favorite?",
+    options: ["Meals taste like candy", "Songs sound like my favorite"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "preferences"]
+  },
+  {
+    id: "tot-new-2",
+    text: "Would you rather always smell like pizza or always have glitter on you?",
+    options: ["Smell like pizza", "Covered in glitter"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["personal", "funny"]
+  },
+  {
+    id: "tot-new-3",
+    text: "Would you rather talk like a pirate all day or only communicate in emojis?",
+    options: ["Talk like a pirate", "Use only emojis"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "communication"]
+  },
+  {
+    id: "tot-new-4",
+    text: "Would you rather date someone who's obsessed with their pet or their TikTok followers?",
+    options: ["Obsessed with pet", "Obsessed with TikTok"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["dating", "relationships"]
+  },
+  {
+    id: "tot-new-5",
+    text: "Would you rather have your best friend pick your outfits or your dating profile pics?",
+    options: ["Pick my outfits", "Pick my profile pics"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["personal", "social"]
+  },
+  {
+    id: "tot-new-6",
+    text: "Would you rather always overshare on dates or always be too mysterious?",
+    options: ["Overshare", "Too mysterious"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["dating", "personal"]
+  },
+  {
+    id: "tot-new-7",
+    text: "Would you rather have a partner who's loud in bed or loud about your relationship online?",
+    options: ["Loud in bed", "Loud online"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["relationships", "sex"]
+  },
+  {
+    id: "tot-new-8",
+    text: "Would you rather accidentally send a nude to your boss or your group chat?",
+    options: ["To my boss", "To my group chat"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "social"]
+  },
+  {
+    id: "tot-new-9",
+    text: "Would you rather have your kinks posted anonymously online or explained in detail to a friend?",
+    options: ["Posted anonymously", "Explained to a friend"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "privacy"]
   }
 ];
 

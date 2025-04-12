@@ -20,18 +20,8 @@ import { useSocket } from '@/context/SocketContext';
 type AppGameMode = 'solo' | '2player';
 type RoundTimeLimit = 10 | 20 | 30 | null; // Add type
 
-// Define Player type if not imported globally
-interface Player {
-  id: string;
-  nickname: string;
-  score: number;
-}
-
-// Add a type for the results data
-interface ResultsData {
-  questionId: string;
-  players: PlayerResult[]; // Assuming PlayerResult is defined based on server structure
-}
+// Define comprehensive status type
+type GameRoomStatus = 'waiting' | 'selecting' | 'style-selecting' | 'playing' | 'results' | 'completed';
 
 // Define PlayerResult if not already present (adjust based on actual server structure if needed)
 interface PlayerResult {
@@ -41,6 +31,12 @@ interface PlayerResult {
   predictedPlayerId?: string;
   isCorrect?: boolean;
   pointsEarned: number;
+}
+
+// Add a type for the results data
+interface ResultsData {
+  questionId: string;
+  players: PlayerResult[];
 }
 
 interface GameRoomProps {
@@ -71,7 +67,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const getInitialState = () => {
     if (initialPlayersData && initialPlayersData.length > 0) {
       return {
-        status: 'selecting' as const, 
+        status: 'selecting' as const, // Use status type
         players: initialPlayersData 
       };
     } else if (gameMode === 'solo') {
@@ -93,7 +89,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
   };
 
   const initialState = getInitialState();
-  const [status, setStatus] = useState(initialState.status);
+  const [status, setStatus] = useState<GameRoomStatus>(initialState.status); // Use status type
   const [players, setPlayers] = useState<Player[]>(initialState.players);
   const [selectedGameMode, setSelectedGameMode] = useState<SpecificGameMode | null>(null);
   const [selectedGameStyle, setSelectedGameStyle] = useState<GameStyle>('reveal-only'); // Default to reveal-only
@@ -110,6 +106,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
   // Add state for creator's selection before starting
   const [roundTimeLimitSelection, setRoundTimeLimitSelection] = useState<RoundTimeLimit>(null); 
   const [roundResults, setRoundResults] = useState<ResultsData | null>(null);
+  const [hasClickedContinueThisRound, setHasClickedContinueThisRound] = useState(false);
 
   // Determine if the current player is the creator using the derived currentPlayerId
   const isCreator = gameMode === 'solo' || 
@@ -544,6 +541,15 @@ const GameRoom: React.FC<GameRoomProps> = ({
     // setQuestions(newQuestions);
   };
 
+  const handleContinueClick = () => {
+    if (socket) {
+      console.log('[GameRoom] Emitting playerReady');
+      socket.emit('playerReady', { roomId });
+      setRoundResults(null); // Clear results for next round
+      setStatus('playing'); 
+    }
+  };
+
   const renderHeader = () => {
     const player1 = players[0];
     const player2 = players.length > 1 ? players[1] : null;
@@ -743,18 +749,22 @@ const GameRoom: React.FC<GameRoomProps> = ({
     console.log(`[GameRoom] Rendering game component. selectedGameMode:`, selectedGameMode);
     // --- End Debugging Log ---
 
+    // Define dummy onComplete function
+    const handleGameComplete = () => { /* console.log("Game component reported complete."); */ };
+
     switch (selectedGameMode) {
       case 'guess-who-i-am':
         return (
           <GuessWhoIAm
             roomId={roomId}
             players={players}
-            currentPlayerId={currentPlayerId!} // Assert non-null as game is playing
+            currentPlayerId={currentPlayerId!} 
             questions={questions}
             currentRound={currentRound}
             totalRounds={totalRounds}
             gameStyle={selectedGameStyle}
-            onUpdateScore={handleUpdateScore} // Pass score updater
+            onUpdateScore={handleUpdateScore}
+            onComplete={handleGameComplete} // Pass dummy prop
           />
         );
       case 'hot-takes':
@@ -762,12 +772,13 @@ const GameRoom: React.FC<GameRoomProps> = ({
           <HotTakes
             roomId={roomId}
             players={players}
-            currentPlayerId={currentPlayerId!} // Assert non-null as game is playing
+            currentPlayerId={currentPlayerId!} 
             questions={questions}
             currentRound={currentRound}
             totalRounds={totalRounds}
             gameStyle={selectedGameStyle}
-            onUpdateScore={handleUpdateScore} // Pass score updater
+            onUpdateScore={handleUpdateScore}
+            onComplete={handleGameComplete} // Pass dummy prop
           />
         );
       case 'this-or-that':
@@ -775,16 +786,17 @@ const GameRoom: React.FC<GameRoomProps> = ({
           <ThisOrThat
             roomId={roomId}
             players={players}
-            currentPlayerId={currentPlayerId!} // Assert non-null as game is playing
+            currentPlayerId={currentPlayerId!} 
             questions={questions}
             currentRound={currentRound}
             totalRounds={totalRounds}
             gameStyle={selectedGameStyle}
-            onUpdateScore={handleUpdateScore} // Pass score updater
+            onUpdateScore={handleUpdateScore}
+            onComplete={handleGameComplete} // Pass dummy prop
           />
         );
       default:
-        return <div>Error: Game mode not recognized.</div>;
+        return <div>Error: Game mode not recognized.</div>; 
     }
   };
 
@@ -841,19 +853,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
              playerNames={playerNamesMap}
              questionText={questionText}
              showPredictions={selectedGameStyle === 'prediction'}
-             // hasClickedContinue={...} // TODO: Add state to track if current player clicked continue
-             onContinue={() => {
-                if (socket) {
-                    console.log('[GameRoom] Emitting playerReady');
-                    socket.emit('playerReady', { roomId });
-                    // TODO: Update local state to show "Waiting for opponent..."
-                    // e.g., setHasClickedContinue(true);
-                    setRoundResults(null); // Clear results for next round
-                    // Consider a smoother transition state instead of jumping back to 'playing' immediately
-                    // setStatus('waiting-next-round'); 
-                    setStatus('playing'); 
-                }
-             }}
+             hasClickedContinue={hasClickedContinueThisRound}
+             onContinue={handleContinueClick}
           />
         );
       case 'completed':

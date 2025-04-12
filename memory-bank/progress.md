@@ -92,6 +92,12 @@
     - Applied comprehensive solution with `min-w-0`, `max-w-full`, and `overflow-hidden` at multiple container levels
     - Added explicit `whitespace-normal` and `break-words` classes to text elements
     - Implemented inline `wordWrap: 'break-word'` and `hyphens: 'auto'` styles for optimal word breaking
+*   **Production Deployment:**
+    - Deployed frontend to Vercel.
+    - Deployed backend (Node.js/Socket.IO) to Render.
+    - Configured environment variables (`VITE_SOCKET_URL`) on both platforms for successful connection.
+    - Implemented backend build process (`npm run build`) to handle TypeScript compilation and copy shared types, resolving TS6059 error.
+    - Configured backend CORS to allow connections from deployed frontend URL.
 
 ## Current Focus / Next Steps
 

@@ -141,8 +141,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
     // Listener for when the game actually starts
     const handleGameStarted = (data: { 
         players: Player[];
-        selectedGameMode: SpecificGameMode;
-        selectedGameStyle: GameStyle;
+        gameMode: SpecificGameMode;
+        gameStyle: GameStyle;
         nsfwLevel: number;
         timerDuration: number; // This comes from the server
         totalRounds: number;
@@ -152,8 +152,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
         console.log('[GameRoom] Received gameStarted event:', data);
         stopTimer(); // Stop any previous timer
         setPlayers(data.players);
-        setSelectedGameMode(data.selectedGameMode);
-        setSelectedGameStyle(data.selectedGameStyle);
+        setSelectedGameMode(data.gameMode);
+        setSelectedGameStyle(data.gameStyle);
         setNsfwLevel(data.nsfwLevel);
         setSelectedTimerDuration(data.timerDuration); // Store the duration
         setTotalRounds(data.totalRounds);
@@ -165,8 +165,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
         // --- Debugging Log --- 
         console.log(`[GameRoom] State AFTER set in handleGameStarted:`, { 
             status: 'playing',
-            selectedGameMode: data.selectedGameMode, // Log the value we just set
-            selectedGameStyle: data.selectedGameStyle,
+            selectedGameMode: data.gameMode, // Log the value we just set
+            selectedGameStyle: data.gameStyle,
             currentRound: data.currentRound 
         });
         // --- End Debugging Log ---
@@ -187,7 +187,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
         
         toast({ 
             title: "Game Started!", 
-            description: `Mode: ${data.selectedGameMode}`,
+            description: `Mode: ${data.gameMode}`,
             duration: 2000,
             className: "compact-toast"
         });

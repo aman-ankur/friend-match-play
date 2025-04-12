@@ -209,21 +209,27 @@ const GameRoom: React.FC<GameRoomProps> = ({
     };
 
     // --- Listener for New Round --- 
-    const handleNewRound = (data: { currentRound: number }) => {
+    const handleNewRound = (data: { currentRound: number; question: GameQuestion; timerDuration: number }) => { 
         console.log(`[GameRoom] Received newRound event for round: ${data.currentRound}. Setting state.`);
         stopTimer(); // Stop timer for the previous round
         setCurrentRound(data.currentRound);
-        
+        setRoundResults(null); // <<< Clear previous results
+        setHasClickedContinueThisRound(false); // Reset continue button state
+        setStatus('playing'); // <<< Set status back to playing
+
+        // Note: We assume the full question list was received on gameStarted.
+        // We only use data.currentRound to know which question index to use.
+        // The `data.question` sent by the server isn't strictly necessary with the current client logic,
+        // but included in type for correctness.
+
         // Restart timer if a duration is set for the game
-        if (selectedTimerDuration > 0) {
-            console.log(`[GameRoom] Restarting timer for round ${data.currentRound} with duration ${selectedTimerDuration}`);
-            
-            // Set the time left directly - don't use setTimeout which can cause issues
-            setTimeLeft(selectedTimerDuration);
-            
-            // The timer effect will handle the actual interval creation
-            // Force reset initialization state to ensure clean start
+        // Use timerDuration from the event data if provided, otherwise fallback to selectedTimerDuration
+        const roundDuration = data.timerDuration ?? selectedTimerDuration;
+        if (roundDuration > 0) {
+            console.log(`[GameRoom] Restarting timer for round ${data.currentRound} with duration ${roundDuration}`);
+            setTimeLeft(roundDuration);
             timerInitializedRef.current = false;
+            setIsTimerRunning(true); // Ensure timer starts running
         } else {
             setTimeLeft(null); // Ensure timer is explicitly off if duration is 0
             setIsTimerRunning(false);

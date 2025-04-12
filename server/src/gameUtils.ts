@@ -1,6 +1,6 @@
 // server/src/gameUtils.ts
-// Import types from the single source of truth
-import { GameQuestion as ImportedGameQuestion, GameMode as ImportedGameMode } from '../../src/types/game';
+// Import types from the single source of truth (expected to be copied locally during build)
+import { GameQuestion as ImportedGameQuestion, GameMode as ImportedGameMode } from './types/game';
 
 // Re-export the types for use by other server modules
 export type GameQuestion = ImportedGameQuestion;
@@ -9,7 +9,7 @@ export type GameMode = ImportedGameMode;
 // Question data and function will be added in the next step
 
 // Define basic types here or import from a shared types file
-// Removed duplicate type definitions (GameQuestion, GameMode) - Now imported from ../../src/types/game
+// Removed duplicate type definitions (GameQuestion, GameMode) - Now imported from ./types/game
 
 // --- Question Data (Duplicated from src/utils/gameQuestions.ts to avoid CJS/ESM issues) --- 
 const guessWhoIAmQuestions: GameQuestion[] = [

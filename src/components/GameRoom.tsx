@@ -542,11 +542,13 @@ const GameRoom: React.FC<GameRoomProps> = ({
   };
 
   const handleContinueClick = () => {
-    if (socket) {
+    // Only emit and set state if the player hasn't already clicked
+    if (socket && !hasClickedContinueThisRound) { 
       console.log('[GameRoom] Emitting playerReady');
       socket.emit('playerReady', { roomId });
-      setRoundResults(null); // Clear results for next round
-      setStatus('playing'); 
+      setHasClickedContinueThisRound(true); // Set state to true for button display
+      // REMOVED: setRoundResults(null); 
+      // REMOVED: setStatus('playing');
     }
   };
 

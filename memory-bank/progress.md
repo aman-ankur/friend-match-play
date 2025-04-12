@@ -24,6 +24,16 @@
     - Server waits for all players to be ready.
     - Server emits `newRound` or `gameOver`.
     - Clients receive event and update round or display final scores.
+- **Exclusive Mode:**
+    - PIN-protected mode for "This or That" games with adult content
+    - Can be activated during setup or gameplay (only by creator)
+    - Special set of questions with `nsfwRating: 11`
+    - Unlimited rounds that continue until questions exhausted or manually ended
+    - UI indicators showing mode is active
+- **Reset Functionality:**
+    - After game completion, room can be reset to play again
+    - Server reset ensures proper room state transitions
+    - All players get synchronized back to game selection
 - **Disconnection Handling:** Server removes disconnected players and notifies the remaining player (`playerLeft` event).
 - **Solo Mode Path:** Basic flow for creating a solo game exists (skips waiting).
 - **UI Component Foundation:** Shadcn/ui components for UI elements.
@@ -57,6 +67,8 @@
 
 - **Core Multiplayer Flow Implemented:** Create, join, synchronized game start, reveal-only round progression, and game completion flow are functional using Socket.IO.
 - **Server Authoritative:** Backend manages the core game state.
+- **Exclusive Mode:** Working implementation of PIN-protected adult content.
+- **Room Reset:** Implemented functionality to reset room after game completion.
 - **Key Missing Features:** Prediction mode logic, robust solo play, data persistence.
 
 ## 4. Known Issues / Blockers
@@ -68,6 +80,18 @@
 
 ## Completed Tasks (Recent)
 
+*   **Exclusive Mode Implementation:**
+    - Added PIN protection ("s3xy") for adult content
+    - Implemented server-side question filtering/management
+    - Created activation flow via modal dialog
+    - Added UI indicators and creator-only controls
+    - Implemented unlimited round handling
+    - Added proper state management for exclusive questions
+*   **Room Reset Functionality:**
+    - Added client-side reset request on "Play Again"
+    - Implemented server-side room state reset
+    - Added synchronization of all clients after reset
+    - Fixed issue with game state after multiple plays
 *   **Project Name Change:** Updated project name references.
 *   **Solo/2P Mode Selection:** Added UI and state for choosing game mode.
 *   **Backend Setup:** Created Node.js/Express/Socket.IO server.
@@ -113,10 +137,15 @@
 *   Custom game modes or rules.
 *   Spectator mode.
 *   More sophisticated scoring options.
+*   Enhanced PIN protection/authentication for exclusive content.
+*   Admin interface for managing questions.
 
 ## Blockers / Issues
 
 *   ~~Game doesn't progress to the next round after results.~~ (Resolved)
 *   ~~Friend's prediction is not shown on the results screen in Prediction mode.~~ (Resolved)
 *   ~~Timer doesn't restart between rounds / counts down incorrectly.~~ (Resolved)
+*   ~~Exclusive mode questions repeating during gameplay.~~ (Resolved)
+*   ~~Cannot play another game after completing one.~~ (Resolved)
+*   ~~Question text not properly displaying in results view.~~ (Resolved)
 *   Client-side state management needs to be replaced for true multiplayer.

@@ -58,6 +58,9 @@ graph TD
 - **In-Memory Database (Backend):** Simple object (`rooms`) used for storing server state during development. **Needs replacement for production.**
 - **Single Source of Truth (Backend):** The server maintains the definitive game state.
 - **State Synchronization Issues (Client):** Recent timer fixes highlighted complexities in managing client-side state derived from server events, especially involving `useEffect` dependencies and state updates (`isTimerRunning`, `timeLeft`). Required careful management of dependencies and state reset logic.
+- **State Machine Pattern:** Room status transitions follow a finite state machine model: waiting → selecting → playing → results → (back to playing or to completed) → selecting (after reset).
+- **Feature Flagging:** The exclusive mode feature is implemented as a flag in the Room interface, allowing dynamic enabling/disabling of the feature.
+- **PIN Protection:** Access to sensitive content (exclusive mode) is protected by a PIN code, implementing a simple authentication mechanism.
 
 ## 4. Component Relationships & Data Flow (Simplified)
 
@@ -80,9 +83,52 @@ graph TD
     - Player clicks continue -> `handleContinue` emits `playerReady` -> sets local `hasClickedContinue`.
     - Listens for `newRound` -> `GameRoom` updates `currentRound` prop -> `useGameLogic` resets local state via `useEffect`.
     - Listens for `gameOver` -> Calls `onComplete` prop.
-5.  **Disconnection:** `disconnect` event on server removes player, emits `playerLeft`, clients show toast/update UI.
+5.  **Exclusive Mode Flow:**
+    - Creator clicks exclusive mode button -> Opens PIN modal (`PinEntryModal.tsx`)
+    - Creator enters PIN -> Emits `attemptExclusiveMode` with PIN
+    - Server validates PIN -> Emits `exclusiveModeActivated` (success) or `exclusiveModeFailed` (wrong PIN)
+    - On success, server loads exclusive questions (filtered by `nsfwRating: 11`)
+    - During gameplay, questions are drawn from exclusive queue instead of regular questions
+    - Game continues indefinitely until queue is empty or creator ends mode
+    - Creator can end mode at any time by clicking "End Round" button -> Emits `endExclusiveMode`
+6.  **Room Reset Flow:**
+    - After game completion, creator clicks "Play Again" -> Emits `resetRoom`
+    - Server resets room state (status, questions, scores, etc.) -> Emits `roomReset`
+    - All clients update their state to show game selection UI
+7.  **Disconnection:** `disconnect` event on server removes player, emits `playerLeft`, clients show toast/update UI.
 
-## 5. Future Considerations / Refinements
+## 5. Room Status State Machine
+
+The game implements a state machine for room status management:
+
+```
+                             ┌───────────┐
+                             │           │
+                             ▼           │
+  ┌────────┐         ┌───────────┐       │
+  │waiting │ ──────► │ selecting │ ──────┘
+  └────────┘         └───────────┘
+      ▲                   │
+      │                   ▼
+  ┌─────────┐       ┌─────────┐
+  │completed│ ◄───── │ playing │
+  └─────────┘       └─────────┘
+      ▲                │   ▲
+      │                ▼   │
+      └────────── ┌─────────┐
+                  │ results │
+                  └─────────┘
+```
+
+Each state has specific UI components and allowed actions:
+- **waiting**: Shows room code for sharing, waiting for player 2 to join
+- **selecting**: Shows game mode selection options (This or That, etc.)
+- **style-selecting**: Shows game style, timer, NSFW settings 
+- **playing**: Shows active game UI with current question
+- **results**: Shows round results with player answers/predictions
+- **completed**: Shows final scores and "Play Again" button
+
+## 6. Future Considerations / Refinements
 
 - **Database Integration:** Replace in-memory `rooms` storage.
 - **Error Handling:** More specific error events and client-side handling.
@@ -90,3 +136,7 @@ graph TD
 - **Scalability:** Consider stateless server design if scaling becomes necessary (storing session state externally, e.g., Redis).
 - **Security:** Input validation, rate limiting, authentication (if users are added).
 - **Testing:** Unit/Integration tests for backend logic, E2E tests for frontend flows.
+- **Enhanced PIN Protection:** Consider stronger authentication or encryption for protecting sensitive content.
+- **Question Management:** Implementation of an admin interface for adding or removing questions.
+- **Session Resumption:** Allow players to reconnect to an in-progress game if disconnected.
+- **Better Error Recovery:** Implement additional mechanisms for recovering from server-client state mismatches.

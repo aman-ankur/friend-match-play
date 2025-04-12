@@ -86,6 +86,7 @@
         - `PORT`: Automatically assigned by Render.
     - **CORS:** Configured in `server/src/server.ts` to allow requests from the URL specified in the `VITE_SOCKET_URL` environment variable and `localhost:5173`.
     - **Domain:** (Add your actual Render service URL here)
+    - **Keep-Alive:** Uses UptimeRobot (free tier) hitting the `/health` endpoint every 5-10 minutes to prevent the free instance from spinning down due to inactivity.
 
 - **Deployment Process Notes:**
     - Backend (`server/`) build copies shared types from `../src/types` into `server/src/types` before compiling to resolve TS6059 build errors.

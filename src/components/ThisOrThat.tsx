@@ -17,6 +17,7 @@ interface ThisOrThatProps {
   onComplete: (finalScores: Record<string, number>) => void;
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
   gameStyle: GameStyle;
+  isExclusiveModeActive?: boolean;
 }
 
 const ThisOrThat: React.FC<ThisOrThatProps> = ({
@@ -29,6 +30,7 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
   onComplete,
   onUpdateScore,
   gameStyle,
+  isExclusiveModeActive = false,
 }) => {
   const {
     currentPhase,
@@ -60,7 +62,7 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
   if (!currentQuestion || !currentPlayer || (players.length > 1 && !otherPlayer)) {
     return (
       <div className="w-full max-w-2xl mx-auto animate-fade-in">
-        <GameCard title={`Round ${currentRound}/${totalRounds}`}>
+        <GameCard title={isExclusiveModeActive ? "Exclusive Mode" : `Round ${currentRound}/${totalRounds}`}>
           <div className="text-center py-8">
             <p className="text-gray-600">Loading game state...</p>
           </div>
@@ -73,7 +75,7 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
   const showWaitingAfterPrediction = currentPhase === 'waiting' && hasSubmittedPrediction && !roundResult;
 
   const predictionPrompt = `Predict what ${otherPlayer.nickname} chose:`;
-  const cardTitle = `Round ${currentRound}/${totalRounds}`;
+  const cardTitle = isExclusiveModeActive ? "Exclusive Mode" : `Round ${currentRound}/${totalRounds}`;
 
   if (showWaitingAfterAnswer) {
     return (

@@ -26,6 +26,7 @@ export interface GameRoom {
   totalRounds: number;
   questions: GameQuestion[];
   status: 'waiting' | 'playing' | 'completed';
+  isExclusiveModeActive: boolean;
 }
 
 export interface Answer {

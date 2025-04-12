@@ -128,7 +128,9 @@ const GameRoom: React.FC<GameRoomProps> = ({
           if (data.players[0]?.id === currentPlayerId) { 
               toast({ 
                   title: "Player Joined!", 
-                  description: `${data.players[1]?.nickname || 'Someone'} has joined the room.` 
+                  description: `${data.players[1]?.nickname || 'Someone'} has joined the room.`,
+                  duration: 2500,
+                  className: "compact-toast"
               });
           }
       } else {
@@ -174,7 +176,12 @@ const GameRoom: React.FC<GameRoomProps> = ({
           setIsTimerRunning(false);
         }
         
-        toast({ title: "Game Started!", description: `Mode: ${data.selectedGameMode}` });
+        toast({ 
+            title: "Game Started!", 
+            description: `Mode: ${data.selectedGameMode}`,
+            duration: 2000,
+            className: "compact-toast"
+        });
     };
 
     // --- Listener for New Round --- 
@@ -223,7 +230,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
         toast({
             title: "Error",
             description: data.message || "An server error occurred.",
-            variant: "destructive"
+            variant: "destructive",
+            duration: 3500
         });
         setIsProcessing(false); // Reset processing state on ANY error from server
     };
@@ -237,7 +245,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
            toast({
             title: "Opponent Left",
             description: `${data.playerName} has left the room.`,
-            variant: "destructive"
+            variant: "destructive",
+            duration: 3000
           });
           // Update player list, remove the leaving player
           setPlayers(prev => prev.filter(p => p.id !== data.playerId));
@@ -309,7 +318,12 @@ const GameRoom: React.FC<GameRoomProps> = ({
               timerIntervalRef.current = null;
             }
             console.log('[GameRoom] Timer expired! Emitting roundTimerExpired.');
-            toast({ title: "Time's Up!", description: "Moving to the next round.", duration: 2000 });
+            toast({ 
+                title: "Time's Up!", 
+                description: "Moving to the next round.", 
+                duration: 2000,
+                className: "compact-toast"
+            });
             // Emit event to server indicating time ran out
             socket.emit('roundTimerExpired', { roomId }); 
             return 0; // Set display to 0
@@ -356,17 +370,32 @@ const GameRoom: React.FC<GameRoomProps> = ({
   // Renamed to reflect it's the creator action
   const handleCreatorStartGame = () => {
     if (!socket) {
-        toast({ title: "Error", description: "Not connected to server.", variant: "destructive" });
+        toast({ 
+            title: "Error", 
+            description: "Not connected to server.", 
+            variant: "destructive",
+            duration: 3000
+        });
         return;
     }
     if (!selectedGameMode) {
-        toast({ title: "Error", description: "Please select a game mode.", variant: "destructive" });
+        toast({ 
+            title: "Error", 
+            description: "Please select a game mode.", 
+            variant: "destructive",
+            duration: 3000 
+        });
         return;
     }
     // Validation - Only creator can start
     // Server also validates, but good to prevent unnecessary emits
     if (gameMode === '2player' && !isCreator) {
-        toast({ title: "Wait", description: "Only the room creator can start the game.", variant: "default" });
+        toast({ 
+            title: "Wait", 
+            description: "Only the room creator can start the game.", 
+            variant: "default",
+            duration: 2500
+        });
         return;
     }
     
@@ -427,7 +456,12 @@ const GameRoom: React.FC<GameRoomProps> = ({
      if (!isCreator && socket) {
          // Perhaps notify server player wants to play again?
          // socket.emit('requestPlayAgain', { roomId });
-         toast({ title: "Play Again?", description: `Waiting for ${creatorName} to start a new game.` });
+         toast({ 
+             title: "Play Again?", 
+             description: `Waiting for ${creatorName} to start a new game.`,
+             duration: 3000,
+             className: "compact-toast"
+         });
      }
   };
   
@@ -543,12 +577,14 @@ const GameRoom: React.FC<GameRoomProps> = ({
                 variant={selectedGameMode === mode ? "default" : "outline"}
                 onClick={() => handleGameModeSelect(mode)}
                 className={cn(
-                  "h-auto p-4 flex flex-col items-start text-left transition-all",
+                  "h-auto p-4 flex flex-col items-start text-left transition-all min-h-[180px] overflow-hidden",
                   selectedGameMode === mode ? "bg-connection-primary text-white" : "hover:border-connection-primary hover:bg-connection-light"
                 )}
               >
-                <h3 className="font-semibold text-lg mb-1">{GAME_DESCRIPTIONS[mode].title}</h3>
-                <p className="text-sm text-muted-foreground">{GAME_DESCRIPTIONS[mode].description}</p>
+                <div className="w-full flex flex-col h-full">
+                  <h3 className="font-semibold text-lg mb-2">{GAME_DESCRIPTIONS[mode].title}</h3>
+                  <p className="text-sm text-muted-foreground break-words">{GAME_DESCRIPTIONS[mode].description}</p>
+                </div>
               </Button>
             ))}
           </div>
@@ -672,7 +708,12 @@ const GameRoom: React.FC<GameRoomProps> = ({
           <GameCard title="Waiting for Player 2" description="Share the room code with your friend!">
             <div className="text-center py-8">
               <p className="text-gray-600 mb-2">Room Code:</p>
-              <p className="text-4xl font-mono font-bold tracking-widest text-connection-tertiary select-all cursor-pointer" onClick={() => navigator.clipboard.writeText(roomId).then(() => toast({ title: "Copied!", description: "Room code copied to clipboard." })) }>
+              <p className="text-4xl font-mono font-bold tracking-widest text-connection-tertiary select-all cursor-pointer" onClick={() => navigator.clipboard.writeText(roomId).then(() => toast({ 
+                  title: "Copied!", 
+                  description: "Room code copied to clipboard.",
+                  duration: 1500,
+                  className: "compact-toast"
+              })) }>
                 {roomId}
               </p>
               <p className="text-sm text-gray-500 mt-2">Click to copy</p>

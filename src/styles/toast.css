@@ -1,0 +1,37 @@
+/* Custom styles for toast notifications */
+
+.compact-toast {
+  max-width: 320px !important;
+  padding: 0.5rem 1rem !important;
+}
+
+.compact-toast [data-toast-title] {
+  font-size: 0.875rem !important;
+  margin-bottom: 0.15rem !important;
+}
+
+.compact-toast [data-toast-description] {
+  font-size: 0.75rem !important;
+}
+
+/* Position the toast container at the bottom-right */
+[data-sonner-toaster] {
+  bottom: 16px !important;
+  right: 16px !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+/* Ensure toasts don't block as much of the UI */
+[data-sonner-toast] {
+  --border: 1px solid var(--connection-border, #e2e8f0);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Fix text wrapping issues in game cards */
+.break-words {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+} 

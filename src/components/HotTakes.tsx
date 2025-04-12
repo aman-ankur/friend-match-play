@@ -4,7 +4,7 @@ import { GameQuestion, Player, GameStyle } from '@/types/game';
 import GameCard from './GameCard';
 import ResultComparison from './ResultComparison';
 import useGameLogic from '@/hooks/useGameLogic';
-import TimerWidget from './TimerWidget';
+import AnswerSelection from './AnswerSelection';
 
 interface HotTakesProps {
   roomId: string;
@@ -14,9 +14,7 @@ interface HotTakesProps {
   totalRounds: number;
   onComplete: (finalScores: Record<string, number>) => void;
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
-  onNextRound: () => void;
   gameStyle: GameStyle;
-  timerDuration: number;
   currentPlayerId: string | null;
 }
 
@@ -28,20 +26,20 @@ const HotTakes: React.FC<HotTakesProps> = ({
   totalRounds,
   onComplete,
   onUpdateScore,
-  onNextRound,
   gameStyle,
-  timerDuration,
   currentPlayerId
 }) => {
-  console.log(`[HotTakes] Rendering. Received round prop: ${currentRound}`);
+  console.log(`[HotTakes] Rendering. Round: ${currentRound}`);
 
   const {
     currentPhase,
-    currentPlayerIndex,
     currentPlayer,
     otherPlayer,
     currentQuestion,
     roundResult,
+    hasSubmittedAnswer,
+    hasSubmittedPrediction,
+    hasClickedContinue,
     handleAnswerSelect,
     handlePredictionSelect,
     handleContinue,
@@ -54,78 +52,108 @@ const HotTakes: React.FC<HotTakesProps> = ({
     totalRounds,
     onComplete,
     onUpdateScore,
-    onNextRound,
     gameStyle,
     currentPlayerId
   });
 
-  // Render different phases
-  if (currentPhase === 'results' && roundResult) {
-    return (
-      <ResultComparison 
-        result={roundResult} 
-        playerNames={getPlayerNameMap()} 
-        onContinue={handleContinue}
-        showPredictions={gameStyle === 'prediction'}
-      />
-    );
-  }
+  console.log(`[HotTakes] Phase: ${currentPhase}, SubmittedAnswer: ${hasSubmittedAnswer}, SubmittedPrediction: ${hasSubmittedPrediction}`);
 
-  // Add loading state
-  if (!currentQuestion || !currentPlayer || !otherPlayer) {
+  const showWaitingAfterAnswer = currentPhase === 'waiting' && !roundResult && !hasSubmittedPrediction;
+  const showWaitingAfterPrediction = currentPhase === 'waiting' && hasSubmittedPrediction && !roundResult;
+
+  if (!currentQuestion || !currentPlayer || (players.length > 1 && !otherPlayer)) {
     return (
       <div className="w-full max-w-2xl mx-auto animate-fade-in">
-        <GameCard>
+        <GameCard title={`Round ${currentRound}/${totalRounds}`}>
           <div className="text-center py-8">
-            <p className="text-gray-600">Loading question...</p>
+            <p className="text-gray-600">Loading game state...</p>
           </div>
         </GameCard>
       </div>
     );
   }
 
+  const cardTitle = `Round ${currentRound}/${totalRounds}`;
+  const predictionPrompt = `Predict what ${otherPlayer.nickname} thinks:`;
+
+  if (showWaitingAfterAnswer) {
+    return (
+      <GameCard
+        title={cardTitle}
+        className="w-full max-w-2xl"
+      >
+        <div className="text-center p-8">
+          <p className="text-lg text-gray-600 animate-pulse">
+            {otherPlayer ? `Waiting for ${otherPlayer.nickname} to answer...` : 'Waiting for your friend...'}
+          </p>
+        </div>
+      </GameCard>
+    );
+  }
+
+  if (showWaitingAfterPrediction) {
+    return (
+      <GameCard
+        title={cardTitle}
+        className="w-full max-w-2xl"
+      >
+        <div className="text-center p-8">
+          <p className="text-lg text-gray-600 animate-pulse">
+            Waiting for results...
+          </p>
+        </div>
+      </GameCard>
+    );
+  }
+
+  if (currentPhase === 'results' && roundResult) {
+    return (
+      <GameCard
+        title={cardTitle}
+        className="w-full max-w-2xl"
+      >
+        <ResultComparison
+          result={roundResult}
+          questionText={currentQuestion.text}
+          playerNames={getPlayerNameMap()}
+          onContinue={handleContinue}
+          showPredictions={gameStyle === 'predict-score'}
+          hasClickedContinue={hasClickedContinue}
+        />
+      </GameCard>
+    );
+  }
+
   return (
     <div className="w-full max-w-2xl mx-auto animate-fade-in">
-      <div className="mb-6 text-center">
-        {timerDuration > 0 && (
-          <div className="flex justify-center">
-            <TimerWidget duration={timerDuration} />
-          </div>
+      <GameCard
+        title={cardTitle}
+        className="w-full max-w-2xl"
+      >
+        <div className="text-center mb-6 px-4">
+          {(currentPhase === 'answer' || (currentPhase === 'prediction' && gameStyle === 'reveal-only')) && (
+             <p className="text-xl md:text-2xl font-semibold text-gray-800">{currentQuestion?.text ?? 'Loading...'}</p>
+          )}
+           {currentPhase === 'prediction' && gameStyle === 'predict-score' && (
+             <p className="text-xl md:text-2xl font-semibold text-indigo-700">{predictionPrompt}</p>
+           )}
+        </div>
+
+        {currentPhase === 'answer' && !hasSubmittedAnswer && (
+           <AnswerSelection
+             options={currentQuestion.options}
+             onSelect={handleAnswerSelect}
+             layout="column"
+           />
         )}
-        <div className="text-sm font-medium text-connection-secondary mb-1">
-          Round {currentRound} of {totalRounds}
-        </div>
-        <h2 className="text-xl md:text-2xl font-bold text-connection-tertiary">
-          {currentPhase === 'answer' ? "What's your take?" : "Predict their take"}
-        </h2>
-        <p className="text-gray-600 mt-1">
-          {currentPhase === 'answer' 
-            ? `${currentPlayer.nickname}, share your opinion` 
-            : `${currentPlayer.nickname}, predict what ${otherPlayer.nickname} thinks`}
-        </p>
-      </div>
 
-      <GameCard>
-        <div className="text-xl font-medium text-center mb-6">
-          {currentQuestion.text}
-        </div>
-
-        <div className="grid gap-3">
-          {currentQuestion.options.map((option, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className="p-4 h-auto text-left justify-start hover:bg-connection-light hover:text-connection-tertiary transition-all border-connection-light"
-              onClick={() => 
-                currentPhase === 'answer' 
-                  ? handleAnswerSelect(option) 
-                  : handlePredictionSelect(option)
-              }
-            >
-              <span className="text-md">{option}</span>
-            </Button>
-          ))}
-        </div>
+        {currentPhase === 'prediction' && gameStyle === 'predict-score' && !hasSubmittedPrediction && (
+          <AnswerSelection
+            options={currentQuestion.options}
+            onSelect={handlePredictionSelect}
+            layout="column"
+          />
+        )}
       </GameCard>
     </div>
   );

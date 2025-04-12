@@ -3,8 +3,8 @@ import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 
 interface NSFWSliderProps {
-  initialLevel: number;
-  onLevelChange: (value: number) => void;
+  value: number;
+  onValueChange: (value: number) => void;
 }
 
 const nsfwSegments = [
@@ -19,12 +19,12 @@ const getSegmentForLevel = (level: number) => {
   return nsfwSegments.find(seg => level >= seg.range[0] && level <= seg.range[1]) || nsfwSegments[0];
 };
 
-const NSFWSlider: React.FC<NSFWSliderProps> = ({ initialLevel, onLevelChange }) => {
-  const currentSegment = getSegmentForLevel(initialLevel);
+const NSFWSlider: React.FC<NSFWSliderProps> = ({ value, onValueChange }) => {
+  const currentSegment = getSegmentForLevel(value);
 
   const handleSliderChange = (value: number[]) => {
     if (value && value.length > 0) {
-      onLevelChange(value[0]);
+      onValueChange(value[0]);
     }
   };
 
@@ -34,18 +34,18 @@ const NSFWSlider: React.FC<NSFWSliderProps> = ({ initialLevel, onLevelChange }) 
         <span className="text-sm font-medium text-gray-700">Spice Level:</span>
         <span className={cn(
           "font-semibold px-2 py-0.5 rounded text-sm",
-          initialLevel <= 2 && "text-green-700 bg-green-100",
-          initialLevel > 2 && initialLevel <= 6 && "text-yellow-700 bg-yellow-100",
-          initialLevel > 6 && initialLevel <= 8 && "text-orange-700 bg-orange-100",
-          initialLevel > 8 && "text-red-700 bg-red-100"
+          value <= 2 && "text-green-700 bg-green-100",
+          value > 2 && value <= 6 && "text-yellow-700 bg-yellow-100",
+          value > 6 && value <= 8 && "text-orange-700 bg-orange-100",
+          value > 8 && "text-red-700 bg-red-100"
         )}>
           {currentSegment.label}
         </span>
       </div>
       
       <Slider
-        defaultValue={[initialLevel]}
-        value={[initialLevel]}
+        defaultValue={[value]}
+        value={[value]}
         min={1}
         max={10}
         step={1}

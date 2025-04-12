@@ -4,7 +4,7 @@ import { GameQuestion, Player, GameStyle } from '@/types/game';
 import GameCard from './GameCard';
 import ResultComparison from './ResultComparison';
 import useGameLogic from '@/hooks/useGameLogic';
-import TimerWidget from './TimerWidget';
+import AnswerSelection from './AnswerSelection';
 
 interface GuessWhoIAmProps {
   roomId: string;
@@ -14,9 +14,7 @@ interface GuessWhoIAmProps {
   totalRounds: number;
   onComplete: (finalScores: Record<string, number>) => void;
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
-  onNextRound: () => void;
   gameStyle: GameStyle;
-  timerDuration: number;
   currentPlayerId: string | null;
 }
 
@@ -28,26 +26,24 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
   totalRounds,
   onComplete,
   onUpdateScore,
-  onNextRound,
   gameStyle,
-  timerDuration,
   currentPlayerId
 }) => {
-  console.log(`[GuessWhoIAm] Rendering. Received round prop: ${currentRound}`);
+  console.log(`[GuessWhoIAm] Rendering. Round: ${currentRound}`);
 
   const {
     currentPhase,
-    currentPlayerIndex,
     currentPlayer,
     otherPlayer,
     currentQuestion,
     roundResult,
+    hasSubmittedAnswer,
+    hasSubmittedPrediction,
+    hasClickedContinue,
     handleAnswerSelect,
     handlePredictionSelect,
     handleContinue,
-    getPlayerNameMap,
-    hasSubmittedAnswer,
-    hasSubmittedPrediction
+    getPlayerNameMap
   } = useGameLogic({
     roomId: roomId,
     players,
@@ -56,101 +52,120 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
     totalRounds,
     onComplete,
     onUpdateScore,
-    onNextRound,
     gameStyle,
     currentPlayerId
   });
 
-  // Determine if the current player is waiting after submitting in the current phase
-  const isWaitingAfterSubmission = 
-    (currentPhase === 'answer' && hasSubmittedAnswer) || 
-    (currentPhase === 'prediction' && hasSubmittedPrediction);
+  console.log(`[GuessWhoIAm] Phase: ${currentPhase}, SubmittedAnswer: ${hasSubmittedAnswer}, SubmittedPrediction: ${hasSubmittedPrediction}`);
 
-  // Render different phases
-  if (currentPhase === 'results' && roundResult) {
+  // Determine if we should show the waiting state
+  const showWaitingAfterAnswer = currentPhase === 'waiting' && !roundResult && !hasSubmittedPrediction;
+  const showWaitingAfterPrediction = currentPhase === 'waiting' && hasSubmittedPrediction && !roundResult;
+
+  // Determine if we should disable buttons while waiting (generally handled by phase logic now)
+  // const isWaitingAfterSubmission = currentPhase === 'waiting' && !roundResult;
+
+  // --- Loading State ---
+  if (!currentQuestion || !currentPlayer || (players.length > 1 && !otherPlayer)) {
     return (
-      <ResultComparison 
-        result={roundResult} 
-        playerNames={getPlayerNameMap()} 
-        onContinue={handleContinue}
-        showPredictions={gameStyle === 'prediction'}
-      />
+      <div className="w-full max-w-2xl mx-auto animate-fade-in">
+        <GameCard title={`Round ${currentRound}/${totalRounds}`}>
+          <div className="text-center py-8">
+            <p className="text-gray-600">Loading game state...</p>
+          </div>
+        </GameCard>
+      </div>
     );
   }
 
-  return (
-    <div className="w-full max-w-2xl mx-auto animate-fade-in">
-      <div className="mb-6 text-center">
-        {timerDuration > 0 && (
-          <div className="flex justify-center">
-            <TimerWidget duration={timerDuration} />
-          </div>
-        )}
-        <div className="text-sm font-medium text-connection-secondary mb-1">
-          Round {currentRound} of {totalRounds}
-        </div>
-        {/* Show header only when player names are available */}
-        {currentPlayer?.nickname && otherPlayer?.nickname ? (
-          <>
-            <h2 className="text-xl md:text-2xl font-bold text-connection-tertiary">
-              {currentPhase === 'answer' 
-                ? "Answer Honestly"
-                : (currentPhase === 'prediction' 
-                    // Use actual nickname 
-                    ? `Predict ${otherPlayer.nickname}'s Answer` 
-                    : "Waiting...") // Should ideally not hit this if results phase is handled
-              }
-            </h2>
-            <p className="text-gray-600 mt-1">
-              {currentPhase === 'answer' && !hasSubmittedAnswer
-                // Use actual nickname
-                ? `${currentPlayer.nickname}, what's your answer?` 
-                : (currentPhase === 'prediction' && !hasSubmittedPrediction
-                    // Use actual nicknames
-                    ? `${currentPlayer.nickname}, what do you think ${otherPlayer.nickname} answered?`
-                    : (isWaitingAfterSubmission 
-                        // Use actual nickname
-                        ? `Waiting for ${otherPlayer.nickname}...` 
-                        : "Loading phase...") // Fallback if somehow waiting but not after submission
-                )
-              }
-            </p>
-          </>
-        ) : (
-          // Show loading state if names are not yet available
-          <h2 className="text-xl md:text-2xl font-bold text-connection-tertiary animate-pulse">Loading names...</h2>
-        )}
-      </div>
+  const cardTitle = `Round ${currentRound}/${totalRounds}`;
+  const predictionPrompt = `Predict ${otherPlayer.nickname}'s Answer`;
 
-      <GameCard>
-        <div className="text-xl font-medium text-center mb-6">
-          {currentQuestion.text}
-        </div>
-
-        <div className="grid gap-3">
-          {currentQuestion.options.map((option, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className="p-4 h-auto text-left justify-start hover:bg-connection-light hover:text-connection-tertiary transition-all border-connection-light"
-              onClick={() => 
-                currentPhase === 'answer' 
-                  ? handleAnswerSelect(option) 
-                  : handlePredictionSelect(option)
-              }
-              disabled={isWaitingAfterSubmission}
-            >
-              <span className="text-md">{option}</span>
-            </Button>
-          ))}
+  // --- Render Waiting State (After Answer Submission) ---
+  if (showWaitingAfterAnswer) {
+    return (
+      <GameCard
+        title={cardTitle}
+        className="w-full max-w-2xl"
+      >
+        <div className="text-center p-8">
+          <p className="text-lg text-gray-600 animate-pulse">
+            {otherPlayer ? `Waiting for ${otherPlayer.nickname} to answer...` : 'Waiting for your friend...'}
+          </p>
         </div>
       </GameCard>
+    );
+  }
 
-      {isWaitingAfterSubmission && (
-        <div className="mt-4 text-center text-sm text-gray-500 animate-pulse">
-          Waiting for other player...
+  // --- Render Waiting State (After Prediction Submission) ---
+   if (showWaitingAfterPrediction) {
+     return (
+       <GameCard
+         title={cardTitle}
+         className="w-full max-w-2xl"
+       >
+         <div className="text-center p-8">
+           <p className="text-lg text-gray-600 animate-pulse">
+             Waiting for results...
+           </p>
+         </div>
+       </GameCard>
+     );
+   }
+
+  // --- Render Results Phase ---
+  if (currentPhase === 'results' && roundResult) {
+    return (
+      <GameCard
+        title={cardTitle}
+        className="w-full max-w-2xl"
+      >
+        <ResultComparison
+          result={roundResult}
+          questionText={currentQuestion.text}
+          playerNames={getPlayerNameMap()}
+          onContinue={handleContinue}
+          showPredictions={gameStyle === 'predict-score'} // Use correct value
+          hasClickedContinue={hasClickedContinue}
+        />
+      </GameCard>
+    );
+  }
+
+  // --- Render Answer/Prediction Phase ---
+  return (
+    <div className="w-full max-w-2xl mx-auto animate-fade-in">
+      <GameCard
+        title={cardTitle}
+        className="w-full max-w-2xl"
+      >
+         {/* Header */}
+         <div className="text-center mb-6 px-4">
+          {(currentPhase === 'answer' || (currentPhase === 'prediction' && gameStyle === 'reveal-only')) && (
+             <p className="text-xl md:text-2xl font-semibold text-gray-800">{currentQuestion?.text ?? 'Loading...'}</p>
+          )}
+           {currentPhase === 'prediction' && gameStyle === 'predict-score' && (
+             <p className="text-xl md:text-2xl font-semibold text-indigo-700">{predictionPrompt}</p>
+           )}
         </div>
-      )}
+
+        {/* Options Grid - Use AnswerSelection Component */}
+        {currentPhase === 'answer' && !hasSubmittedAnswer && (
+          <AnswerSelection
+            options={currentQuestion.options}
+            onSelect={handleAnswerSelect}
+            layout="column"
+          />
+        )}
+
+        {currentPhase === 'prediction' && gameStyle === 'predict-score' && !hasSubmittedPrediction && (
+          <AnswerSelection
+            options={currentQuestion.options}
+            onSelect={handlePredictionSelect}
+            layout="column"
+          />
+        )}
+      </GameCard>
     </div>
   );
 };

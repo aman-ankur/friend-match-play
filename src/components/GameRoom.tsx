@@ -8,6 +8,7 @@ import getQuestionsByMode, { GAME_DESCRIPTIONS } from '@/utils/gameQuestions';
 import GuessWhoIAm from './GuessWhoIAm';
 import HotTakes from './HotTakes';
 import ThisOrThat from './ThisOrThat';
+import ResultComparison from './ResultComparison';
 import GameCard from './GameCard';
 import NSFWSlider from './NSFWSlider';
 import { useToast } from '@/components/ui/use-toast';

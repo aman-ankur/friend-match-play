@@ -1,0 +1,13 @@
+NSFW Level 6: Playfully Naughty
+Steamy and cheeky—diving into spicy territory with a playful twist.
+
+{ id: "tot-l6-1", text: "Would you rather have a partner who’s amazing in bed but awful at cuddling or amazing at cuddling but awful in bed?", options: ["Great in bed, bad cuddler", "Great cuddler, bad in bed"], score: 1, nsfwRating: 6, categories: ["intimatemoments", "relationships"] }
+{ id: "tot-l6-2", text: "Would you rather hook up in a tent under the stars or in a fancy hotel penthouse?", options: ["Tent under stars", "Hotel penthouse"], score: 1, nsfwRating: 6, categories: ["adventure", "intimatemoments"] }
+{ id: "tot-l6-3", text: "Would you rather have a partner who’s into leaving lipstick marks on you or one who’s into scratching your back lightly?", options: ["Lipstick marker", "Back scratcher"], score: 1, nsfwRating: 6, categories: ["intimatemoments", "affection"] }
+{ id: "tot-l6-4", text: "Would you rather have your most awkward sexting moment exposed or your most cringe-worthy hookup playlist?", options: ["Awkward sexts exposed", "Cringe playlist exposed"], score: 1, nsfwRating: 6, categories: ["embarrassment", "intimatemoments"] }
+{ id: "tot-l6-5", text: "Would you rather have a partner who’s into role-playing as strangers or one who’s into reenacting your first date?", options: ["Stranger role-play", "First date reenactor"], score: 1, nsfwRating: 6, categories: ["fantasy", "romance"] }
+{ id: "tot-l6-6", text: "Would you rather have a partner who’s loud during sex or one who’s silent but intense?", options: ["Loud partner", "Silent but intense"], score: 1, nsfwRating: 6, categories: ["intimatemoments", "dynamics"] }
+{ id: "tot-l6-7", text: "Would you rather have a partner who’s into ice cube foreplay or one who’s into warm oil massages?", options: ["Ice cube foreplay", "Warm oil massages"], score: 1, nsfwRating: 6, categories: ["intimatemoments", "sensory"] }
+{ id: "tot-l6-8", text: "Would you rather have a partner who’s into quickies in the car or long sessions in the bath?", options: ["Car quickies", "Bath sessions"], score: 1, nsfwRating: 6, categories: ["intimatemoments", "locations"] }
+{ id: "tot-l6-9", text: "Would you rather have a partner who’s into biting your lip or one who’s into tugging your hair?", options: ["Lip biter", "Hair tugger"], score: 1, nsfwRating: 6, categories: ["intimatemoments", "affection"] }
+{ id: "tot-l6-10", text: "Would you rather have a partner who’s into sending you spicy dares or one who’s into playing naughty truth-or-dare games?", options: ["Spicy dare sender", "Naughty truth-or-dare player"], score: 1, nsfwRating: 6, categories: ["playfulness", "intimatemoments"] }

@@ -16,6 +16,10 @@ import { cn } from '@/lib/utils';
 import { useSocket } from '@/context/SocketContext';
 import PinEntryModal from './PinEntryModal';
 import ConfirmationModal from './ConfirmationModal';
+import { Copy, ShieldCheck, Info, PlayCircle, LogOut, Award, Eye, Brain, ArrowLeft, AlertTriangle, Key } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Switch } from "@/components/ui/switch";
 
 // Game descriptions for each mode, moved from the deleted file
 const GAME_DESCRIPTIONS: Record<SpecificGameMode, { title: string; description: string }> = {
@@ -38,7 +42,8 @@ type AppGameMode = 'solo' | '2player';
 type RoundTimeLimit = 10 | 20 | 30 | null; // Add type
 
 // Define comprehensive status type
-type GameRoomStatus = 'waiting' | 'selecting' | 'style-selecting' | 'playing' | 'results' | 'completed';
+// Add 'waiting-next-round'
+type GameRoomStatus = 'waiting' | 'selecting' | 'style-selecting' | 'playing' | 'results' | 'waiting-next-round' | 'completed';
 
 // Define PlayerResult if not already present (adjust based on actual server structure if needed)
 interface PlayerResult {
@@ -115,7 +120,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const [currentRound, setCurrentRound] = useState(1);
   const [totalRounds, setTotalRounds] = useState(5);
   const [finalScores, setFinalScores] = useState<Record<string, number> | null>(null);
-  const [nsfwLevel, setNsfwLevel] = useState(1);
+  const [nsfwLevel, setNsfwLevel] = useState<number>(1); // Keep default for slider UI if not random
+  const [isRandomSpice, setIsRandomSpice] = useState<boolean>(true); // <-- Add state, default to true
   // State for the actual duration set by the server
   const [selectedTimerDuration, setSelectedTimerDuration] = useState<number>(0); 
   // State for countdown
@@ -529,62 +535,31 @@ const GameRoom: React.FC<GameRoomProps> = ({
   
   // Renamed to reflect it's the creator action
   const handleCreatorStartGame = () => {
-    console.log('[GameRoom] handleCreatorStartGame called');
-    
-    if (!socket) {
-        console.error('[GameRoom] Cannot start game: Socket not connected');
-        toast({ 
-            title: "Error", 
-            description: "Not connected to server.", 
-            variant: "destructive",
-            duration: 3000
-        });
-        return;
-    }
-    if (!selectedGameMode) {
-        console.error('[GameRoom] Cannot start game: No game mode selected');
-        toast({ 
-            title: "Error", 
-            description: "Please select a game mode.", 
-            variant: "destructive",
-            duration: 3000 
-        });
-        return;
-    }
-    // Validation - Only creator can start
-    // Server also validates, but good to prevent unnecessary emits
-    if (gameMode === '2player' && !isCreator) {
-        console.error('[GameRoom] Cannot start game: Not the creator');
-        toast({ 
-            title: "Wait", 
-            description: "Only the room creator can start the game.", 
-            variant: "default",
-            duration: 2500
-        });
-        return;
-    }
-    
-    setIsProcessing(true); // Show loading state on button
+    if (!selectedGameMode || isProcessing) return;
+    setIsProcessing(true);
 
-    const finalTimerDuration = gameMode === 'solo' ? null : roundTimeLimitSelection;
+    const finalNsfwLevel = isRandomSpice ? 0 : nsfwLevel; // <-- Determine level based on toggle
+    const timerDuration = roundTimeLimitSelection !== null ? roundTimeLimitSelection * 1000 : 0;
 
-    const gameSettings = { 
-        roomId, 
-        gameMode: selectedGameMode, 
-        gameStyle: selectedGameStyle, 
-        nsfwLevel, 
-        timerDuration: finalTimerDuration, // Send the selected time limit 
-        totalRounds,
-        isExclusiveModeActive // Include exclusive mode status
-    };
-    
-    console.log('[GameRoom] Emitting startGame with settings:', gameSettings);
-    
-    socket.emit('startGame', gameSettings);
+    console.log('[GameRoom] Creator starting game:', {
+        roomId,
+        mode: selectedGameMode,
+        style: selectedGameStyle,
+        nsfwLevel: finalNsfwLevel, // <-- Use calculated level
+        timerDuration: timerDuration
+    });
 
-    // --- Remove client-side state setting - wait for server 'gameStarted' event --- 
-    // Server is responsible for question generation and game state management
-    // setStatus('playing'); 
+    socket?.emit('startGame', {
+        roomId,
+        mode: selectedGameMode,
+        style: selectedGameStyle,
+        nsfwLevel: finalNsfwLevel, // <-- Use calculated level
+        timerDuration: timerDuration
+    });
+
+    // No longer setting status here, wait for 'gameStarted' event
+    // Set processing back to false after a short delay or on error
+    setTimeout(() => setIsProcessing(false), 5000); // Timeout safeguard
   };
   
   const handleGameComplete = (scores: Record<string, number>) => {
@@ -672,18 +647,24 @@ const GameRoom: React.FC<GameRoomProps> = ({
   console.log(`[GameRoom] Rendering. User: ${currentPlayerId}, Creator: ${isCreator}, Status: ${status}, Players:`, players);
 
   const handleNsfwLevelChange = (level: number) => {
+    // When slider is moved, assume user wants a specific level, not random
+    setIsRandomSpice(false); 
     setNsfwLevel(level);
-    // Questions are now fetched from the server when starting the game
+  };
+
+  const handleRandomSpiceToggle = (checked: boolean) => {
+    setIsRandomSpice(checked);
+    // Optional: Reset nsfwLevel to 1 when switching back to non-random?
+    // if (!checked) setNsfwLevel(1);
   };
 
   const handleContinueClick = () => {
     // Only emit and set state if the player hasn't already clicked
     if (socket && !hasClickedContinueThisRound) { 
-      console.log('[GameRoom] Emitting playerReady');
+      console.log('[GameRoom] Emitting playerReady and setting status to waiting-next-round');
       socket.emit('playerReady', { roomId });
       setHasClickedContinueThisRound(true); // Set state to true for button display
-      // REMOVED: setRoundResults(null); 
-      // REMOVED: setStatus('playing');
+      setStatus('waiting-next-round'); // <-- Set intermediate status
     }
   };
   
@@ -881,10 +862,31 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
                       {/* NSFW Level */}
                       <div className="space-y-3">
-                         <Label className="text-lg font-medium flex items-center">
-                             <Zap className="mr-2 h-5 w-5 text-connection-secondary" /> Spicy Level
-                         </Label>
-                          <NSFWSlider value={nsfwLevel} onValueChange={handleNsfwLevelChange} />
+                          <Label className="text-lg font-medium flex items-center justify-between">
+                              <div className="flex items-center">
+                                 <Zap className="mr-2 h-5 w-5 text-connection-secondary" /> Spicy Level
+                              </div>
+                              {/* Random Toggle */} 
+                              <div className="flex items-center space-x-2">
+                                  <Switch
+                                      id="random-spice"
+                                      checked={isRandomSpice}
+                                      onCheckedChange={handleRandomSpiceToggle}
+                                      aria-label="Toggle random spice level"
+                                  />
+                                  <Label htmlFor="random-spice" className="text-sm font-normal text-gray-600 cursor-pointer">
+                                      Random
+                                  </Label>
+                              </div>
+                          </Label>
+                          <NSFWSlider 
+                              value={nsfwLevel} 
+                              onValueChange={handleNsfwLevelChange} 
+                              disabled={isRandomSpice} // <-- Disable slider if random is checked
+                          />
+                           <p className="text-sm text-muted-foreground text-center">
+                               {isRandomSpice ? "Selects questions from any spice level." : "Choose the maximum spice level for questions."}
+                           </p>
                       </div>
 
                       {/* Exclusive Mode Option - Only for This or That */}
@@ -1132,6 +1134,15 @@ const GameRoom: React.FC<GameRoomProps> = ({
              hasClickedContinue={hasClickedContinueThisRound}
              onContinue={handleContinueClick}
           />
+        );
+      case 'waiting-next-round':
+        return (
+          <GameCard title={`Round ${currentRound} Results`} description="Waiting for opponent to continue...">
+            <div className="text-center py-8">
+              <p className="text-gray-600 mb-2">Hang tight!</p>
+              {/* Optionally show results again here or just a waiting message */}
+            </div>
+          </GameCard>
         );
       case 'completed':
         return (

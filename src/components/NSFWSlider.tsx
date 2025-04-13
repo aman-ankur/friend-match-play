@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 interface NSFWSliderProps {
   value: number;
   onValueChange: (value: number) => void;
+  disabled?: boolean;
 }
 
 const nsfwSegments = [
@@ -19,17 +20,17 @@ const getSegmentForLevel = (level: number) => {
   return nsfwSegments.find(seg => level >= seg.range[0] && level <= seg.range[1]) || nsfwSegments[0];
 };
 
-const NSFWSlider: React.FC<NSFWSliderProps> = ({ value, onValueChange }) => {
+const NSFWSlider: React.FC<NSFWSliderProps> = ({ value, onValueChange, disabled = false }) => {
   const currentSegment = getSegmentForLevel(value);
 
   const handleSliderChange = (value: number[]) => {
-    if (value && value.length > 0) {
+    if (!disabled && value && value.length > 0) {
       onValueChange(value[0]);
     }
   };
 
   return (
-    <div className="w-full max-w-md mx-auto mb-6 px-4">
+    <div className={cn("w-full max-w-md mx-auto mb-6 px-4", disabled && "opacity-50 cursor-not-allowed")}>
       <div className="flex justify-between items-center mb-2">
         <span className="text-sm font-medium text-gray-700">Spice Level:</span>
         <span className={cn(
@@ -49,11 +50,21 @@ const NSFWSlider: React.FC<NSFWSliderProps> = ({ value, onValueChange }) => {
         min={1}
         max={10}
         step={1}
-        className={cn("w-full h-2 rounded-full cursor-pointer",
-          "[&>span:first-child]:bg-gradient-to-r [&>span:first-child]:from-green-400 [&>span:first-child]:via-yellow-400 [&>span:first-child]:to-red-500"
+        disabled={disabled}
+        className={cn(
+          "w-full h-2 rounded-full",
+          !disabled && "cursor-pointer",
+          "[&>span:first-child]:bg-gradient-to-r [&>span:first-child]:from-green-400 [&>span:first-child]:via-yellow-400 [&>span:first-child]:to-red-500",
+          "[&>span:last-child]:appearance-none [&>span:last-child]:bg-transparent [&>span:last-child]:border-none",
+          "[&>span:last-child]:w-6 [&>span:last-child]:h-6 [&>span:last-child]:rounded-full",
+          "[&>span:last-child]:relative [&>span:last-child]:-top-2",
+          "before:[&>span:last-child]:content-['🔥'] before:[&>span:last-child]:text-xl",
+          "before:[&>span:last-child]:absolute before:[&>span:last-child]:inset-0",
+          "before:[&>span:last-child]:flex before:[&>span:last-child]:items-center before:[&>span:last-child]:justify-center"
         )}
         onValueChange={handleSliderChange}
         aria-label="NSFW Level Slider"
+        aria-disabled={disabled}
       />
       
       <p className="text-sm text-muted-foreground text-center mt-2 h-4">

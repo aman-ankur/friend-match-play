@@ -660,14 +660,6 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["personal", "philosophy"]
   },
   {
-    id: "tot-3",
-    text: "Would you rather be too hot or too cold?",
-    options: ["Too hot", "Too cold"],
-    score: 1,
-    nsfwRating: 1,
-    categories: ["personal", "preferences"]
-  },
-  {
     id: "tot-4",
     text: "Would you rather be famous or rich?",
     options: ["Famous", "Rich"],
@@ -804,39 +796,23 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["abilities", "fantasy"]
   },
   {
-    id: "tot-21",
-    text: "Would you rather live in the city or the countryside?",
-    options: ["City", "Countryside"],
-    score: 1,
-    nsfwRating: 1,
-    categories: ["lifestyle", "preferences"]
-  },
-  {
-    id: "tot-22",
-    text: "Would you rather give up coffee or alcohol forever?",
-    options: ["Give up coffee", "Give up alcohol"],
-    score: 1,
-    nsfwRating: 2,
-    categories: ["food", "habits"]
-  },
-  {
     id: "tot-23",
-    text: "Would you rather have more time or more money?",
-    options: ["More time", "More money"],
+    text: "Would you rather be able to speak every language or play every instrument?",
+    options: ["Speak every language", "Play every instrument"],
     score: 1,
     nsfwRating: 1,
-    categories: ["lifestyle", "philosophy"]
-  },
-  {
-    id: "tot-24",
-    text: "Would you rather be an amazing singer or an amazing dancer?",
-    options: ["Singer", "Dancer"],
-    score: 1,
-    nsfwRating: 1,
-    categories: ["abilities", "personal"]
+    categories: ["abilities", "skills"]
   },
   {
     id: "tot-25",
+    text: "Would you rather have unlimited money or unlimited time?",
+    options: ["Unlimited money", "Unlimited time"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["fantasy", "choices"]
+  },
+  {
+    id: "tot-26",
     text: "Would you rather travel the future or the past?",
     options: ["Future", "Past"],
     score: 1,
@@ -844,7 +820,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["fantasy", "personal"]
   },
   {
-    id: "tot-26",
+    id: "tot-27",
     text: "Would you rather always have to tell the truth or always have to lie?",
     options: ["Always tell truth", "Always lie"],
     score: 1,
@@ -852,7 +828,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["morality", "philosophy"]
   },
   {
-    id: "tot-27",
+    id: "tot-28",
     text: "Would you rather find true love or win the lottery?",
     options: ["True love", "Lottery"],
     score: 1,
@@ -860,7 +836,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["relationships", "lifestyle"]
   },
   {
-    id: "tot-28",
+    id: "tot-29",
     text: "Would you rather date someone much older or much younger?",
     options: ["Much older", "Much younger"],
     score: 1,
@@ -868,7 +844,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["dating", "relationships"]
   },
   {
-    id: "tot-29",
+    id: "tot-30",
     text: "Would you rather forgive a partner for cheating emotionally or physically?",
     options: ["Forgive emotional cheating", "Forgive physical cheating"],
     score: 1,
@@ -876,7 +852,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["relationships", "morality"]
   },
   {
-    id: "tot-30",
+    id: "tot-31",
     text: "Would you rather have your browser history leaked or your private messages leaked?",
     options: ["Browser history", "Private messages"],
     score: 1,
@@ -884,7 +860,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["privacy", "technology"]
   },
   {
-    id: "tot-31",
+    id: "tot-32",
     text: "Would you rather have a threesome with two people you know or two strangers?",
     options: ["People you know", "Strangers"],
     score: 1,
@@ -892,7 +868,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["sex", "relationships"]
   },
   {
-    id: "tot-32",
+    id: "tot-33",
     text: "Would you rather be dominant or submissive in the bedroom?",
     options: ["Dominant", "Submissive"],
     score: 1,
@@ -900,7 +876,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["sex", "personal"]
   },
   {
-    id: "tot-33",
+    id: "tot-34",
     text: "Would you rather watch porn with your partner or separately?",
     options: ["Watch together", "Watch separately"],
     score: 1,
@@ -908,7 +884,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["sex", "relationships"]
   },
   {
-    id: "tot-34",
+    id: "tot-35",
     text: "Would you rather have sex in public or film a sex tape (never leaked)?",
     options: ["Sex in public", "Film sex tape"],
     score: 1,
@@ -916,7 +892,7 @@ const thisOrThatQuestions: GameQuestion[] = [
     categories: ["sex", "fantasy"]
   },
   {
-    id: "tot-35",
+    id: "tot-36",
     text: "Would you rather have your deepest kink revealed to your parents or your boss?",
     options: ["Parents", "Boss"],
     score: 1,
@@ -1436,6 +1412,384 @@ const thisOrThatQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 11,
     categories: ["sex", "exhibitionism", "sharing", "couple"]
+  },
+  
+  // NSFW 1 Questions - New additions
+  {
+    id: "tot-new-1001",
+    text: "Would you rather have fingers as long as your legs or legs as short as your fingers?",
+    options: ["Fingers as long as legs", "Legs as short as fingers"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "bizarre", "funny"]
+  },
+  {
+    id: "tot-new-1002",
+    text: "Would you rather always have to wear socks with sandals or a fanny pack everywhere?",
+    options: ["Socks with sandals", "Fanny pack everywhere"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "fashion", "funny"]
+  },
+  {
+    id: "tot-new-1003",
+    text: "Would you rather have a tail that wags when you're excited or ears that twitch when you're nervous?",
+    options: ["Wagging tail", "Twitching ears"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "bizarre", "emotions"]
+  },
+  {
+    id: "tot-new-1004",
+    text: "Would you rather burp bubbles or fart sparkles?",
+    options: ["Burp bubbles", "Fart sparkles"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "bizarre", "funny"]
+  },
+  {
+    id: "tot-new-1005",
+    text: "Would you rather have a personal theme song that plays every time you enter a room or a laugh track for every joke you tell?",
+    options: ["Personal theme song", "Laugh track"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "bizarre", "social"]
+  },
+  
+  // NSFW 2 Questions - New additions
+  {
+    id: "tot-new-2001",
+    text: "Would you rather have a superpower that makes you irresistible for 5 minutes a day or mildly attractive all the time?",
+    options: ["Irresistible 5 minutes", "Mildly attractive always"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["personal", "attraction", "fantasy"]
+  },
+  {
+    id: "tot-new-2002",
+    text: "Would you rather always have perfect hair or never need to shave again?",
+    options: ["Perfect hair", "Never shave"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["personal", "appearance", "preferences"]
+  },
+  {
+    id: "tot-new-2003",
+    text: "Would you rather have a clone to do your chores or one to flirt for you?",
+    options: ["Clone for chores", "Clone for flirting"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["personal", "relationships", "fantasy"]
+  },
+  {
+    id: "tot-new-2004",
+    text: "Would you rather accidentally like your crush's old photo or call them by the wrong name in person?",
+    options: ["Like old photo", "Call wrong name"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["relationships", "social", "embarrassment"]
+  },
+  {
+    id: "tot-new-2005",
+    text: "Would you rather have a partner who's always hot or always cold?",
+    options: ["Always hot", "Always cold"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["relationships", "preferences", "lifestyle"]
+  },
+  
+  // NSFW 3 Questions - New additions
+  {
+    id: "tot-new-3001",
+    text: "Would you rather live in a world where everyone can read your thoughts or where you can read everyone else's?",
+    options: ["Everyone reads yours", "You read everyone's"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["psychology", "fantasy", "personal"]
+  },
+  {
+    id: "tot-new-3002",
+    text: "Would you rather always smell like your favorite food or your favorite perfume/cologne?",
+    options: ["Smell like food", "Smell like perfume/cologne"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["personal", "sensory", "social"]
+  },
+  {
+    id: "tot-new-3003",
+    text: "Would you rather have a secret admirer who never confesses or a loud crush who won't shut up?",
+    options: ["Secret admirer", "Loud crush"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["relationships", "dating", "social"]
+  },
+  {
+    id: "tot-new-3004",
+    text: "Would you rather lose your sense of taste or your sense of touch for a week?",
+    options: ["Lose taste", "Lose touch"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["personal", "sensory", "choices"]
+  },
+  {
+    id: "tot-new-3005",
+    text: "Would you rather have a partner who's always right or one who always admits they're wrong?",
+    options: ["Always right", "Always admits wrong"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["relationships", "communication", "psychology"]
+  },
+  
+  // NSFW 4 Questions - New additions
+  {
+    id: "tot-new-4001",
+    text: "Would you rather date someone who's a morning person or a night owl?",
+    options: ["Morning person", "Night owl"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "dating", "lifestyle"]
+  },
+  {
+    id: "tot-new-4002",
+    text: "Would you rather have a partner who's obsessed with planning dates or one who's totally spontaneous?",
+    options: ["Planning obsessed", "Totally spontaneous"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "dating", "compatibility"]
+  },
+  {
+    id: "tot-new-4003",
+    text: "Would you rather kiss someone who's all tongue or all teeth?",
+    options: ["All tongue", "All teeth"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "sex", "intimacy"]
+  },
+  {
+    id: "tot-new-4004",
+    text: "Would you rather date someone who loves to cuddle or someone who needs their space?",
+    options: ["Loves cuddling", "Needs space"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "intimacy", "preferences"]
+  },
+  {
+    id: "tot-new-4005",
+    text: "Would you rather have a partner who's a loud snorer or a sleep-talker spilling secrets?",
+    options: ["Loud snorer", "Sleep-talker spilling secrets"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "lifestyle", "funny"]
+  },
+  
+  // NSFW 5 Questions - New additions
+  {
+    id: "tot-new-5001",
+    text: "Would you rather your partner know all your passwords or all your guilty pleasures?",
+    options: ["Know all passwords", "Know all guilty pleasures"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["relationships", "trust", "privacy"]
+  },
+  {
+    id: "tot-new-5002",
+    text: "Would you rather have a partner who's jealous but passionate or chill but distant?",
+    options: ["Jealous but passionate", "Chill but distant"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["relationships", "emotions", "compatibility"]
+  },
+  {
+    id: "tot-new-5003",
+    text: "Would you rather accidentally flash your neighbor or your boss?",
+    options: ["Flash neighbor", "Flash boss"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["embarrassment", "social", "awkward"]
+  },
+  {
+    id: "tot-new-5004",
+    text: "Would you rather have a partner who loves long foreplay or gets straight to the point?",
+    options: ["Loves long foreplay", "Gets straight to the point"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "relationships", "intimacy"]
+  },
+  {
+    id: "tot-new-5005",
+    text: "Would you rather share your wildest dream or your weirdest turn-on?",
+    options: ["Share wildest dream", "Share weirdest turn-on"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["personal", "sex", "vulnerability"]
+  },
+  
+  // NSFW 6 Questions - New additions
+  {
+    id: "tot-new-6001",
+    text: "Would you rather have a partner who's loud in bed or one who bites?",
+    options: ["Loud in bed", "Bites"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "intimacy", "preferences"]
+  },
+  {
+    id: "tot-new-6002",
+    text: "Would you rather hook up in a car or a movie theater?",
+    options: ["Car", "Movie theater"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "public", "thrill"]
+  },
+  {
+    id: "tot-new-6003",
+    text: "Would you rather have a partner who's into blindfolds or handcuffs?",
+    options: ["Blindfolds", "Handcuffs"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "kink", "preferences"]
+  },
+  {
+    id: "tot-new-6004",
+    text: "Would you rather send a nude to the wrong group chat or have your partner post one of you online by mistake?",
+    options: ["Send to wrong chat", "Partner posts online"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "embarrassment", "social"]
+  },
+  {
+    id: "tot-new-6005",
+    text: "Would you rather have a quickie in the shower or a long session on the couch?",
+    options: ["Quickie in shower", "Long session on couch"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "intimacy", "preferences"]
+  },
+  
+  // NSFW 7 Questions - New additions
+  {
+    id: "tot-new-7001",
+    text: "Would you rather have your partner find your sex toy stash or your secret fan fiction?",
+    options: ["Find sex toys", "Find fan fiction"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "secrets", "embarrassment"]
+  },
+  {
+    id: "tot-new-7002",
+    text: "Would you rather have sex on a beach or in a forest?",
+    options: ["Beach", "Forest"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "outdoor", "fantasy"]
+  },
+  {
+    id: "tot-new-7003",
+    text: "Would you rather admit your most awkward hookup moment or your strangest fantasy?",
+    options: ["Awkward hookup moment", "Strangest fantasy"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "past", "fantasy"]
+  },
+  {
+    id: "tot-new-7004",
+    text: "Would you rather have a partner who's into dirty talk in public or sexts you at work?",
+    options: ["Dirty talk in public", "Sexts at work"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "public", "naughty"]
+  },
+  {
+    id: "tot-new-7005",
+    text: "Would you rather have a one-night stand with your best friend's ex or your ex's best friend?",
+    options: ["Best friend's ex", "Ex's best friend"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "relationships", "taboo"]
+  },
+  
+  // NSFW 8 Questions - New additions
+  {
+    id: "tot-new-8001",
+    text: "Would you rather have sex with music playing or someone watching?",
+    options: ["Music playing", "Someone watching"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "preferences", "voyeurism"]
+  },
+  {
+    id: "tot-new-8002",
+    text: "Would you rather have your partner rate your oral skills or you rate theirs?",
+    options: ["They rate yours", "You rate theirs"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "communication", "intimacy"]
+  },
+  {
+    id: "tot-new-8003",
+    text: "Would you rather have a partner who's into spanking or one who's into ice cubes?",
+    options: ["Spanking", "Ice cubes"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kink", "sensations"]
+  },
+  {
+    id: "tot-new-8004",
+    text: "Would you rather walk in on your roommate hooking up or have them walk in on you?",
+    options: ["Walk in on them", "They walk in on you"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "embarrassment", "awkward"]
+  },
+  {
+    id: "tot-new-8005",
+    text: "Would you rather have a threesome with two strangers or two exes?",
+    options: ["Two strangers", "Two exes"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "threesome", "fantasy"]
+  },
+  
+  // NSFW 9 Questions - New additions
+  {
+    id: "tot-new-9001",
+    text: "Would you rather have sex tied up or tie someone else up?",
+    options: ["Be tied up", "Tie someone up"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "kink", "bondage"]
+  },
+  {
+    id: "tot-new-9002",
+    text: "Would you rather have your loudest orgasm heard by neighbors or recorded by accident?",
+    options: ["Heard by neighbors", "Recorded by accident"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "embarrassment", "privacy"]
+  },
+  {
+    id: "tot-new-9003",
+    text: "Would you rather have a partner who's into public groping or private stripping?",
+    options: ["Public groping", "Private stripping"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "exhibitionism", "intimacy"]
+  },
+  {
+    id: "tot-new-9004",
+    text: "Would you rather confess your dirtiest roleplay idea or act it out with no warning?",
+    options: ["Confess it", "Act it out"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "roleplay", "communication"]
+  },
+  {
+    id: "tot-new-9005",
+    text: "Would you rather have sex in a hot tub with a stranger or on a rooftop with someone you know?",
+    options: ["Hot tub with stranger", "Rooftop with someone you know"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "public", "thrill"]
   }
 ];
 

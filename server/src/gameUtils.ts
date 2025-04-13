@@ -1454,11 +1454,11 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   },
   {
     "id": "gwia-new-123", // Renamed from gwia-new-115
-    "text": "What’s the dirtiest power move I could make during a family wedding?",
+    "text": "What's the dirtiest power move I could make during a family wedding?",
     "options": [
       "Sneak away for a quickie during the sangeet",
-      "Hook up with a cousin’s hot best friend—again",
-      "Use the DJ’s mic to whisper something filthy to one person",
+      "Hook up with a cousin's hot best friend—again",
+      "Use the DJ's mic to whisper something filthy to one person",
       "Send my plus-one a pic from the bathroom with a challenge"
     ],
     "score": 1,
@@ -1469,7 +1469,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
     "id": "gwia-new-124", // Renamed from gwia-new-116
     "text": "What secret roleplay would *destroy* me if someone found out I liked it?",
     "options": [
-      "Getting ‘disciplined’ by a strict professor type",
+      "Getting 'disciplined' by a strict professor type",
       "Being interrogated like a spy with *kinky consequences*",
       "Playing a submissive pet for a dom",
       "Being forced to perform in front of a live audience"
@@ -1480,7 +1480,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   },
   {
     "id": "gwia-new-125", // Renamed from gwia-new-117
-    "text": "What’s the most scandalous public situation I’d get *giddy* about being caught in?",
+    "text": "What's the most scandalous public situation I'd get *giddy* about being caught in?",
     "options": [
       "Making out with a stranger in an elevator",
       "A very public display of dominance in the middle of a park",
@@ -1498,7 +1498,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
       "Do a very public striptease in the middle of a work event",
       "Challenge someone to a public *showdown* of humiliation",
       "Send a message full of *dirty* confessions to the wrong person",
-      "Fake an embarrassing ‘confession’ on a live stream"
+      "Fake an embarrassing 'confession' on a live stream"
     ],
     "score": 1,
     "nsfwRating": 10,
@@ -1506,7 +1506,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   },
   {
     "id": "gwia-new-127", // Renamed from gwia-new-119
-    "text": "What’s the most fucked up thing I’d risk to *completely* destroy my life just for the thrill?",
+    "text": "What's the most fucked up thing I'd risk to *completely* destroy my life just for the thrill?",
     "options": [
       "Live out a sexual fantasy on a public stage with no warning",
       "Hook up with a total stranger in a public restroom",
@@ -2992,24 +2992,26 @@ const allQuestions: Record<GameMode, GameQuestion[]> = {
 };
 
 // --- Function to get questions (Exported for server use) ---
-export const getQuestionsByMode = (mode: GameMode, count: number = 5, nsfwLevel: number = 1, includeExclusive: boolean = false): GameQuestion[] => {
+export const getQuestionsByMode = (mode: GameMode, count: number = 5, nsfwLevel: number = 0, includeExclusive: boolean = false): GameQuestion[] => {
   const questionsPool = allQuestions[mode] || [];
   
   console.log(`[getQuestionsByMode] Called with: mode=${mode}, count=${count}, nsfwLevel=${nsfwLevel}, includeExclusive=${includeExclusive}`);
   console.log(`[getQuestionsByMode] Total questions in pool for ${mode}: ${questionsPool.length}`);
 
-  // Filter questions by NSFW level
-  const filteredQuestions = includeExclusive
-    ? questionsPool.filter(q => q.nsfwRating === 11) // Only get exclusive questions (rating 11)
-    : questionsPool.filter(q => q.nsfwRating <= nsfwLevel); // Standard filtering (up to specified level)
-    
-  console.log(`[getQuestionsByMode] Filtered questions: ${filteredQuestions.length} (includeExclusive=${includeExclusive})`);
+  let filteredQuestions: GameQuestion[];
+
   if (includeExclusive) {
-    console.log(`[getQuestionsByMode] NSFW Rating 11 questions found: ${filteredQuestions.length}`);
-    // Log the first 3 questions to verify they're correct
-    if (filteredQuestions.length > 0) {
-      console.log(`[getQuestionsByMode] First exclusive question: ${filteredQuestions[0].id} - ${filteredQuestions[0].text.substring(0, 40)}...`);
-    }
+    // Only get exclusive questions (rating 11)
+    filteredQuestions = questionsPool.filter(q => q.nsfwRating === 11);
+    console.log(`[getQuestionsByMode] Filtering for EXCLUSIVE questions (nsfwRating 11). Found: ${filteredQuestions.length}`);
+  } else if (nsfwLevel === 0) {
+    // nsfwLevel 0 means RANDOM: Include all non-exclusive levels (1-10)
+    filteredQuestions = questionsPool.filter(q => q.nsfwRating >= 1 && q.nsfwRating <= 10);
+    console.log(`[getQuestionsByMode] Filtering for RANDOM spice (nsfwLevel 0 -> ratings 1-10). Found: ${filteredQuestions.length}`);
+  } else {
+    // Standard filtering: Include levels up to the specified nsfwLevel
+    filteredQuestions = questionsPool.filter(q => q.nsfwRating >= 1 && q.nsfwRating <= nsfwLevel);
+    console.log(`[getQuestionsByMode] Filtering for specific spice (nsfwLevel ${nsfwLevel} -> ratings 1-${nsfwLevel}). Found: ${filteredQuestions.length}`);
   }
 
   // Shuffle and pick the first 'count' questions

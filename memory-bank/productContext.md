@@ -74,3 +74,36 @@ Cards Against Maturity is a web-based party game where players connect and test 
     *   Both players receive `gameOver`, update state, see final results screen.
     *   Option to "Play Again" (TODO: Implement) or "Exit".
 6.  **Disconnection:** If a player disconnects, server removes them, emits `playerLeft` to the remaining player, who sees a notification and might be returned to game selection.
+
+## Feature Request: Strict NSFW Spice Level Filtering (Parked)
+
+**Date:** 2024-07-26
+
+**Context:**
+User observed that when selecting a higher spice level (e.g., "Hot"), questions with lower NSFW ratings (e.g., 1) could still appear in subsequent rounds. The current system filters questions *up to* the selected maximum level and shuffles them.
+
+**Desired Behavior:**
+When a user selects a specific spice level category (e.g., "Mild" [1-2], "Medium" [3-4], "Spicy" [5-6], "Hot" [7-8], "Wild" [9-10]), the game should *only* include questions whose `nsfwRating` falls strictly within the numerical range defined for that category. The "Random" setting should still include questions from all levels (1-10).
+
+**Current Behavior:**
+- Frontend sends the single maximum numerical value of the selected spice level (e.g., 7 for "Hot" if slider is on 7) to the backend (`nsfwLevel`).
+- Backend (`getQuestionsByMode`) filters for questions with `nsfwRating` from 1 up to `nsfwLevel`.
+- This filtered pool (e.g., ratings 1-7) is shuffled, allowing lower-rated questions to appear.
+
+**Proposed Implementation Changes:**
+
+1.  **Frontend (`GameRoom.tsx` / `NSFWSlider.tsx`):**
+    *   Access/share the `nsfwSegments` mapping that defines label-to-range (e.g., `Hot: [7, 8]`).
+    *   When a spice level is selected, determine the corresponding min/max range.
+    *   Send *both* `minNsfwLevel` and `maxNsfwLevel` to the server instead of a single `nsfwLevel`.
+    *   Handle the "Random" selection distinctly (e.g., sending `min: 0, max: 0` or similar).
+
+2.  **Backend (`server.ts` - `startGame` handler):**
+    *   Update the handler to receive `minNsfwLevel` and `maxNsfwLevel` from the client.
+    *   Pass these two values to `getQuestionsByMode`.
+
+3.  **Backend (`gameUtils.ts` - `getQuestionsByMode`):**
+    *   Update function signature to accept `minNsfwLevel` and `maxNsfwLevel`.
+    *   Modify filtering logic:
+        *   If "Random" signal received: filter `nsfwRating >= 1 && nsfwRating <= 10`.
+        *   Otherwise: filter `nsfwRating >= minNsfwLevel && nsfwRating <= maxNsfwLevel`.

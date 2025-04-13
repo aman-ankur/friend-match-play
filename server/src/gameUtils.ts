@@ -16,7 +16,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-1",
     text: "What's your go-to karaoke song when you're feeling confident?",
-    options: ["Bohemian Rhapsody", "Don't Stop Believin'", "Sweet Caroline", "Livin' on a Prayer"],
+    options: ["Bohemian Rhapsody", "Shape of You'", "WAP", "Let It Go"],
     score: 1,
     nsfwRating: 1,
     categories: ["personal", "music"]
@@ -24,23 +24,23 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-2",
     text: "What's your secret talent that no one would guess?",
-    options: ["I can solve a Rubik's cube", "I'm really good at impressions", "I can recite pi to 50 digits", "I'm a great cook"],
+    options: ["Flirting via memes only", "Guessing someone's vibe from their Spotify playlist", "I can cry on command — emotionally and dramatically", "Detecting red flags in under 0.3 seconds"],
     score: 1,
-    nsfwRating: 1,
+    nsfwRating: 2,
     categories: ["personal", "skills"]
   },
   {
     id: "gwia-3",
     text: "What's your guilty pleasure TV show?",
-    options: ["The Bachelor", "Keeping Up with the Kardashians", "90 Day Fiancé", "Love Island"],
+    options: ["Bridgerton — for the plot (aka the Duke of Hastings)", "Any cooking show where they get judged harshly for raw chicken", "Shark Tank — but only for the drama, not the business", "Indian Matchmaking — it's anthropology, I swear"],
     score: 1,
-    nsfwRating: 1,
+    nsfwRating: 2,
     categories: ["entertainment", "personal"]
   },
   {
     id: "gwia-4",
     text: "What's your most irrational fear?",
-    options: ["Clowns", "Heights", "Spiders", "Public Speaking"],
+    options: ["The Wi-Fi dropping at the wrong moment", "My phone battery dying during an important conversation", "Accidentally sending a message to the wrong person", "Running into an ex when you're looking your worst"],
     score: 1,
     nsfwRating: 1,
     categories: ["personal", "fears"]
@@ -48,7 +48,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-5",
     text: "What's your dream travel destination?",
-    options: ["Japan", "Italy", "New Zealand", "Iceland"],
+    options: ["A cozy cabin in the Swiss Alps with a view of the Northern Lights", "A tiny island in Greece where you can swim to dinner", "A secluded villa in Tuscany with endless vineyards and sunsets", "An ancient Japanese village with traditional tea ceremonies and cherry blossoms"],
     score: 1,
     nsfwRating: 1,
     categories: ["travel", "personal"]
@@ -56,15 +56,15 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-6",
     text: "What's your most controversial food opinion?",
-    options: ["Pineapple belongs on pizza", "Ketchup is overrated", "Avocado is just okay", "Coffee is better without sugar"],
+    options: ["Burgers don't need lettuce or tomato", "Breakfast should be a dessert, not a meal", "Avocado is just a green mush with delusions of grandeur", "Coffee without sugar is for true masochists"],
     score: 1,
-    nsfwRating: 4,
+    nsfwRating: 3,
     categories: ["food", "opinions"]
   },
   {
     id: "gwia-7",
-    text: "What's your most embarrassing dating app story?",
-    options: ["Matched with my ex", "Got catfished", "Awkward first date", "Ghosted after great conversation"],
+    text: "What's your most embarrassing dating app story (or what would it be if you ever dared to download one)?",
+    options: ["Matched with my ex… and we both swiped right 😬", "Sent a risky message… to the wrong match 😭", "Used ChatGPT to write my bio and now they expect me to be funny", "Got ghosted mid-convo — they vanished like my motivation on Mondays"],
     score: 1,
     nsfwRating: 5,
     categories: ["dating", "personal"]
@@ -72,23 +72,23 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-8",
     text: "What's your most controversial relationship opinion?",
-    options: ["Living together before marriage is essential", "Long-distance relationships never work", "Age gaps don't matter", "Friends with exes is fine"],
+    options: ["Couples should stalk each other's exes — it's just research", "\"We were on a break\" is a valid excuse — sorry, Ross was right", "You don't need to share everything — including the Netflix password", "If they don't post you, you're not the main character 💅"],
     score: 1,
-    nsfwRating: 5,
+    nsfwRating: 4,
     categories: ["relationships", "opinions"]
   },
   {
     id: "gwia-9",
     text: "What's your most scandalous social media habit?",
-    options: ["Stalking exes", "Posting thirst traps", "Arguing in comments", "Fake checking in at fancy places"],
+    options: ["Secretly stalking my ex like I'm a detective on a case", "Posting thirst traps and pretending it's just 'casual content'", "I scroll through my crush's profile until I know their life story", "I follow people I don't even like just for the drama"],
     score: 1,
-    nsfwRating: 4,
+    nsfwRating: 5,
     categories: ["social", "personal"]
   },
   {
     id: "gwia-10",
     text: "What's your most controversial opinion about modern dating?",
-    options: ["Ghosting is sometimes necessary", "Dating apps ruined romance", "Marriage is outdated", "Friends with benefits never works"],
+    options: ["Ghosting is sometimes necessary", "Dating apps ruined romance", "Marriage? A relic of the past", "Friends with benefits never works"],
     score: 1,
     nsfwRating: 5,
     categories: ["dating", "opinions"]
@@ -96,23 +96,23 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-11",
     text: "What's your most controversial opinion about sex?",
-    options: ["Communication is overrated", "Monogamy is unnatural", "Size doesn't matter", "Sex on first date is fine"],
+    options: ["Communication is overrated", "Monogamy? It's a societal invention. Let's think outside the box.", "SSize doesn't matter. It's about chemistry, baby.", "Sex on first date is fine"],
     score: 1,
-    nsfwRating: 8,
+    nsfwRating: 9,
     categories: ["sex", "opinions"]
   },
   {
     id: "gwia-12",
-    text: "What's your most scandalous dating app behavior?",
-    options: ["Using fake photos", "Lying about age", "Having multiple accounts", "Using someone else's photos"],
+    text: "What's your most wildly questionable move on a dating app? ",
+    options: ["Using a picture from 5 years ago (or 10... who's counting?)", "Telling them you're \"just here for friends\" but really you're only looking for one thing...", "Juggling 3 apps like it's your full-time job", "Pretending to be a dog lover when you're definitely allergic"],
     score: 1,
-    nsfwRating: 7,
+    nsfwRating: 6,
     categories: ["dating", "personal"]
   },
   {
     id: "gwia-13",
     text: "What's your most controversial opinion about relationships?",
-    options: ["Cheating can be justified", "Open relationships are better", "Marriage is a scam", "Love is just chemicals"],
+    options: ["Sometimes, cheating isn't as black-and-white as people make it out to be.", "Open relationships can be more fun than monogamy", "Marriage is just an expensive tradition.", "Living together before marriage is the real test."],
     score: 1,
     nsfwRating: 8,
     categories: ["relationships", "opinions"]
@@ -120,55 +120,47 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-14",
     text: "What's your most scandalous social media confession?",
-    options: ["I have a secret account", "I post fake relationship drama", "I stalk my crush's ex", "I pretend to be someone else"],
+    options: ["I have a secret account that nobody knows about… except my dog.", "I've stalked my crush's ex to see if I'm better (spoiler: I am).", "I've used a fake account to peek at someone's stories without them knowing.", "I've commented on my own post to make it look like I'm more popular."],
     score: 1,
-    nsfwRating: 7,
+    nsfwRating: 6,
     categories: ["social", "personal"]
   },
   {
     id: "gwia-15",
     text: "What's your most controversial opinion about modern romance?",
-    options: ["Romance is dead", "Love is a choice not a feeling", "Soulmates don't exist", "Marriage is outdated"],
+    options: ["Romance is dead — we're all just trying to survive in this chaotic world", "Love is a choice not a feeling", "Soulmates are a myth — we're just here for the vibes.", "We all love the idea of 'the one,' but let's face it, it's more like 'the right one for now.'"],
     score: 1,
-    nsfwRating: 8,
+    nsfwRating: 6,
     categories: ["relationships", "opinions"]
-  },
-  {
-    id: "gwia-16",
-    text: "What's your comfort food after a bad day?",
-    options: ["Pizza", "Ice Cream", "Mac & Cheese", "Chocolate"],
-    score: 1,
-    nsfwRating: 1,
-    categories: ["personal", "food"]
   },
   {
     id: "gwia-17",
     text: "If you could have any superpower, what would it be?",
-    options: ["Flight", "Invisibility", "Teleportation", "Super Strength"],
+    options: ["Perfect Memory — Never forget that hilarious meme again.", "Invisibility — Sneak into VIP sections without anyone noticing.", "Mind Reading — So you can actually know what your crush is thinking", "Time Travel — Undo all those awkward moments and missed opportunities."],
     score: 1,
-    nsfwRating: 1,
+    nsfwRating: 2,
     categories: ["personal", "fantasy"]
   },
   {
     id: "gwia-18",
     text: "What's the first thing you do when you wake up?",
-    options: ["Check phone", "Drink water", "Hit snooze", "Meditate"],
+    options: ["Check the time and instantly regret it", "Hit snooze 5 times and pretend I'm actually getting rest", "Check Instagram to see what I missed while sleeping", "Immediately regret not going to bed earlier last night"],
     score: 1,
     nsfwRating: 1,
     categories: ["personal", "habits"]
   },
   {
     id: "gwia-19",
-    text: "What's a small thing that makes your day better?",
-    options: ["Sunny weather", "Good coffee", "Kind stranger", "Favorite song"],
+    text: "What's that tiny thing that instantly boosts your mood?",
+    options: ["Sunny weather", "That first sip of coffee in the morning that makes you human again.", "A random act of kindness from a stranger that makes you believe in good people.", "When your favorite song plays, and suddenly life is a music video"],
     score: 1,
     nsfwRating: 1,
     categories: ["personal", "preferences"]
   },
   {
     id: "gwia-20",
-    text: "What fictional world would you most like to live in?",
-    options: ["Hogwarts", "Middle-earth", "Star Wars Galaxy", "Narnia"],
+    text: "If you could live in any fictional universe, which one would it be?",
+    options: ["Hogwarts – magic school vibes.", "Marvel – superheroes, obviously.", "Star Wars – lightsabers and space battles", "Westeros – drama and dragons."],
     score: 1,
     nsfwRating: 2,
     categories: ["entertainment", "personal"]
@@ -176,7 +168,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-21",
     text: "What's a skill you wish you had?",
-    options: ["Playing an instrument", "Speaking another language", "Drawing", "Coding"],
+    options: ["Playing an instrument – so I can make a dramatic entrance.", "Speaking another language – so I can talk smack in private.", "Drawing – because my stick figures deserve better.", "Photography – to prove I went to that concert."],
     score: 1,
     nsfwRating: 2,
     categories: ["personal", "skills"]
@@ -184,7 +176,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-22",
     text: "What's your biggest pet peeve?",
-    options: ["Loud chewing", "Being late", "Slow walkers", "Interrupting"],
+    options: ["Loud phone talkers in public - we get it, you're popular", "Being late – I don't have time for your time management issues", "Interrupting – I'm not even done with my sentence yet, but okay.", "Texting 'k' – why does it feel like a passive-aggressive war declaration?"],
     score: 1,
     nsfwRating: 3,
     categories: ["personal", "preferences"]
@@ -192,7 +184,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-23",
     text: "What's the most spontaneous thing you've ever done?",
-    options: ["Last-minute trip", "Quit a job", "Got a tattoo", "Confessed feelings"],
+    options: ["Made an impulse purchase I definitely didn't need", "Ate an entire pizza in one sitting (and regretted it)", "Signed up for a random class on a whim", "Blurted out my feelings without thinking"],
     score: 1,
     nsfwRating: 4,
     categories: ["personal", "life"]
@@ -200,7 +192,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-24",
     text: "What's a white lie you tell often?",
-    options: ["I'm fine", "On my way", "Looks great!", "I've seen that movie"],
+    options: ["I'm fine... really!", "Be there in 5!", "It's amazing! I'll pretend I didn't hate it.", "I've totally seen that movie"],
     score: 1,
     nsfwRating: 5,
     categories: ["personal", "morality"]
@@ -208,7 +200,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-25",
     text: "What's something you find attractive that others might not?",
-    options: ["Specific accent", "Awkwardness", "Intelligence over looks", "Unique hobby"],
+    options: ["That one accent that makes you swoon", "Embracing that adorable awkwardness", "Brains > looks, fight me on it", "A dry sense of humor that keeps you guessing"],
     score: 1,
     nsfwRating: 6,
     categories: ["personal", "attraction"]
@@ -216,7 +208,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-26",
     text: "What's the weirdest place you've fallen asleep?",
-    options: ["Public transport", "At work/school", "Standing up", "During a movie"],
+    options: ["At a friend's party, because I'm too old for this.", "During a Zoom call, pretending to listen.", "On the bus/train, drooling like a champion.", "On a park bench, because who needs a bed?"],
     score: 1,
     nsfwRating: 6,
     categories: ["personal", "funny"]
@@ -224,7 +216,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-27",
     text: "Have you ever snooped through someone's phone?",
-    options: ["Yes, partner's", "Yes, friend's", "Yes, family's", "No, never"],
+    options: ["Yes, my partner's – couldn't resist.", "Yes, my friend's – curiosity is a disease.", "Yes, my family's – because family secrets, right?", "Nope, I'm a saint (for now)."],
     score: 1,
     nsfwRating: 7,
     categories: ["personal", "relationships", "morality"]
@@ -232,7 +224,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-28",
     text: "What's your go-to move to initiate intimacy?",
-    options: ["Direct approach", "Subtle hints", "Physical touch", "Flirty banter"],
+    options: ["A little bit of teasing mixed with a whole lot of charm", "The classic accidental touch – oops, didn't mean to", "Unsubtle eye contact and a slow smile.", "Flirty banter that turns into a full-on roast session."],
     score: 1,
     nsfwRating: 8,
     categories: ["relationships", "sex"]
@@ -240,7 +232,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-29",
     text: "What's a sexual fantasy you'd be hesitant to admit?",
-    options: ["Group scenario", "Public place", "BDSM", "Roleplay"],
+    options: ["Getting bossed around – and not in a business meeting.", "Something involving a blindfold and lots of trust", "BDSM, but only if we have a safe word", "Roleplay, but only if I'm not a fantasy character."],
     score: 1,
     nsfwRating: 9,
     categories: ["sex", "personal"]
@@ -248,7 +240,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-30",
     text: "What's the biggest secret you've kept from a partner?",
-    options: ["Financial issue", "Past relationship detail", "Secret habit", "Infidelity"],
+    options: ["I've been low-key lying about my job.", "A fling I never told them about", "I told them I'm 'working late'... but I'm out with friends.", "I still have a stash of things from my wild days"],
     score: 1,
     nsfwRating: 10,
     categories: ["relationships", "secrets"]
@@ -256,7 +248,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-new-1",
     text: "What's the one thing you'd secretly love to do if nobody was judging you?",
-    options: ["Sing opera in public", "Wear a full superhero costume all day", "Eat dessert for breakfast daily", "Dance like nobody's watching at a bus stop"],
+    options: ["Post a silly dance video on social media and not care.", "Wear pajamas to work... every day", "Eat dessert for breakfast daily", "Take a spontaneous road trip with no destination."],
     score: 1,
     nsfwRating: 2,
     categories: ["personal", "fantasy"]
@@ -264,15 +256,15 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-new-2",
     text: "What's your go-to snack you'd eat way too much of if calories didn't exist?",
-    options: ["Nacho cheese Doritos", "Gummy bears", "French fries", "Chocolate chip cookies"],
+    options: ["Ice cream, all day, every day", "Pani puri, because who can stop at just one?", "Cheese fries—because who doesn't love melted cheese?", "Chaat—pav bhaji, bhel puri, the works."],
     score: 1,
-    nsfwRating: 1,
+    nsfwRating: 2,
     categories: ["food", "personal"]
   },
   {
     id: "gwia-new-3",
     text: "What's the pettiest thing that gets you irrationally annoyed?",
-    options: ["People who clap at movies", "Misplaced grocery carts", "Using 'literally' wrong", "Loud phone notifications"],
+    options: ["People who clap at movies", "Loud phone notifications in quiet spaces.", "Using 'literally' for everything, like, literally.", "When people say 'we need to talk' without context."],
     score: 1,
     nsfwRating: 3,
     categories: ["personal", "preferences"]
@@ -280,7 +272,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-new-4",
     text: "What's the flirtiest thing you'd do to get someone's attention at a bar?",
-    options: ["Send them a drink with a wink", "Bust out a cheesy pick-up line", "Pretend to 'accidentally' bump into them", "Challenge them to a silly bet"],
+    options: ["Send them a drink, and add a mysterious smile.", "Drop a line so cheesy, it'll have them laughing.", "Casually 'bump' into them, then play it cool.", "Start a playful debate and invite them to argue"],
     score: 1,
     nsfwRating: 5,
     categories: ["dating", "personal"]
@@ -288,7 +280,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-new-5",
     text: "What's the weirdest thing you'd admit to finding kinda hot?",
-    options: ["Someone explaining math passionately", "Clumsy dancing", "Arguing about pizza toppings", "Wearing mismatched socks"],
+    options: ["When they get all flustered while trying to explain something.", "A heated debate that somehow ends in laughter... and chemistry.", "When they just own their quirks, no matter how weird.", "Seeing someone get sweaty from a workout (unapologetically)."],
     score: 1,
     nsfwRating: 6,
     categories: ["attraction", "personal"]
@@ -296,7 +288,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-new-6",
     text: "What's your secret social media guilty pleasure?",
-    options: ["Watching dog reels for hours", "Liking every post from a crush", "Reading petty comment fights", "Following weird niche meme pages"],
+    options: ["Watching dog reels for hours", "Watching cringe-worthy influencer try-ons, judging every outfit.","Getting lost in the chaos of comment section drama.", "Liking every single thing my crush posts—no shame."],
     score: 1,
     nsfwRating: 4,
     categories: ["social", "personal"]
@@ -304,7 +296,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-new-7",
     text: "What's the naughtiest thing you'd consider doing if you knew it'd stay a secret?",
-    options: ["Sneak into a VIP club", "Send a risky text to a crush", "Try a blindfolded taste test date", "Crash a stranger's party"],
+    options: ["Have a late-night adventure with a complete stranger, no names, no rules.", "Send a scandalous message to my crush just to see if they'd bite.", "Take a risky bet and try a blindfolded date with someone completely new.", "Flirt openly with someone while pretending it's all innocent"],
     score: 1,
     nsfwRating: 8,
     categories: ["personal", "fantasy"]
@@ -312,7 +304,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-new-8",
     text: "What's your go-to move to spice things up in the bedroom?",
-    options: ["Whisper something flirty", "Break out a blindfold", "Play a sexy playlist", "Suggest a new position"],
+    options: ["Whisper your wildest fantasies to them and see what happens.", "Try a slow and sensual kiss, building up the anticipation.", "Whisper something naughty in their ear to set the mood.", "Suggest a new position that neither of you has tried before."],
     score: 1,
     nsfwRating: 9,
     categories: ["sex", "relationships"]
@@ -320,10 +312,1210 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-new-9",
     text: "What's the most unhinged thing you'd want to try in a relationship just to see what happens?",
-    options: ["Plan a fake proposal for laughs", "Go to a couples' retreat with no prep", "Swap phones for a day", "Try a 24-hour no-talking challenge"],
+    options: ["Suggest a threesome with their hottest friend", "Book a kink retreat without telling them the theme.", "Swap phones for a day, no questions, full access", "Send them a 'hall pass'... and mean it"],
     score: 1,
     nsfwRating: 10,
     categories: ["relationships", "fantasy"]
+  },
+  {
+    id: "gwia-new-10",
+    text: "What's my secret guilty pleasure when I'm home alone?",
+    options: ["Bingeing 90s Bollywood dance numbers or movies", "Stalking my own Instagram account", "Eating Maggi straight from the pan", "Practicing my Oscar speech in the mirror"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "funny"]
+  },
+  {
+    id: "gwia-new-11",
+    text: "What's the one street food I'd fight a crowd for?",
+    options: ["Pani puri with extra spice", "The OG Chhole Bhature that needs a nap afterward", "Momos with fiery sauce", "Jalebi fresh from the kadhai"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["food", "funny"]
+  },
+  {
+    id: "gwia-new-12",
+    text: "What's my go-to excuse for dodging a boring family function?",
+    options: ["Fake a work deadline", "Claim a sudden stomachache", "Can't. Mercury is in retrograde and so is my will to live", "Pretend I'm stuck in traffic forever"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["personal", "quirky"]
+  },
+  {
+    id: "gwia-new-13",
+    text: "What's the one song I'd blast to scare away a bad mood?",
+    options: ["'Munni Badnaam Hui' because chaos is therapy", "'Baby Shark' for ironic vibes", "'Badtameez Dil' to dance like a fool", "'Despacito' even though I don't get the words"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["music", "funny"]
+  },
+  {
+    id: "gwia-new-14",
+    text: "What's my weirdest monsoon habit?",
+    options: ["Sniffing the wet earth like a poet", "Jumping in every puddle like a kid", "Drinking chai while judging people's umbrella choices", "Pretending I'm in a music video every time it drizzles"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["habits", "quirky"]
+  },
+  {
+    id: "gwia-new-15",
+    text: "What's the one thing I'd save from my room in a fire?",
+    options: ["My childhood photo album", "My charger, because my phone is basically my soul", "My secret snack stash", "The one pair of dress/clothing that fits me right every time"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["personal", "sentimental"]
+  },
+  {
+    id: "gwia-new-16",
+    text: "What's my most irrational fear at a desi wedding?",
+    options: ["Aunties asking about my marriage plans", "Tripping during the baraat dance", "Ending up in the family dance video looking like a lost intern", "Getting stuck in a selfie with creepy uncle"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["funny", "social"]
+  },
+  {
+    id: "gwia-new-17",
+    text: "My power move while rewatching my favorite sitcom/movie is…",
+    options: ["Quoting every line 2 seconds before the character does (with pride)", "Laughing louder than the laugh track like I'm part of the cast", "Judging the character's life choices even though I've seen it 15 times", "Pausing to explain plot holes that nobody asked about"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["entertainment", "funny"]
+  },
+  {
+    id: "gwia-new-18",
+    text: "What's the one thing I'd smuggle into a movie theater?",
+    options: ["A full South Indian meal on a banana leaf", "Pakoras in a tissue-lined box like it's gold", "Homemade pav bhaji in Tupperware with chutneys labeled", "A whole biryani tiffin"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["food", "quirky"]
+  },
+  {
+    id: "gwia-new-19",
+    text: "What's my weirdest way of cheering myself up?",
+    options: ["Pretending I'm being interviewed about surviving emotional trauma—by Karan Johar", "Cocooning under the blanket while playing sad songs like it's my personal music video", "Talking to my ceiling fan like it's my therapist", "Calling my mom just to argue"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["personal", "funny"]
+  },
+  {
+    id: "gwia-new-20",
+    text: "What's my strangest comfort ritual after a rough day?",
+    options: ["Watch conspiracy videos and suddenly become an expert", "Ordering a cartful of random stuff online and calling it \"retail therapy\"", "Try 7 skincare products at once to confuse my pores", "Rewatching a movie I've seen 50 times"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["personal", "funny"]
+  },
+  {
+    id: "gwia-new-21",
+    text: "What's my secret weapon to dodge a boring conversation?",
+    options: ["Pretending to get a very important call and whispering \"Hello? Yes, it's done.\"", "Pretend I forgot something urgent", "Faking a coughing fit and dramatically sanitizing everything", "Asking \"What would you do if you woke up as a potato?\" and taking mental notes about their emotional stability"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["social", "funny"]
+  },
+  {
+    id: "gwia-new-22",
+    text: "What's the one thing I do in private that'd make you laugh?",
+    options: ["Rehearsing how I'll win an imaginary reality show", "Imitating celebrity accents while doing chores", "Practicing fake arguments so I'm never caught off guard", "Dance like nobody's watching—badly"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "funny"]
+  },
+  {
+    id: "gwia-new-23",
+    text: "What's my go-to vibe for a lazy Sunday?",
+    options: ["Binge a crime podcast marathon", "Nap like it's an Olympic sport", "Rearrange my room for no reason", "Scroll 3 years deep into someone's profile \"by accident\""],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["habits", "relaxation"]
+  },
+  {
+    id: "gwia-new-24",
+    text: "What's the pettiest thing I've held a grudge over?",
+    options: ["They said \"let's catch up soon\" and never followed up. It's been 4 years", "They didn't laugh hard enough at my joke that was objectively hilarious", "They played a song I showed them — in a party — and didn't give me credit", "I said \"guess what happened\" and they replied \"what?\" without any excitement"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["personal", "funny"]
+  },
+  {
+    id: "gwia-new-25",
+    text: "What's my weirdest quirk when I'm nervous?",
+    options: ["Twirl my hair like I'm plotting a heist", "Laugh during serious trauma dumps", "Over-apologize for everything, even air", "Hum random tunes like I'm buffering"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["habits", "quirky"]
+  },
+  {
+    id: "gwia-new-26",
+    text: "What's the one thing I'd splurge on without regret?",
+    options: ["A scenic Airbnb I'll barely leave because it has \"vibes\"", "A gadget I'll use twice", "An outfit I'll wear once and then emotionally retire", "A 5-course meal with molecular gastronomy and zero idea what's happening"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["personal", "lifestyle"]
+  },
+  {
+    id: "gwia-new-27",
+    text: "What's my most absurd childhood belief?",
+    options: ["Monsters lived in my closet", "That if I swallowed a watermelon seed, a tree would grow inside me", "That my shadow had its own life and would misbehave when I wasn't looking", "That mixing all the soft drinks made a magic potion"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["sentimental", "funny"]
+  },
+  {
+    id: "gwia-new-28",
+    text: "What's the one thing I'd do if I was invisible for a day?",
+    options: ["Eavesdrop on strangers' drama", "Sit in on strangers' dates and rate their chemistry", "Move things around in a friend's house to confuse them like a poltergeist", "Whisper weird things into people's ears just for fun"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["funny", "imagination"]
+  },
+  {
+    id: "gwia-new-29",
+    text: "What's the one food I'd eat every day if calories didn't exist?",
+    options: ["Overloaded biryani with raita, gravy, and a smug sense of superiority", "Loaded fries drowned in cheese, jalapeños, and secrets", "Cheesecake so rich it requires a loan", "Deep-dish pizza with gravity-defying cheese pull"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["food", "quirky"]
+  },
+  {
+    id: "gwia-new-30",
+    text: "What's my go-to excuse when I'm trying to sneak out of a bad date?",
+    options: ["Sudden 'food poisoning' from a salad", "My friend just 'got dumped and needs me ASAP'", "Forgot I left my dog... on the stove", "A surprise period. Works every time"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["dating", "funny", "escape"]
+  },
+  {
+    id: "gwia-new-31",
+    text: "If I had to send a risky text right now, what would it be?",
+    options: ["\"You up? 😉\"", "\"Wanna skip the talking part tonight?\"", "\"Had a dream about you… it wasn't PG\"", "\"Thinking about that one time. You know the one.\""],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["flirting", "texts"]
+  },
+  {
+    id: "gwia-new-32",
+    text: "Which of these would totally ruin the mood for me?",
+    options: ["Socks still on… *with sandals*", "Saying \"let's make love\" in a baby voice", "Playing Nickelback mid-hookup", "Moaning their own name"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "ick"]
+  },
+  {
+    id: "gwia-new-33",
+    text: "If I was a sexy Halloween costume, what would I be?",
+    options: ["Slutty ghost: just a sheet with holes in all the wrong places", "Sexy Excel Sheet: because I got all the right curves & formulas", "Naughty Librarian who shushes with a wink", "Steamy barista who'll steam more than milk"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["funny", "costume"]
+  },
+  {
+    id: "gwia-new-34",
+    text: "What's my biggest red flag... that somehow people still find hot?",
+    options: ["Emotionally unavailable but devastatingly charming", "Ghosts for a week, then replies with 'hey stranger'", "Loves chaos, hates small talk", "Will analyze your birth chart before texting back"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["personality", "funny"]
+  },
+  {
+    id: "gwia-new-35",
+    text: "What's the most sus thing I'd do if I ran into my ex with their new partner?",
+    options: ["Loudly say 'Oh, you replaced me already? Cute.'", "Pretend not to know them, then wink", "Mention our 'vacation tape' in front of them", "Say hi… and accidentally touch their arm a little too long"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["exes", "awkward"]
+  },
+  {
+    id: "gwia-43",
+    text: "What's a quirky habit you have that others might find amusing?",
+    options: ["Talking to pets like they're people", "Making up songs about daily tasks", "Collecting random items", "Dancing while cooking", "Naming inanimate objects", "Creating elaborate to-do lists", "Practicing accents alone", "Laughing at your own jokes"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["habits", "quirks"]
+  },
+  {
+    id: "gwia-new-61",
+    text: "What's something I'd totally say *right after* hooking up?",
+    options: [
+      "\"So... brunch or round two?\"",
+      "\"Wait, where are my pants?\"",
+      "\"That was... unexpectedly athletic.\"",
+      "\"Do you validate parking or just trauma?\""
+    ],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "post-hookup", "funny"]
+  },
+  {
+    id: "gwia-new-62",
+    text: "If I had to describe my flirting style as a type of food, what would it be?",
+    options: [
+      "Spicy ramen: hot, messy, and leaves you thirsty",
+      "Dark chocolate: smooth, mysterious, and might ruin your shirt",
+      "Curry: intense, unforgettable, and lingers for days",
+      "Tiramisu: layered, sweet, and might put you in a coma"
+    ],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["flirting", "personality"]
+  },
+  {
+    id: "gwia-new-63",
+    text: "What's the weirdest thing that could turn me on *way too fast*?",
+    options: [
+      "A voice that sounds like sin and bad decisions",
+      "Watching someone expertly fold laundry",
+      "Getting called 'sir/ma'am' in the wrong context",
+      "The sound of a belt unbuckling... in Dolby surround"
+    ],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["kinks", "turn-ons"]
+  },
+  {
+    id: "gwia-new-71",
+    text: "What would be my accidental safe word?",
+    options: [
+      "\"WiFi's down!\"",
+      "\"Oof... that's new!\"",
+      "\"Wait, did you just quote Twilight?\"",
+      "\"I smell... toast?\""
+    ],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "humor", "kinks"]
+  },
+  {
+    id: "gwia-new-72",
+    text: "What's the one thing I secretly want said to me mid-hookup?",
+    options: [
+      "\"You're doing *terrible things* to my soul.\"",
+      "\"I can't believe you're real.\"",
+      "\"Say that again and I might combust.\"",
+      "\"Okay but like... teach me that move later?\""
+    ],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "compliments", "fantasy"]
+  },
+  {
+    id: "gwia-new-73",
+    text: "If I had to roleplay one of these, which would I choose?",
+    options: [
+      "Angsty vampire and reluctant snack",
+      "Boss and very unqualified intern",
+      "Detective and *suspiciously flexible* suspect",
+      "Gym trainer and client who 'forgot' leg day"
+    ],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["roleplay", "fantasy", "sex"]
+  },
+  {
+    id: "gwia-new-74",
+    text: "What would be the title of my sex tape?",
+    options: [
+      "\"No Notes, Just Moans\"",
+      "\"Oops... We Did It Again\"",
+      "\"Lighting Could've Been Better\"",
+      "\"Rated R for Regret and Rhythm\""
+    ],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "humor", "confession"]
+  },
+  {
+    id: "gwia-new-75",
+    text: "What's the thirstiest thing I've done without realizing?",
+    options: [
+      "Moaned during a *stretch* in yoga class",
+      "Seduced someone using only eye contact and a bag of chips",
+      "Accidentally sexted... my boss (oops)",
+      "Slid into DMs with a meme and *zero shame*"
+    ],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "confession", "cringe"]
+  },
+  {
+    id: "gwia-new-76",
+    text: "What's my weirdest turn-on I *might* lie about?",
+    options: [
+      "Being manhandled just the right amount",
+      "Accents that could ruin lives",
+      "That look someone gives *right before bad decisions*",
+      "Someone reading... in a deep, slow voice"
+    ],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["kinks", "sex", "secrets"]
+  },
+  {
+    id: "gwia-new-77",
+    text: "What's the most dangerously flirty thing I could whisper?",
+    options: [
+      "\"You're not gonna survive tonight, are you?\"",
+      "\"I dreamt about this. You were louder.\"",
+      "\"If you stop now, I'll sue.\"",
+      "\"I'm not wearing patience. Or underwear.\""
+    ],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["flirting", "sex", "wildcards"]
+  },
+  {
+    id: "gwia-new-78",
+    text: "What's a red flag I'd *absolutely ignore* if the sex is good?",
+    options: [
+      "Still in touch with all their exes (and their exes' moms)",
+      "Says 'I don't believe in beds'",
+      "Sends unprompted astrology memes *about us*",
+      "Owns more toys than furniture"
+    ],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["relationships", "sex", "red flags"]
+  },
+  {
+    id: "gwia-new-79",
+    text: "What's the kink I'd deny in public but whisper about later?",
+    options: [
+      "Biting. Lots of biting.",
+      "Being tied up... or doing the tying.",
+      "Praise so intense it's practically a monologue.",
+      "Calling them something I'd blush to text."
+    ],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["kinks", "secrets", "sex"]
+  },
+  {
+    id: "gwia-new-81",
+    text: "What's my *most dangerous* sex-related habit?",
+    options: [
+      "I push things to the limit and never look back.",
+      "I'm into very loud things... after hours.",
+      "I flirt *way* too much in public.",
+      "I get a rush from breaking the rules... of consent."
+    ],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["kinks", "sex", "risky"]
+  },
+  {
+    id: "gwia-new-82",
+    text: "Which of these would I absolutely refuse to do... in *public*?",
+    options: [
+      "Whisper all the dirty things I've done in a crowd.",
+      "Act out an entire roleplay scenario, live.",
+      "Talk about the *craziest* thing I've done in bed.",
+      "Kiss someone in a way that leaves *no room for imagination*"
+    ],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "public", "kinks"]
+  },
+  {
+    id: "gwia-new-83",
+    text: "If I were to be a stripper, what would my stage name be?",
+    options: [
+      "The *Unfiltered* Whisper",
+      "Dangerous Desire",
+      "Mistress of Mayhem",
+      "Your Worst Mistake"
+    ],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "humor", "roleplay"]
+  },
+  {
+    id: "gwia-new-84",
+    text: "Which taboo would I experiment with if no one knew?",
+    options: [
+      "Public sex... but like, *really* public.",
+      "Dominating someone way out of my comfort zone.",
+      "Fantasies involving multiple people, all at once.",
+      "Bending some *very* strict rules about consent."
+    ],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "taboo", "kinks"]
+  },
+  {
+    id: "gwia-new-85",
+    text: "What's the filthiest thing I've thought about doing but would *never* admit?",
+    options: [
+      "Having a one-night stand with someone I met in a bookstore.",
+      "Tying someone up, just to leave them waiting.",
+      "Breaking all the rules in a public setting—on purpose.",
+      "Showering with someone... then never talking to them again."
+    ],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "fantasy", "wild thoughts"]
+  },
+  {
+    id: "gwia-new-86",
+    text: "Which of these would I say during *the hottest* hookup of my life?",
+    options: [
+      "\"You're *too* good at this.\"",
+      "\"Let's just say... your stamina's getting tested.\"",
+      "\"Keep going, and I might *worship* you.\"",
+      "\"You just unlocked a *new* kink of mine.\""
+    ],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "dirty talk", "flirting"]
+  },
+  {
+    id: "gwia-new-87",
+    text: "How do I secretly like to be dominated?",
+    options: [
+      "Take control, but with *gentle* reminders.",
+      "Talk *really dirty* and don't hold back.",
+      "Overpower me *physically*, but not emotionally.",
+      "Tell me exactly what to do... and watch me obey."
+    ],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "domination", "kinks"]
+  },
+  {
+    id: "gwia-new-88",
+    text: "If I had to pick a *most shocking* location for a hookup, where would it be?",
+    options: [
+      "On a crowded subway at rush hour.",
+      "The office... during a meeting.",
+      "The kitchen... while making dinner.",
+      "In the backseat of a car, *parked in public*."
+    ],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "public", "taboo"]
+  },
+  {
+    id: "gwia-new-89",
+    text: "What's my biggest *darkest* secret when it comes to desire?",
+    options: [
+      "I've considered *forcing* someone into a fantasy scenario.",
+      "I get off to watching forbidden things happen to others.",
+      "I crave a total loss of control in bed, no matter the cost.",
+      "I fantasize about doing unspeakable things... *safely*."
+    ],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "fantasy", "dark desires"]
+  },
+  {
+    id: "gwia-new-411",
+    text: "What's your go-to cringe playlist move you hope no one ever sees?",
+    options: [
+      "Bollywood heartbreak anthems on loop",
+      "That one 2000s emo track I never deleted",
+      "K-pop bangers while pretending to dance-battle",
+      "Disney songs at full volume—fight me"
+    ],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["music", "personal"]
+  },
+  {
+    id: "gwia-new-412",
+    text: "Which friend are you during a breakup?",
+    options: [
+      "The one ready to slash tires (metaphorically… probably)",
+      "The therapist who *needs* wine during sessions",
+      "The distraction master: brunch, trip, rebound—GO",
+      "The ghost who disappears until it blows over"
+    ],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "personal"]
+  },
+  {
+    id: "gwia-new-413",
+    text: "What's the most 'main character' thing you've done lately?",
+    options: [
+      "Walked out dramatically after an argument",
+      "Cried in an Uber while pretending I'm in a movie",
+      "Stared at myself in the mirror like it's a scene",
+      "Said 'I'm done' and didn't mean it (but looked good)"
+    ],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["personal", "drama"]
+  },
+  {
+    id: "gwia-new-414",
+    text: "What's the weirdest compliment you've *actually* enjoyed?",
+    options: [
+      "'You look like you'd ruin lives—in a good way'",
+      "'You give villain energy, but like… hot villain'",
+      "'You seem like you know everyone's secrets'",
+      "'You're probably someone's red flag, and I respect it'"
+    ],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["compliments", "social"]
+  },
+  {
+    id: "gwia-new-101",
+    text: "Would I rather get caught having sex in a public place or be secretly filmed during my most embarrassing moment?",
+    options: [
+      "Caught having sex in public.",
+      "Secretly filmed during my most embarrassing moment."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "embarrassment", "public"]
+  },
+  {
+    id: "gwia-new-102",
+    text: "If I could choose one way to humiliate myself for the most pleasure, what would it be?",
+    options: [
+      "Being forced to beg for it.",
+      "Doing something completely degrading in front of an audience.",
+      "Confessing my most embarrassing fantasies to someone I trust.",
+      "Being totally vulnerable and exposed to a stranger."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["humiliation", "kinks", "public"]
+  },
+  {
+    id: "gwia-new-103",
+    text: "What's my ultimate *no limits* kink that no one can ever know about?",
+    options: [
+      "A scene where I'm completely dominated without being able to move.",
+      "Public exposure with *no discretion*.",
+      "A wild orgy scenario where I'm the center of attention.",
+      "Being forced into something so taboo, it could ruin my reputation."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["kinks", "humiliation", "taboo"]
+  },
+  {
+    id: "gwia-new-104",
+    text: "What's the most messed up thing I've secretly fantasized about but *would never admit*?",
+    options: [
+      "Being controlled by someone I trust, to the point where I can't resist.",
+      "A hardcore public display of kink I'm too ashamed to tell anyone about.",
+      "Being secretly filmed while fulfilling every *dirty* fantasy.",
+      "A scenario where my deepest secrets are exposed and used against me."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["fantasy", "sex", "embarrassment"]
+  },
+  {
+    id: "gwia-new-105",
+    text: "What would be my most *embarrassing* but *exhilarating* experience if no one was watching?",
+    options: [
+      "Letting go of all control in a kinky situation.",
+      "Being publicly humiliated in front of a crowd.",
+      "Doing something taboo that could ruin me, but *only for the thrill*.",
+      "Being caught in a forbidden act by a stranger who *doesn't care*."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["humiliation", "kinks", "public"]
+  },
+  {
+    id: "gwia-new-106",
+    text: "What would be my reaction if someone dared me to participate in their ultimate fantasy, no matter how crazy?",
+    options: [
+      "I'd say yes instantly—anything for the thrill.",
+      "I'd hesitate, but secretly be *excited* to try it.",
+      "I'd be terrified, but wouldn't be able to resist.",
+      "I'd flat-out refuse, but the idea would still linger in my mind."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["kinks", "fantasy", "sex"]
+  },
+  {
+    id: "gwia-new-107",
+    text: "Which of these would turn me on *like crazy*, but I'd never tell anyone about it?",
+    options: [
+      "Being tied up in front of an audience who doesn't know me.",
+      "Having someone talk dirty to me in the most graphic way imaginable.",
+      "Doing something sexually taboo that I can't even speak about.",
+      "Participating in a gangbang that no one ever hears about."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["kinks", "fantasy", "taboo"]
+  },
+  {
+    id: "gwia-new-108",
+    text: "Would I rather explore my deepest taboo with *complete strangers* or someone I trust the most?",
+    options: [
+      "Strangers, because it's even *more thrilling*.",
+      "Someone I trust completely, for the ultimate intimacy."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["kinks", "fantasy", "strangers"]
+  },
+  {
+    id: "gwia-new-109",
+    text: "What's the most intense kink I'd be willing to *sacrifice* my normal life for?",
+    options: [
+      "Being someone's full-time slave in a dominant-submissive relationship.",
+      "Living a life where all I do is fulfill their wildest, most taboo fantasies.",
+      "Being part of an underground group that indulges in every sexual taboo imaginable.",
+      "A life of constant public humiliation and secretive *dirty play*."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["kinks", "dominance", "taboo"]
+  },
+  {
+    id: "gwia-new-110",
+    text: "What's the *ultimate fantasy* I'd live out if I knew no one would ever judge me?",
+    options: [
+      "Living a secret life where I'm *publicly* owned and used.",
+      "Being forced into a taboo scenario with no way out.",
+      "Indulging in every dirty fantasy with a *group* of strangers.",
+      "Exploring every forbidden sexual desire I've secretly had for years."
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["kinks", "fantasy", "taboo"]
+  },
+  {
+    id: "gwia-new-111",
+    text: "What's your toxic post-midnight text energy?",
+    options: [
+      "'You up?' — to someone I *definitely* shouldn't text",
+      "Starting a fight just to feel something",
+      "Thirst-trap selfie with zero context",
+      "Asking deep life questions like I'm Socrates on tequila"
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["social", "chaotic", "spicy"]
+  },
+  {
+    id: "gwia-new-112",
+    text: "Choose your unholy thirst-trap caption:",
+    options: [
+      "Just shower thoughts. And no clothes.",
+      "Oops! Dropped my morals 🫠",
+      "Serving emotional damage with a side of legs",
+      "Mood: ethically questionable but photogenic"
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["social", "spicy", "chaotic"]
+  },
+  {
+    id: "gwia-new-113",
+    text: "Pick a cursed safe word you'd actually use (for the meme):",
+    options: [
+      "'GSTIN'",
+      "'Nana Patekar'",
+      "'Adobe Premiere Pro 2014'",
+      "'Dhinchak Pooja'"
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["chaotic", "bedroom", "funny"]
+  },
+  {
+    id: "gwia-new-114",
+    text: "What's your personal red flag you secretly take pride in?",
+    options: [
+      "I flirt like it's an Olympic sport—then ghost like Houdini",
+      "Emotionally available... for 6 hours max",
+      "Will fall in love over one song recommendation",
+      "My love language is sending memes and mixed signals"
+    ],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["spicy", "relationships", "chaotic"]
+  },
+  {
+    id: "gwia-new-64",
+    text: "What's your secret go-to move when flirting IRL?",
+    options: [
+      "Laughing at their worst jokes like it's stand-up night",
+      "Light accidental touches — oops!",
+      "Mirroring their energy like a sneaky chameleon",
+      "Eye contact so intense it should come with a warning"
+    ],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["flirty", "social", "funny"]
+  },
+  {
+    id: "gwia-new-65",
+    text: "What instantly gives you a tiny crush on someone?",
+    options: [
+      "The way they talk about something they love",
+      "Their totally unnecessary but cute hand gestures",
+      "A killer playlist they casually drop",
+      "Them correcting your grammar — respectfully"
+    ],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["relationships", "vibes", "fun"]
+  },
+  {
+    id: "gwia-new-66",
+    text: "What's something that's technically a red flag, but still hot?",
+    options: [
+      "They know *everyone* at the party",
+      "Too confident for no reason — and it works",
+      "They casually ignore texts… but show up in person 🔥",
+      "They always say 'we'll figure it out' with zero plan"
+    ],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["dating", "controversial", "funny"]
+  },
+  {
+    id: "gwia-new-67",
+    text: "What's your signature move to test someone's vibe?",
+    options: [
+      "Send them a cursed meme and see if they survive",
+      "Ask 'Would you rather fight 100 duck-sized horses…'",
+      "Pretend you're into astrology and judge their response",
+      "Invite them to karaoke and unleash chaos"
+    ],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["chaotic", "fun", "vibes"]
+  },
+  {
+    "id": "gwia-new-80",
+    "text": "Which of these would be my ultimate 'seduction power move'?",
+    "options": [
+      "Wearing nothing but confidence and eye contact.",
+      "Slow dancing to a song with *dangerously* filthy lyrics.",
+      "Cooking in just an apron and a smirk.",
+      "Reading their deepest fantasy out loud... like a bedtime story."
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["sex", "seduction", "fantasy"]
+  },
+  {
+    "id": "gwia-new-81",
+    "text": "Which 'guilty pleasure' would I secretly *love* to try with a partner?",
+    "options": [
+      "Sending spicy voice notes throughout the day.",
+      "A secret affair... in our own house.",
+      "Watching each other get flirty with strangers... then pouncing later.",
+      "Recording our sessions – for *personal use only*, of course."
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["sex", "kinks", "modern love"]
+  },
+  {
+    "id": "gwia-new-82",
+    "text": "If I had to text someone one *dirty* line right now, which would it be?",
+    "options": [
+      "\"I just had a thought I can't say out loud. Wanna hear it?\"",
+      "\"You left something at my place… your control.\"",
+      "\"My hands are free. So is my imagination.\"",
+      "\"If I sent a photo, would you be decent... or honest?\""
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["sex", "flirting", "texts"]
+  },
+  {
+    "id": "gwia-new-83",
+    "text": "Which of these secret fantasies would I *actually* try if dared?",
+    "options": [
+      "A masquerade hookup with no real names.",
+      "Roleplaying as strangers who meet at a bar.",
+      "Being handcuffed somewhere... questionable.",
+      "Getting caught in the act, just for the thrill."
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["sex", "fantasy", "roleplay"]
+  },
+  {
+    "id": "gwia-new-84",
+    "text": "Which unusual place secretly turns me on?",
+    "options": [
+      "The dressing room of a fancy store.",
+      "A rooftop with city lights watching.",
+      "An elevator with *way too many* stops.",
+      "The middle row in a packed movie theatre."
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["sex", "public", "locations"]
+  },
+  {
+    "id": "gwia-new-85",
+    "text": "What's the most dangerous outfit I'd wear to tease someone?",
+    "options": [
+      "Absolutely nothing... under a trench coat.",
+      "A crop top that screams 'come closer'.",
+      "Just their shirt, and a look that says 'prove it'.",
+      "Something sheer, with zero apologies."
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["fashion", "sex", "flirting"]
+  },
+  {
+    "id": "gwia-new-86",
+    "text": "What's the wildest *bet* I'd be willing to make in the bedroom?",
+    "options": [
+      "Winner gives the loser a massage... with no hands.",
+      "Loser has to be blindfolded for the next round.",
+      "Winner gets to pick a toy... and use it.",
+      "Loser has to wear whatever the winner chooses."
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["sex", "games", "kinks"]
+  },
+  {
+    "id": "gwia-new-87",
+    "text": "What kind of NSFW 'bucket list' item secretly tempts me?",
+    "options": [
+      "Join a secret club with *very specific* rules.",
+      "Hook up in a location that could go viral.",
+      "Try something that involves an ice cube and no mercy.",
+      "Have a day with zero clothes and zero shame."
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["sex", "bucket list", "fantasy"]
+  },
+  {
+    "id": "gwia-new-88",
+    "text": "What's my *weirdest turn-on* I wouldn't tell my friends about?",
+    "options": [
+      "Getting bossed around *professionally*.",
+      "The smell of someone's shirt after a night out.",
+      "Being praised while doing *very* bad things.",
+      "Getting caught eavesdropping on someone else's fun."
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["kinks", "weird", "psych"]
+  },
+  {
+    "id": "gwia-new-89",
+    "text": "What would I *accidentally* moan during a hot moment?",
+    "options": [
+      "\"This should be illegal.\"",
+      "\"Don't stop. Ever.\"",
+      "\"Who even *taught* you that?!\"",
+      "\"I want this *again* tomorrow.\""
+    ],
+    "score": 1,
+    "nsfwRating": 8,
+    "categories": ["sex", "humor", "dirty talk"]
+  },
+  {
+    "id": "gwia-new-90",
+    "text": "Which of these would I actually consider filming... just once?",
+    "options": [
+      "A full-on roleplay scene, costumes and all.",
+      "A slow-motion solo session with dramatic lighting.",
+      "A 'caught in the act' style hidden camera moment.",
+      "A POV fantasy that gets *way too real*."
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "fantasy", "filming"]
+  },
+  {
+    "id": "gwia-new-91",
+    "text": "What's something *wild* I'd do in a hotel room with no rules?",
+    "options": [
+      "Order room service mid-hookup... and keep going.",
+      "Tie someone up with the bathrobe belt.",
+      "Make *use* of every surface—yes, even the minibar.",
+      "Leave the curtains wide open for the thrill."
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "fantasy", "adventure"]
+  },
+  {
+    "id": "gwia-new-92",
+    "text": "Which *power play* secretly turns me on?",
+    "options": [
+      "Being bossed around by someone younger.",
+      "Flipping the script and dominating someone older.",
+      "Trading control every 5 minutes.",
+      "Being seduced by someone totally off-limits."
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "power", "roleplay"]
+  },
+  {
+    "id": "gwia-new-93",
+    "text": "If I got invited to an exclusive underground kink party, what would I do?",
+    "options": [
+      "Dress up and *watch* from the shadows.",
+      "Try the mild stuff... then maybe more.",
+      "Join in anonymously, no names allowed.",
+      "Host my own secret room and set the rules."
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "kinks", "fantasy"]
+  },
+  {
+    "id": "gwia-new-94",
+    "text": "What's something spicy I'd whisper to someone *in public* just to mess with them?",
+    "options": [
+      "\"Remember what we did in the elevator?\"",
+      "\"Don't act innocent. You're still sore, aren't you?\"",
+      "\"Keep a straight face while I tell you what I'm *not* wearing.\"",
+      "\"Want to recreate that *kitchen counter* moment later?\""
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "dirty talk", "public"]
+  },
+  {
+    "id": "gwia-new-95",
+    "text": "Which of these 'morning after' scenarios secretly excites me?",
+    "options": [
+      "Waking up in a stranger's shirt with zero regrets.",
+      "Cooking breakfast in nothing but socks.",
+      "Sneaking out unnoticed... with a cheeky note left behind.",
+      "Round two *before* brushing teeth."
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "aftercare", "humor"]
+  },
+  {
+    "id": "gwia-new-96",
+    "text": "What's a bold request I might text someone at 2 AM?",
+    "options": [
+      "\"Want to come over and ruin my sleep schedule?\"",
+      "\"Need help testing out this new toy...\"",
+      "\"My bed's cold and my thoughts are filthy.\"",
+      "\"Let's play a game called 'yes, daddy/mommy'.\""
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "flirting", "late night"]
+  },
+  {
+    "id": "gwia-new-97",
+    "text": "What would I secretly love to try in front of a mirror?",
+    "options": [
+      "Watch myself take total control.",
+      "Lock eyes mid-action and keep going.",
+      "Experiment with angles no one's ever seen before.",
+      "Record a short clip... just for *me*."
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "mirror", "kinks"]
+  },
+  {
+    "id": "gwia-new-98",
+    "text": "Which of these would I *pretend* to be into, only to realize I love it?",
+    "options": [
+      "Being handcuffed to the bed.",
+      "Getting called something filthy during foreplay.",
+      "Reading erotica out loud.",
+      "Wearing something outrageous under my clothes."
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "kinks", "discovery"]
+  },
+  {
+    "id": "gwia-new-99",
+    "text": "Which of these would turn me on more than I'd admit?",
+    "options": [
+      "Someone *narrating* exactly what they're doing to me.",
+      "Getting teased for hours with no release.",
+      "A voice note that's 99% breathing and 1% words.",
+      "Losing a bet... and paying for it in *creative* ways."
+    ],
+    "score": 1,
+    "nsfwRating": 9,
+    "categories": ["sex", "sensual", "kinks"]
+  },
+  {
+    "id": "gwia-new-115",
+    "text": "Which of these would instantly ruin a wholesome cuddle session?",
+    "options": [
+      "Loud stomach growl mid-snuggle",
+      "Unprompted 'Would you still love me if I was a worm?'",
+      "Sudden fart war—no survivors",
+      "Pulling out a spreadsheet of cuddle KPIs"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["chaotic", "bedroom", "humor"]
+  },
+  {
+    "id": "gwia-new-116",
+    "text": "You accidentally send a spicy pic to your family WhatsApp group. What's your next move?",
+    "options": [
+      "Yeet phone. Become tree.",
+      "Follow up with 'That was a dare 😅'",
+      "Claim you were hacked by Russians. Again.",
+      "Just delete the group and move to another country"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["chaotic", "social", "oops"]
+  },
+  {
+    "id": "gwia-new-117",
+    "text": "What's your post-hookup intrusive thought of the week?",
+    "options": [
+      "Did I leave my socks on... again?",
+      "Was that one noise *me* or the furniture?",
+      "Should I text my therapist or my bestie first?",
+      "Do they now know my weird breathing rhythm?"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["bedroom", "personal", "overthink"]
+  },
+  {
+    "id": "gwia-new-118",
+    "text": "What's your toxic post-midnight text energy?",
+    "options": [
+      "'You up?' — to someone I *definitely* shouldn't text",
+      "Starting a fight just to feel something",
+      "Thirst-trap selfie with zero context",
+      "Asking deep life questions like I'm Socrates on tequila"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["social", "chaotic", "spicy"]
+  },
+  {
+    "id": "gwia-new-119",
+    "text": "Choose your unholy thirst-trap caption:",
+    "options": [
+      "Just shower thoughts. And no clothes.",
+      "Oops! Dropped my morals 🫠",
+      "Serving emotional damage with a side of legs",
+      "Mood: ethically questionable but photogenic"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["social", "spicy", "chaotic"]
+  },
+  {
+    "id": "gwia-new-120",
+    "text": "What's your worst 'accidentally sexy' moment?",
+    "options": [
+      "Tripped in slow motion while making eye contact",
+      "Voice cracked while trying to flirt",
+      "Spilled drink *on myself* mid-wink",
+      "Sexy sneeze? It's a thing. I swear."
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["chaotic", "flirty", "oops"]
+  },
+  {
+    "id": "gwia-new-121",
+    "text": "Pick a cursed safe word you'd actually use (for the meme):",
+    "options": [
+      "'GSTIN'",
+      "'Nana Patekar'",
+      "'Adobe Premiere Pro 2014'",
+      "'Dhinchak Pooja'"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["chaotic", "bedroom", "funny"]
+  },
+  {
+    "id": "gwia-new-122",
+    "text": "What's your personal red flag you secretly take pride in?",
+    "options": [
+      "I flirt like it's an Olympic sport—then ghost like Houdini",
+      "Emotionally available... for 6 hours max",
+      "Will fall in love over one song recommendation",
+      "My love language is sending memes and mixed signals"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["spicy", "relationships", "chaotic"]
+  },
+  {
+    "id": "gwia-new-123", // Renamed from gwia-new-115
+    "text": "What’s the dirtiest power move I could make during a family wedding?",
+    "options": [
+      "Sneak away for a quickie during the sangeet",
+      "Hook up with a cousin’s hot best friend—again",
+      "Use the DJ’s mic to whisper something filthy to one person",
+      "Send my plus-one a pic from the bathroom with a challenge"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["taboo", "public", "chaotic"]
+  },
+  {
+    "id": "gwia-new-124", // Renamed from gwia-new-116
+    "text": "What secret roleplay would *destroy* me if someone found out I liked it?",
+    "options": [
+      "Getting ‘disciplined’ by a strict professor type",
+      "Being interrogated like a spy with *kinky consequences*",
+      "Playing a submissive pet for a dom",
+      "Being forced to perform in front of a live audience"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["kinks", "roleplay", "taboo"]
+  },
+  {
+    "id": "gwia-new-125", // Renamed from gwia-new-117
+    "text": "What’s the most scandalous public situation I’d get *giddy* about being caught in?",
+    "options": [
+      "Making out with a stranger in an elevator",
+      "A very public display of dominance in the middle of a park",
+      "Having an unplanned *quickie* in the back of a cab",
+      "Wearing nothing but a trench coat while walking through a busy mall"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["public", "kinks", "chaotic"]
+  },
+  {
+    "id": "gwia-new-126", // Renamed from gwia-new-118
+    "text": "If I had to do something that would destroy my reputation just to turn someone on, what would it be?",
+    "options": [
+      "Do a very public striptease in the middle of a work event",
+      "Challenge someone to a public *showdown* of humiliation",
+      "Send a message full of *dirty* confessions to the wrong person",
+      "Fake an embarrassing ‘confession’ on a live stream"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["taboo", "humiliation", "public"]
+  },
+  {
+    "id": "gwia-new-127", // Renamed from gwia-new-119
+    "text": "What’s the most fucked up thing I’d risk to *completely* destroy my life just for the thrill?",
+    "options": [
+      "Live out a sexual fantasy on a public stage with no warning",
+      "Hook up with a total stranger in a public restroom",
+      "Join a secret club that lives out illegal kinks without fear of consequence",
+      "Expose all my deepest secrets in a podcast that gets millions of listeners"
+    ],
+    "score": 1,
+    "nsfwRating": 10,
+    "categories": ["taboo", "humiliation", "chaotic"]
   }
 ];
 

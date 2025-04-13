@@ -1,66 +1,96 @@
+Question: Would you rather your Instagram explore page be shown to your entire family or your screen time shared with your crush?
+Options: ["Family sees explore page", "Crush sees screen time"]
+NSFW Level: 5
 
-  {
-    "id": "gwia-new-115",
-    "text": "What’s the dirtiest power move I could make during a family wedding?",
-    "options": [
-      "Sneak away for a quickie during the sangeet",
-      "Hook up with a cousin’s hot best friend—again",
-      "Use the DJ’s mic to whisper something filthy to one person",
-      "Send my plus-one a pic from the bathroom with a challenge"
-    ],
-    "score": 1,
-    "nsfwRating": 10,
-    "categories": ["taboo", "public", "chaotic"]
-  },
-  {
-    "id": "gwia-new-116",
-    "text": "What secret roleplay would *destroy* me if someone found out I liked it?",
-    "options": [
-      "Getting ‘disciplined’ by a strict professor type",
-      "Being interrogated like a spy with *kinky consequences*",
-      "Playing a submissive pet for a dom",
-      "Being forced to perform in front of a live audience"
-    ],
-    "score": 1,
-    "nsfwRating": 10,
-    "categories": ["kinks", "roleplay", "taboo"]
-  },
-  {
-    "id": "gwia-new-117",
-    "text": "What’s the most scandalous public situation I’d get *giddy* about being caught in?",
-    "options": [
-      "Making out with a stranger in an elevator",
-      "A very public display of dominance in the middle of a park",
-      "Having an unplanned *quickie* in the back of a cab",
-      "Wearing nothing but a trench coat while walking through a busy mall"
-    ],
-    "score": 1,
-    "nsfwRating": 10,
-    "categories": ["public", "kinks", "chaotic"]
-  },
-  {
-    "id": "gwia-new-118",
-    "text": "If I had to do something that would destroy my reputation just to turn someone on, what would it be?",
-    "options": [
-      "Do a very public striptease in the middle of a work event",
-      "Challenge someone to a public *showdown* of humiliation",
-      "Send a message full of *dirty* confessions to the wrong person",
-      "Fake an embarrassing ‘confession’ on a live stream"
-    ],
-    "score": 1,
-    "nsfwRating": 10,
-    "categories": ["taboo", "humiliation", "public"]
-  },
-  {
-    "id": "gwia-new-119",
-    "text": "What’s the most fucked up thing I’d risk to *completely* destroy my life just for the thrill?",
-    "options": [
-      "Live out a sexual fantasy on a public stage with no warning",
-      "Hook up with a total stranger in a public restroom",
-      "Join a secret club that lives out illegal kinks without fear of consequence",
-      "Expose all my deepest secrets in a podcast that gets millions of listeners"
-    ],
-    "score": 1,
-    "nsfwRating": 10,
-    "categories": ["taboo", "humiliation", "chaotic"]
-  }
+Question: Would you rather get added to your ex's family WhatsApp group or accidentally like your manager’s beach thirst trap?
+Options: ["Ex’s family group chat", "Manager’s thirst trap like"]
+NSFW Level: 5
+
+Question: Would you rather send a typo-laced 3AM rant to your boss or accidentally post your Notes app breakdown to your story?
+Options: ["3AM boss rant", "Notes app meltdown post"]
+NSFW Level: 5
+
+Question: Would you rather your phone screen mirror onto a public display for 10 minutes or send your group chat history to your boss?
+Options: ["Public phone mirror", "Boss gets the GC tea"]
+NSFW Level: 5
+
+Question: Would you rather always reply to texts with voice notes or only use Comic Sans in all work emails?
+Options: ["Voice note gremlin", "Comic Sans menace"]
+NSFW Level: 5
+
+Question: Would you rather have your parents read your diary or your crush read your therapy notes?
+Options: ["Parents read diary", "Crush gets therapist scoop"]
+NSFW Level: 5
+
+Question: Would you rather get roasted at your own wedding or give a TED Talk on your biggest failure?
+Options: ["Wedding roast", "Failure TED Talk"]
+NSFW Level: 5
+
+Question: Would you rather have to end every sentence with “allegedly” or start every sentence with “No offense, but…”?
+Options: ["'Allegedly' forever", "Constant 'No offense'"]
+NSFW Level: 5
+
+Question: Would you rather only communicate through memes or only speak in song lyrics for a year?
+Options: ["Meme talk", "Lyric life"]
+NSFW Level: 5
+
+Question: Would you rather go viral for crying on a reality show or be a meme for a weird laugh?
+Options: ["Crying reality star", "Weird laugh meme"]
+NSFW Level: 5
+
+Question: Would you rather have your worst hot take trend on Twitter or your deepest insecurity become a subreddit?
+Options: ["Hot take exposed", "Insecurity subreddit"]
+NSFW Level: 6
+
+Question: Would you rather your high school ex write your wedding vows or your most judgmental aunt plan your honeymoon?
+Options: ["Ex writes vows", "Aunt’s honeymoon plans"]
+NSFW Level: 6
+
+Question: Would you rather accidentally like your ex's new partner’s 2014 selfie or send a flirty emoji to your CEO?
+Options: ["Like their old pic", "Flirt with CEO"]
+NSFW Level: 6
+
+Question: Would you rather only wear crocs with socks to every formal event or have to wear your partner’s baby photo on a locket?
+Options: ["Crocs at weddings", "Baby face locket"]
+NSFW Level: 6
+
+Question: Would you rather go to a therapist who knew you in high school or get therapy from your nemesis?
+Options: ["Therapist from high school", "Nemesis therapist"]
+NSFW Level: 6
+
+Question: Would you rather reveal your screen time stats on a date or share your food delivery history?
+OpNSFW Level: 6
+tions: ["Screen time exposed", "Delivery shame revealed"]
+
+Question: Would you rather attend your own intervention or surprise someone else at theirs… and realize it’s kinda about you too?
+Options: ["My intervention", "Hijacked theirs"]
+NSFW Level: 6
+
+Question: Would you rather be reincarnated as your least favorite influencer’s pet or as your sibling’s child?
+Options: ["Influencer's pet", "Your sibling’s kid"]
+NSFW Level: 7
+
+Question: Would you rather find out your partner is a secret lifestyle vlogger or that your parents are OnlyFans famous?
+Options: ["Partner is a vlogger", "Parents on OF"]
+NSFW Level: 7
+
+
+Question: Would you rather get a face tattoo of your most-used emoji or a QR code that links to your worst tweet?
+Options: ["Emoji tattoo", "QR code regret"]
+NSFW Level: 7
+
+Question: Would you rather be featured in a documentary titled *“World’s Pettiest Person”* or *“How Not To Date”*?
+Options: ["Pettiest Person doc", "How Not To Date star"]
+NSFW Level: 7
+
+Question: Would you rather become a motivational speaker for something you failed at or a brand ambassador for a product you hate?
+Options: ["Failure speaker", "Fake ambassador"]
+NSFW Level: 7
+
+Question: Would you rather be trapped in a group trip with all your ex-friends or attend a silent retreat with people you blocked?
+Options: ["Ex-friends group trip", "Blocked retreat"]
+NSFW Level: 7
+
+Question: Would you rather all your arguments be auto-transcribed and emailed to your parents or auto-Tweeted live?
+Options: ["Parents get transcripts", "Twitter fight stream"]
+NSFW Level: 7

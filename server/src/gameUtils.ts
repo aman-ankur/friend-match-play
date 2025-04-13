@@ -1454,11 +1454,11 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   },
   {
     "id": "gwia-new-123", // Renamed from gwia-new-115
-    "text": "What’s the dirtiest power move I could make during a family wedding?",
+    "text": "What's the dirtiest power move I could make during a family wedding?",
     "options": [
       "Sneak away for a quickie during the sangeet",
-      "Hook up with a cousin’s hot best friend—again",
-      "Use the DJ’s mic to whisper something filthy to one person",
+      "Hook up with a cousin's hot best friend—again",
+      "Use the DJ's mic to whisper something filthy to one person",
       "Send my plus-one a pic from the bathroom with a challenge"
     ],
     "score": 1,
@@ -1469,7 +1469,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
     "id": "gwia-new-124", // Renamed from gwia-new-116
     "text": "What secret roleplay would *destroy* me if someone found out I liked it?",
     "options": [
-      "Getting ‘disciplined’ by a strict professor type",
+      "Getting 'disciplined' by a strict professor type",
       "Being interrogated like a spy with *kinky consequences*",
       "Playing a submissive pet for a dom",
       "Being forced to perform in front of a live audience"
@@ -1480,7 +1480,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   },
   {
     "id": "gwia-new-125", // Renamed from gwia-new-117
-    "text": "What’s the most scandalous public situation I’d get *giddy* about being caught in?",
+    "text": "What's the most scandalous public situation I'd get *giddy* about being caught in?",
     "options": [
       "Making out with a stranger in an elevator",
       "A very public display of dominance in the middle of a park",
@@ -1498,7 +1498,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
       "Do a very public striptease in the middle of a work event",
       "Challenge someone to a public *showdown* of humiliation",
       "Send a message full of *dirty* confessions to the wrong person",
-      "Fake an embarrassing ‘confession’ on a live stream"
+      "Fake an embarrassing 'confession' on a live stream"
     ],
     "score": 1,
     "nsfwRating": 10,
@@ -1506,7 +1506,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   },
   {
     "id": "gwia-new-127", // Renamed from gwia-new-119
-    "text": "What’s the most fucked up thing I’d risk to *completely* destroy my life just for the thrill?",
+    "text": "What's the most fucked up thing I'd risk to *completely* destroy my life just for the thrill?",
     "options": [
       "Live out a sexual fantasy on a public stage with no warning",
       "Hook up with a total stranger in a public restroom",
@@ -2982,6 +2982,954 @@ const thisOrThatQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 9,
     categories: ["sex", "public", "thrill"]
+  },
+
+  // Additional "This or That" questions from revision
+  {
+    id: "tot-new-1101",
+    text: "Would you rather always send texts with typos or always accidentally reply-all?",
+    options: ["Always typo", "Always reply-all"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["social", "technology", "communication"]
+  },
+  {
+    id: "tot-new-1102",
+    text: "Would you rather accidentally like your crush's ancient post or accidentally follow, unfollow, and follow them again?",
+    options: ["Like ancient post", "Follow loop of shame"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["social", "dating", "technology"]
+  },
+  {
+    id: "tot-new-1103",
+    text: "Would you rather your Google search history be public or your photo gallery?",
+    options: ["Search history", "Photo gallery"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["privacy", "technology", "personal"]
+  },
+  {
+    id: "tot-new-1104",
+    text: "Would you rather go on a date with someone who talks only in motivational quotes or someone who only sends voice notes?",
+    options: ["Quotes machine", "Voice note enthusiast"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["dating", "communication", "humor"]
+  },
+  {
+    id: "tot-new-1105",
+    text: "Would you rather get ghosted after one date or be stuck in an endless \"what are we?\" loop?",
+    options: ["Ghosted", "Situationship purgatory"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["dating", "relationships", "communication"]
+  },
+  {
+    id: "tot-new-1106",
+    text: "Would you rather date someone who replies \"k\" or someone who types \"hehe\" unironically?",
+    options: ["'k' texter", "'hehe' user"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["dating", "communication", "texting"]
+  },
+  {
+    id: "tot-new-1107",
+    text: "Would you rather always have spinach in your teeth on dates or toilet paper stuck to your shoe?",
+    options: ["Spinach smile", "Toilet paper trail"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["dating", "embarrassment", "humor"]
+  },
+  {
+    id: "tot-new-2101",
+    text: "Would you rather accidentally text \"I love you\" to your situationship or drunk call your ex?",
+    options: ["Text situationship", "Call the ex"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["relationships", "communication", "awkward"]
+  },
+  {
+    id: "tot-new-2102",
+    text: "Would you rather be caught stalking your ex's new partner or caught rewatching your own Instagram story 12 times?",
+    options: ["Caught stalking", "Caught looping my own story"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["social", "relationships", "technology"]
+  },
+  {
+    id: "tot-new-2103",
+    text: "Would you rather have your partner call you by their ex's name once, or you accidentally call them by yours?",
+    options: ["They mess up", "I mess up"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["relationships", "awkward", "communication"]
+  },
+  {
+    id: "tot-new-2104",
+    text: "Would you rather get a text from your crush saying \"wrong number\" or a Venmo request from your date for your half?",
+    options: ["Wrong number crush", "Date Venmo request"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["dating", "awkward", "money"]
+  },
+  {
+    id: "tot-new-2105",
+    text: "Would you rather have a Hinge bio written by your mom or your most sarcastic friend?",
+    options: ["Mom-made bio", "Snarky friend bio"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["dating", "social", "humor"]
+  },
+  {
+    id: "tot-new-2106",
+    text: "Would you rather your partner never posts you or posts cringe couple content daily?",
+    options: ["Never posts me", "Cringe couple goals"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["relationships", "social", "technology"]
+  },
+  {
+    id: "tot-new-2107",
+    text: "Would you rather accidentally send a flirty text to your boss or a work complaint to your crush?",
+    options: ["Flirty boss text", "Crush gets my 9-5 rant"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["work", "dating", "awkward"]
+  },
+  {
+    id: "tot-new-3101",
+    text: "Would you rather date someone who insists on baby talk or someone who moans when they eat?",
+    options: ["Baby talker", "Food moaner"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["dating", "habits", "pet peeves"]
+  },
+  {
+    id: "tot-new-3102",
+    text: "Would you rather have a hot one-night stand or an average-looking long-term cuddle buddy?",
+    options: ["Hot one-nighter", "Cuddle bae forever"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["dating", "intimacy", "preferences"]
+  },
+  {
+    id: "tot-new-3103",
+    text: "Would you rather always get caught sexting or always get caught snooping?",
+    options: ["Caught sexting", "Caught snooping"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["relationships", "privacy", "technology"]
+  },
+  {
+    id: "tot-new-3104",
+    text: "Would you rather make out with your ex at a party or watch your ex make out with someone hotter?",
+    options: ["Make out with ex", "Watch them upgrade"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["relationships", "jealousy", "social"]
+  },
+  {
+    id: "tot-new-3105",
+    text: "Would you rather send a risky DM and get left on read or accidentally like a 2016 thirst trap?",
+    options: ["Left on read", "Thirst trap like"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["social", "dating", "technology"]
+  },
+  {
+    id: "tot-new-3106",
+    text: "Would you rather hook up with someone who's too quiet or way too vocal?",
+    options: ["Pin-drop silence", "Over-the-top moans"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["sex", "intimacy", "preferences"]
+  },
+  {
+    id: "tot-new-3107",
+    text: "Would you rather always say something awkward during foreplay or accidentally call them \"bro\"?",
+    options: ["Awkward line", "Hey bro 👀"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["sex", "awkward", "communication"]
+  },
+  {
+    id: "tot-new-3108",
+    text: "Would you rather only have pillow talk or only hookup with zero talking at all?",
+    options: ["Only pillow talk", "Silent but spicy"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["sex", "intimacy", "communication"]
+  },
+  {
+    id: "tot-new-3109",
+    text: "Would you rather date someone who only sexts with emojis or someone who uses corporate jargon in bed?",
+    options: ["🍆💦🔥 only", "'Let's circle back' in bed"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["dating", "sex", "communication"]
+  },
+  {
+    id: "tot-new-3110",
+    text: "Would you rather date someone who never makes the first move or someone who always makes the *wrong* move?",
+    options: ["Never initiates", "Wrong move champ"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["dating", "intimacy", "compatibility"]
+  },
+  {
+    id: "tot-new-4101",
+    text: "Would you rather your nudes get leaked or your entire group chat screenshots?",
+    options: ["Leaked nudes", "Leaked group chat"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["privacy", "social", "technology"]
+  },
+  {
+    id: "tot-new-4102",
+    text: "Would you rather sleep with your ex's best friend or your best friend's ex?",
+    options: ["Ex's bestie", "Bestie's ex"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "relationships", "friendship"]
+  },
+  {
+    id: "tot-new-4103",
+    text: "Would you rather hook up with someone who cries after or someone who high-fives you after?",
+    options: ["Cries after", "High-fives after"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "awkward", "humor"]
+  },
+  {
+    id: "tot-new-4104",
+    text: "Would you rather be amazing at foreplay but terrible at sex, or vice versa?",
+    options: ["Foreplay legend", "Sex god, bad build-up"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "abilities", "preferences"]
+  },
+  {
+    id: "tot-new-4105",
+    text: "Would you rather accidentally send a \"thinking of you\" text to your boss or your ex's mom?",
+    options: ["Boss", "Ex's mom"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["work", "relationships", "awkward"]
+  },
+  {
+    id: "tot-new-4106",
+    text: "Would you rather fall asleep mid-hookup or have them fall asleep on you (literally)?",
+    options: ["I fall asleep", "They nap on me"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "awkward", "humor"]
+  },
+  {
+    id: "tot-new-4107",
+    text: "Would you rather be rated 10/10 in bed but 3/10 in emotional availability or vice versa?",
+    options: ["10 in bed, 3 in feels", "10 in feels, 3 in bed"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "relationships", "compatibility"]
+  },
+  {
+    id: "tot-new-4108",
+    text: "Would you rather date someone with an annoying sex playlist or someone who insists on silence?",
+    options: ["Bad playlist", "Silent sessions"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "dating", "preferences"]
+  },
+  {
+    id: "tot-new-4109",
+    text: "Would you rather sext while your mom follows you on Instagram or while she's sitting in the next room?",
+    options: ["While she follows me", "While she's nearby"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "family", "social"]
+  },
+  {
+    id: "tot-new-4110",
+    text: "Would you rather always be asked for feedback after sex or get ghosted every time after?",
+    options: ["Feedback survey", "The classic ghost"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "dating", "communication"]
+  },
+  {
+    id: "tot-new-5101",
+    text: "Would you rather walk in on your parents or have them walk in on you?",
+    options: ["Walk in on them", "They walk in on you"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["family", "sex", "embarrassment"]
+  },
+  {
+    id: "tot-new-5102",
+    text: "Would you rather drunk-text your sneaky link or voice note your crush at 3AM?",
+    options: ["Drunk text", "3AM voice note"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["dating", "communication", "awkward"]
+  },
+  {
+    id: "tot-new-5103",
+    text: "Would you rather hook up with someone who only talks in quotes or only roleplays as historical figures?",
+    options: ["Quote machine", "Horny Napoleon"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "roleplay", "humor"]
+  },
+  {
+    id: "tot-new-5104",
+    text: "Would you rather have a kink you're ashamed of go viral or accidentally expose your search history during a Zoom call?",
+    options: ["Kink goes viral", "Zoom share fail"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "privacy", "technology"]
+  },
+  {
+    id: "tot-new-5105",
+    text: "Would you rather date someone who always says your name mid-hookup or who moans their own name instead?",
+    options: ["My name", "THEIR name"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "dating", "humor"]
+  },
+  {
+    id: "tot-new-5106",
+    text: "Would you rather be celibate for a year or only have bad sex with a toxic ex?",
+    options: ["Celibate monk", "Toxic ex reunion"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "relationships", "choices"]
+  },
+  {
+    id: "tot-new-5107",
+    text: "Would you rather get roasted in a group chat post-hookup or get a LinkedIn message from a one-night stand?",
+    options: ["Group chat roast", "LinkedIn follow-up"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "social", "work"]
+  },
+  {
+    id: "tot-new-5108",
+    text: "Would you rather be kink-shamed publicly or accidentally kink-shame someone on a date?",
+    options: ["I get shamed", "I do the shaming"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "social", "dating"]
+  },
+  {
+    id: "tot-new-5109",
+    text: "Would you rather every hookup be with someone who needs constant affirmations or constant narrations?",
+    options: ["Affirmation addict", "Narrator in the sheets"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "communication", "preferences"]
+  },
+  {
+    id: "tot-new-5110",
+    text: "Would you rather get turned on during a work meeting or during a family event?",
+    options: ["Work meeting", "Family chaos"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "work", "family"]
+  },
+  {
+    id: "tot-new-6101",
+    text: "Would you rather always finish too early or never finish at all?",
+    options: ["Speed run", "Eternal edging"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "performance", "preferences"]
+  },
+  {
+    id: "tot-new-6102",
+    text: "Would you rather your sex tape leak or accidentally upload it to your work cloud?",
+    options: ["Sex tape goes viral", "Company All-Hands exclusive"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "privacy", "work"]
+  },
+  {
+    id: "tot-new-6103",
+    text: "Would you rather find your friend's OnlyFans or your sibling's?",
+    options: ["Friend's OF", "Sibling's OF"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "friendship", "family"]
+  },
+  {
+    id: "tot-new-6104",
+    text: "Would you rather only have sex to the sound of ASMR or wrestling commentary?",
+    options: ["ASMR moans", "WWE dirty talk"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "preferences", "humor"]
+  },
+  {
+    id: "tot-new-6105",
+    text: "Would you rather get walked in on by a pet or have the pet *join* on the bed?",
+    options: ["Walk-in pet", "Too-comfy pet"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "pets", "awkward"]
+  },
+  {
+    id: "tot-new-6106",
+    text: "Would you rather find out your partner's into feet or into clowns?",
+    options: ["Toes for days", "Honk honk kink"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "kink", "relationships"]
+  },
+  {
+    id: "tot-new-6107",
+    text: "Would you rather hook up with someone obsessed with mirror play or one who insists on costumes?",
+    options: ["Mirror junkie", "Costume freak"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "kink", "preferences"]
+  },
+  {
+    id: "tot-new-6108",
+    text: "Would you rather do roleplay but it's always as your boss, or your high school teacher?",
+    options: ["Bossy roleplay", "Homework kink"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "roleplay", "fantasies"]
+  },
+  {
+    id: "tot-new-6109",
+    text: "Would you rather date someone who insists on calling you \"Daddy\" or someone who calls you \"Bestie\" mid-action?",
+    options: ["Daddy issues", "Bestie energy"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "dating", "communication"]
+  },
+  {
+    id: "tot-new-6110",
+    text: "Would you rather discover your partner used to be a cam model or currently has a secret OnlyFans?",
+    options: ["Used to be", "Still going strong"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "relationships", "secrets"]
+  },
+  {
+    id: "tot-new-7101",
+    text: "Would you rather be called \"Daddy\" during sex or accidentally call *them* \"Mommy\"?",
+    options: ["Get the Daddy treatment", "Oops, Mommy slipped out"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "kink", "embarrassment"]
+  },
+  {
+    id: "tot-new-7102",
+    text: "Would you rather your sexts leak or your Google search history from incognito?",
+    options: ["Sexts leak", "Search history goes public"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "privacy", "technology"]
+  },
+  {
+    id: "tot-new-7103",
+    text: "Would you rather be choked or do the choking?",
+    options: ["Choke me", "I'll do the choking"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "kink", "preferences"]
+  },
+  {
+    id: "tot-new-7104",
+    text: "Would you rather sleep with your ex again or their best friend?",
+    options: ["Ex 2.0", "Best friend revenge"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "relationships", "revenge"]
+  },
+  {
+    id: "tot-new-7105",
+    text: "Would you rather be filmed without knowing or watch your partner's past tape?",
+    options: ["Unknowingly filmed", "Watch their tape"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "privacy", "relationships"]
+  },
+  {
+    id: "tot-new-7106",
+    text: "Would you rather moan too loud in public or say something filthy in your sleep at a family sleepover?",
+    options: ["Public moan", "Sleepover confession"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "embarrassment", "public"]
+  },
+  {
+    id: "tot-new-7107",
+    text: "Would you rather have a partner who's too quiet or way too loud in bed?",
+    options: ["Mute mode", "Full surround sound"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "relationships", "preferences"]
+  },
+  {
+    id: "tot-new-7108",
+    text: "Would you rather only have car sex or only public restroom sex for a year?",
+    options: ["Car adventures", "Restroom rendezvous"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "public", "preferences"]
+  },
+  {
+    id: "tot-new-7109",
+    text: "Would you rather get caught sexting at work or catch your boss doing it?",
+    options: ["Caught red-thumbed", "Boss gone wild"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "work", "technology"]
+  },
+  {
+    id: "tot-new-7110",
+    text: "Would you rather never use toys again or only use toys from the 90s?",
+    options: ["No toys ever", "Retro weirdness only"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "preferences", "toys"]
+  },
+  {
+    id: "tot-new-8101",
+    text: "Would you rather be handcuffed for a night or blindfolded for a weekend?",
+    options: ["Handcuffed", "Blindfolded"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kink", "bondage"]
+  },
+  {
+    id: "tot-new-8102",
+    text: "Would you rather sleep with someone in cosplay or someone who stays fully clothed?",
+    options: ["Cosplay commitment", "Fully clothed freak"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kink", "preferences"]
+  },
+  {
+    id: "tot-new-8103",
+    text: "Would you rather be spanked in public or send a spanking video to your parents by mistake?",
+    options: ["Public spanking", "Parental trauma"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kink", "public"]
+  },
+  {
+    id: "tot-new-8104",
+    text: "Would you rather have a foot fetish or be with someone who moans like a cartoon character?",
+    options: ["Foot enthusiast", "Toon moaner"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kink", "preferences"]
+  },
+  {
+    id: "tot-new-8105",
+    text: "Would you rather hook up on your office desk or your childhood bed?",
+    options: ["Office desk", "Childhood bed nostalgia"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "work", "nostalgia"]
+  },
+  {
+    id: "tot-new-8106",
+    text: "Would you rather only do kink with a safe word in Latin or never use a safe word again?",
+    options: ["Latin safe word", "No safe word ever"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kink", "safety"]
+  },
+  {
+    id: "tot-new-8107",
+    text: "Would you rather sext someone you shouldn't or receive a nude from a relative by mistake?",
+    options: ["Risky sext", "Family nude horror"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "family", "technology"]
+  },
+  {
+    id: "tot-new-8108",
+    text: "Would you rather wear latex for a week or explain your kinks to your parents?",
+    options: ["Latex life", "The kink talk"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kink", "family"]
+  },
+  {
+    id: "tot-new-8109",
+    text: "Would you rather only do threesomes with strangers or never have sex again?",
+    options: ["Stranger threesomes", "Forced celibacy"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "threesomes", "choices"]
+  },
+  {
+    id: "tot-new-8110",
+    text: "Would you rather get stuck in your partner's restraints or theirs in yours — with the in-laws walking in?",
+    options: ["Stuck in theirs", "They're stuck in mine"],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kink", "family"]
+  },
+  {
+    id: "tot-new-9101",
+    text: "Would you rather date someone with a humiliation kink or a financial domination kink?",
+    options: ["Humiliation kink", "Fyndom freak"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "kink", "dating"]
+  },
+  {
+    id: "tot-new-9102",
+    text: "Would you rather roleplay as a submissive pet or a strict principal?",
+    options: ["Pet play", "School discipline"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "roleplay", "kink"]
+  },
+  {
+    id: "tot-new-9103",
+    text: "Would you rather get caught mid-threesome or be the accidental third in someone else's?",
+    options: ["Get caught mid-thruple", "Walk in, join in"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "threesomes", "awkward"]
+  },
+  {
+    id: "tot-new-9104",
+    text: "Would you rather use whipped cream or candle wax... in front of an audience?",
+    options: ["Whipped cream show", "Wax performance"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "kink", "exhibitionism"]
+  },
+  {
+    id: "tot-new-9105",
+    text: "Would you rather dominate your boss or be dominated by an intern?",
+    options: ["Boss domination", "Intern in charge"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "work", "power"]
+  },
+  {
+    id: "tot-new-9106",
+    text: "Would you rather hook up with someone dressed as a clown or a furry?",
+    options: ["Clown love", "Fluffy furry fun"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "kink", "costume"]
+  },
+  {
+    id: "tot-new-9107",
+    text: "Would you rather reenact a spicy scene from a rom-com or a horror movie?",
+    options: ["Rom-com kink", "Horror play"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "roleplay", "entertainment"]
+  },
+  {
+    id: "tot-new-9108",
+    text: "Would you rather be filmed in VR POV or stream to OnlyFans live?",
+    options: ["VR star", "OnlyFans live drop"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "technology", "exhibitionism"]
+  },
+  {
+    id: "tot-new-9109",
+    text: "Would you rather have a kink that requires props or one that requires public risk?",
+    options: ["Prop-heavy kink", "Public danger kink"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "kink", "preferences"]
+  },
+  {
+    id: "tot-new-9110",
+    text: "Would you rather have your sex life narrated by Morgan Freeman or your mom?",
+    options: ["Morgan Freeman commentary", "Mom's monologue"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "humor", "family"]
+  },
+  {
+    id: "tot-new-10101",
+    text: "Would you rather wear a vibrating plug at a family dinner or let your partner read your sexts out loud there?",
+    options: ["Plug dinner", "Sext storytelling"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "family", "public"]
+  },
+  {
+    id: "tot-new-10102",
+    text: "Would you rather be in a polycule with your ex and their new partner or be their babysitter?",
+    options: ["Ex polycule", "Babysitter from hell"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "relationships", "polyamory"]
+  },
+  {
+    id: "tot-new-10103",
+    text: "Would you rather be waterboarded by whipped cream or ice cubes in the butt?",
+    options: ["Whipped cream waterboarding", "Chilly cheeks"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "kink", "temperature"]
+  },
+  {
+    id: "tot-new-10104",
+    text: "Would you rather go viral for a sex fail or win an award for amateur porn?",
+    options: ["Sex fail fame", "Amateur Oscar"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "fame", "social"]
+  },
+  {
+    id: "tot-new-10105",
+    text: "Would you rather only orgasm to the national anthem or to your ex's name?",
+    options: ["Anthem climax", "Ex-powered O"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "ex", "fetish"]
+  },
+  {
+    id: "tot-new-10106",
+    text: "Would you rather date someone whose kink is taxes or who cries every orgasm?",
+    options: ["Tax kink", "Teargasm every time"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "kink", "dating"]
+  },
+  {
+    id: "tot-new-10107",
+    text: "Would you rather host a public BDSM workshop or join one where your parents attend?",
+    options: ["Lead the workshop", "Mom and Dad join"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "bdsm", "family"]
+  },
+  {
+    id: "tot-new-10108",
+    text: "Would you rather get a tattoo of your most used kink or send your therapist screenshots of it?",
+    options: ["Kink tattoo", "Therapist drop"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "kink", "therapy"]
+  },
+  {
+    id: "tot-new-10109",
+    text: "Would you rather your nudes be displayed in Times Square or printed in your alumni newsletter?",
+    options: ["Times Square debut", "Alumni exclusive"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "public", "embarrassment"]
+  },
+  {
+    id: "tot-new-10110",
+    text: "Would you rather be stuck in a sex swing during an earthquake or on a stripper pole during a fire drill?",
+    options: ["Sex swing quake", "Pole drill exit"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "emergency", "awkward"]
+  },
+  
+  // Additional This or That questions from latest revision
+  {
+    id: "tot-new-5111",
+    text: "Would you rather your Instagram explore page be shown to your entire family or your screen time shared with your crush?",
+    options: ["Family sees explore page", "Crush sees screen time"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["social", "technology", "privacy"]
+  },
+  {
+    id: "tot-new-5112",
+    text: "Would you rather get added to your ex's family WhatsApp group or accidentally like your manager's beach thirst trap?",
+    options: ["Ex's family group chat", "Manager's thirst trap like"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["social", "work", "awkward"]
+  },
+  {
+    id: "tot-new-5113",
+    text: "Would you rather send a typo-laced 3AM rant to your boss or accidentally post your Notes app breakdown to your story?",
+    options: ["3AM boss rant", "Notes app meltdown post"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["work", "social", "technology"]
+  },
+  {
+    id: "tot-new-5114",
+    text: "Would you rather your phone screen mirror onto a public display for 10 minutes or send your group chat history to your boss?",
+    options: ["Public phone mirror", "Boss gets the GC tea"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["privacy", "technology", "work"]
+  },
+  {
+    id: "tot-new-5115",
+    text: "Would you rather always reply to texts with voice notes or only use Comic Sans in all work emails?",
+    options: ["Voice note gremlin", "Comic Sans menace"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["communication", "work", "technology"]
+  },
+  {
+    id: "tot-new-5116",
+    text: "Would you rather have your parents read your diary or your crush read your therapy notes?",
+    options: ["Parents read diary", "Crush gets therapist scoop"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["family", "privacy", "dating"]
+  },
+  {
+    id: "tot-new-5117",
+    text: "Would you rather get roasted at your own wedding or give a TED Talk on your biggest failure?",
+    options: ["Wedding roast", "Failure TED Talk"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["social", "public", "embarrassment"]
+  },
+  {
+    id: "tot-new-5118",
+    text: "Would you rather have to end every sentence with \"allegedly\" or start every sentence with \"No offense, but…\"?",
+    options: ["'Allegedly' forever", "Constant 'No offense'"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["communication", "social", "humor"]
+  },
+  {
+    id: "tot-new-5119",
+    text: "Would you rather only communicate through memes or only speak in song lyrics for a year?",
+    options: ["Meme talk", "Lyric life"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["communication", "social", "humor"]
+  },
+  {
+    id: "tot-new-5120",
+    text: "Would you rather go viral for crying on a reality show or be a meme for a weird laugh?",
+    options: ["Crying reality star", "Weird laugh meme"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["social", "fame", "embarrassment"]
+  },
+  {
+    id: "tot-new-6111",
+    text: "Would you rather have your worst hot take trend on Twitter or your deepest insecurity become a subreddit?",
+    options: ["Hot take exposed", "Insecurity subreddit"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["social", "privacy", "technology"]
+  },
+  {
+    id: "tot-new-6112",
+    text: "Would you rather your high school ex write your wedding vows or your most judgmental aunt plan your honeymoon?",
+    options: ["Ex writes vows", "Aunt's honeymoon plans"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["relationships", "family", "wedding"]
+  },
+  {
+    id: "tot-new-6113",
+    text: "Would you rather accidentally like your ex's new partner's 2014 selfie or send a flirty emoji to your CEO?",
+    options: ["Like their old pic", "Flirt with CEO"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["social", "work", "technology"]
+  },
+  {
+    id: "tot-new-6114",
+    text: "Would you rather only wear crocs with socks to every formal event or have to wear your partner's baby photo on a locket?",
+    options: ["Crocs at weddings", "Baby face locket"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["fashion", "relationships", "social"]
+  },
+  {
+    id: "tot-new-6115",
+    text: "Would you rather go to a therapist who knew you in high school or get therapy from your nemesis?",
+    options: ["Therapist from high school", "Nemesis therapist"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["mental health", "relationships", "awkward"]
+  },
+  {
+    id: "tot-new-6116",
+    text: "Would you rather reveal your screen time stats on a date or share your food delivery history?",
+    options: ["Screen time exposed", "Delivery shame revealed"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["dating", "technology", "privacy"]
+  },
+  {
+    id: "tot-new-6117",
+    text: "Would you rather attend your own intervention or surprise someone else at theirs… and realize it's kinda about you too?",
+    options: ["My intervention", "Hijacked theirs"],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["mental health", "relationships", "awkward"]
+  },
+  {
+    id: "tot-new-7111",
+    text: "Would you rather be reincarnated as your least favorite influencer's pet or as your sibling's child?",
+    options: ["Influencer's pet", "Your sibling's kid"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["family", "social", "fantasy"]
+  },
+  {
+    id: "tot-new-7112",
+    text: "Would you rather find out your partner is a secret lifestyle vlogger or that your parents are OnlyFans famous?",
+    options: ["Partner is a vlogger", "Parents on OF"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["relationships", "family", "technology"]
+  },
+  {
+    id: "tot-new-7113",
+    text: "Would you rather get a face tattoo of your most-used emoji or a QR code that links to your worst tweet?",
+    options: ["Emoji tattoo", "QR code regret"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["technology", "social", "permanent decisions"]
+  },
+  {
+    id: "tot-new-7114",
+    text: "Would you rather be featured in a documentary titled *\"World's Pettiest Person\"* or *\"How Not To Date\"*?",
+    options: ["Pettiest Person doc", "How Not To Date star"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["fame", "personality", "dating"]
+  },
+  {
+    id: "tot-new-7115",
+    text: "Would you rather become a motivational speaker for something you failed at or a brand ambassador for a product you hate?",
+    options: ["Failure speaker", "Fake ambassador"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["career", "ethics", "irony"]
+  },
+  {
+    id: "tot-new-7116",
+    text: "Would you rather be trapped in a group trip with all your ex-friends or attend a silent retreat with people you blocked?",
+    options: ["Ex-friends group trip", "Blocked retreat"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["social", "awkward", "relationships"]
+  },
+  {
+    id: "tot-new-7117",
+    text: "Would you rather all your arguments be auto-transcribed and emailed to your parents or auto-Tweeted live?",
+    options: ["Parents get transcripts", "Twitter fight stream"],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["privacy", "family", "technology"]
   }
 ];
 

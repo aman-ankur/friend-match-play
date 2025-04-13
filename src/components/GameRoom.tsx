@@ -4,7 +4,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Home, User, Users, Settings, Clock, ShieldQuestion, UsersRound, Zap, Hourglass } from 'lucide-react';
 import { GameQuestion, GameMode as SpecificGameMode, GameStyle, Player } from '@/types/game';
-import getQuestionsByMode, { GAME_DESCRIPTIONS } from '@/utils/gameQuestions';
 import GuessWhoIAm from './GuessWhoIAm';
 import HotTakes from './HotTakes';
 import ThisOrThat from './ThisOrThat';
@@ -17,6 +16,22 @@ import { cn } from '@/lib/utils';
 import { useSocket } from '@/context/SocketContext';
 import PinEntryModal from './PinEntryModal';
 import ConfirmationModal from './ConfirmationModal';
+
+// Game descriptions for each mode, moved from the deleted file
+const GAME_DESCRIPTIONS: Record<SpecificGameMode, { title: string; description: string }> = {
+  "guess-who-i-am": {
+    title: "Guess Who I Am",
+    description: "Reveal hidden aspects of your personality! Answer personal questions about yourself, then predict how your friend would answer the same questions. Discover how well you truly know each other."
+  },
+  "hot-takes": {
+    title: "Hot Takes",
+    description: "Test your ability to predict opinions! Share your stance on controversial topics and predict your friend's reactions. See who's better at reading each other's minds."
+  },
+  "this-or-that": {
+    title: "This or That",
+    description: "Make tough choices and predict your friend's preferences! Face impossible dilemmas and discover how your choices align (or don't) with your friend's."
+  }
+};
 
 // Define the game mode type locally or import if defined globally
 type AppGameMode = 'solo' | '2player';
@@ -568,8 +583,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
     socket.emit('startGame', gameSettings);
 
     // --- Remove client-side state setting - wait for server 'gameStarted' event --- 
-    // const selectedQuestions = getQuestionsByMode(selectedGameMode!, totalRounds, nsfwLevel);
-    // ... (removed question fetching and state setting here) ...
+    // Server is responsible for question generation and game state management
     // setStatus('playing'); 
   };
   
@@ -659,10 +673,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
   const handleNsfwLevelChange = (level: number) => {
     setNsfwLevel(level);
-    // Question fetching logic might need adjustment depending on server interaction
-    // Consider if questions should be fetched *only* when starting the game
-    // const newQuestions = getQuestionsByMode(selectedGameMode!, totalRounds, level);
-    // setQuestions(newQuestions);
+    // Questions are now fetched from the server when starting the game
   };
 
   const handleContinueClick = () => {

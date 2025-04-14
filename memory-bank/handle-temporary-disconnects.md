@@ -63,3 +63,5 @@ Implement a grace period using `setTimeout` within the server's `disconnect` han
 *   **Session/Token-Based:** Most robust but requires significant architectural changes (likely not minimal effort).
 
 This approach focuses changes primarily on the connect/disconnect handlers, minimizing modifications to existing game progression logic.
+
+**Related Note on State Resets:** Debugging the 'Play Again' flow highlighted that robust state reset logic is crucial even *without* disconnections. Client-side handlers for server events like `roomReset` and `newRound` must ensure *all* relevant state is cleared (including UI interaction flags like `hasClickedContinueThisRound`) to prevent bugs during normal game transitions.

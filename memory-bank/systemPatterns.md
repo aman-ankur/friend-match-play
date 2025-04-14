@@ -57,7 +57,7 @@ graph TD
 - **Context API (Frontend):** `SocketContext` provides global access to the WebSocket connection.
 - **In-Memory Database (Backend):** Simple object (`rooms`) used for storing server state during development. **Needs replacement for production.**
 - **Single Source of Truth (Backend):** The server maintains the definitive game state.
-- **State Synchronization Issues (Client):** Recent timer fixes highlighted complexities in managing client-side state derived from server events, especially involving `useEffect` dependencies and state updates (`isTimerRunning`, `timeLeft`). Required careful management of dependencies and state reset logic.
+- **State Synchronization Issues (Client):** Recent timer fixes highlighted complexities in managing client-side state derived from server events, especially involving `useEffect` dependencies and state updates (`isTimerRunning`, `timeLeft`). Required careful management of dependencies and state reset logic. Debugging the 'Play Again' flow further revealed that client-side UI state (like button readiness flags - e.g., `hasClickedContinueThisRound`) must also be explicitly reset in response to server-driven state changes (like `roomReset` or `newRound`) to prevent desynchronization, even when core game state seems correct.
 - **State Machine Pattern:** Room status transitions follow a finite state machine model: waiting → selecting → playing → results → (back to playing or to completed) → selecting (after reset).
 - **Feature Flagging:** The exclusive mode feature is implemented as a flag in the Room interface, allowing dynamic enabling/disabling of the feature.
 - **PIN Protection:** Access to sensitive content (exclusive mode) is protected by a PIN code, implementing a simple authentication mechanism.

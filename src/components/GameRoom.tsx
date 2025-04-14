@@ -410,6 +410,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
         setCurrentRound(1);
         setFinalScores(null);
         setIsExclusiveModeActive(false);
+        setHasClickedContinueThisRound(false);
         
         toast({
           title: "Room Reset",
@@ -623,6 +624,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
     setCurrentRound(1);
     setFinalScores(null);
     setIsExclusiveModeActive(false); // Reset exclusive mode state
+    setHasClickedContinueThisRound(false);
     
     console.log('[GameRoom] Resetting game state for play again...');
     

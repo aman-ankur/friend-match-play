@@ -544,14 +544,26 @@ io.on('connection', (socket: Socket) => {
     const room = rooms[roomId];
     if (!room) return; // Room might have been cleaned up
 
+    console.log(`[${roomId}] Received playerReady from ${socket.id}`); // Log who sent it
+
     room.readyForNextRound.add(socket.id);
-    console.log(`[${roomId}] Player ${socket.id} is ready for next round.`);
+    // console.log(`[${roomId}] Player ${socket.id} is ready for next round.`); // Original log, replaced by the one above
+
+    // *** Add detailed logging before the check ***
+    console.log(`[${roomId}] Checking if all players are ready...`);
+    console.log(`[${roomId}] Current room.players:`, JSON.stringify(room.players.map(p => p.id)));
+    console.log(`[${roomId}] Current room.readyForNextRound:`, JSON.stringify(Array.from(room.readyForNextRound)));
 
     // Check if all players are ready
     const allPlayersReady = room.players.every(player => room.readyForNextRound.has(player.id));
 
+    // Log the result of the check
+    console.log(`[${roomId}] Result of allPlayersReady check: ${allPlayersReady}`); 
+
     if (allPlayersReady) {
-      console.log(`[${roomId}] All players ready. Proceeding to next round or game over.`);
+      console.log(`[${roomId}] All players ready. Clearing ready set and proceeding...`);
+      // *** Clear the ready set immediately upon proceeding ***
+      room.readyForNextRound.clear(); 
       // Move to the next round
       room.currentRound++;
       

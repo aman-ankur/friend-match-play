@@ -72,6 +72,8 @@ interface Room {
 - **results**: Showing round results before proceeding to next round
 - **completed**: Game over, showing final scores
 
+*(Note: When transitioning from 'completed' back to 'selecting' via the reset flow, it's crucial that client-side event handlers for server events like `roomReset` ensure *all* relevant client-side state is reset, including UI interaction flags like `hasClickedContinueThisRound`, not just the core game state provided by the server payload.)*
+
 ## Event Flow
 
 The system uses a bidirectional event-driven architecture:
@@ -87,7 +89,7 @@ The system uses a bidirectional event-driven architecture:
 - `exclusiveModeActivated`: Exclusive mode was turned on
 - `exclusiveModeFailed`: Failed to activate exclusive mode
 - `exclusiveModeSuccess`: Exclusive mode activated successfully
-- `roomReset`: Room has been reset for a new game
+- `roomReset`: Room has been reset for a new game *(Client handler must ensure full state reset, including UI flags)*
 
 ### Client → Server Events:
 - `createRoom`: Create a new room
@@ -100,6 +102,9 @@ The system uses a bidirectional event-driven architecture:
 - `attemptExclusiveMode`: Request to activate exclusive mode
 - `endExclusiveMode`: End exclusive mode round
 - `resetRoom`: Reset room after game completion
+- `currentRound`: Current round number
+- `isExclusiveModeActive`: Whether exclusive mode is active
+- `hasClickedContinueThisRound`: Client-side flag to manage the 'Continue' button interaction after results are shown. *Needs careful resetting via `handleNewRound` and `handleRoomReset` event handlers to prevent state bugs between games.*
 
 ## GameRoom Component
 

@@ -1831,6 +1831,206 @@ const hotTakesQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 10,
     categories: ["relationships", "opinions"]
+  },
+  {
+    id: "ht-new-10",
+    text: "It's okay to mute family WhatsApp groups and never look back.",
+    options: ["Agree – Mental health first.", "Disagree – It’s disrespectful to elders.", "Depends – Only if there are no birthdays coming up."],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["social", "family", "communication"]
+  },
+  {
+    id: "ht-new-11",
+    text: "If you don't post it on Instagram, did it even happen?",
+    options: ["Agree – Pics or it didn’t happen.", "Disagree – Real life > social media.", "Depends – Was it a first date or a Maldives trip?"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["social", "technology", "opinions"]
+  },
+  {
+    id: "ht-new-12",
+    text: "Every couple should live together before getting married.",
+    options: ["Agree – Test drive before the lease.", "Disagree – Tradition matters.", "Depends – Are Indian parents involved?"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["relationships", "lifestyle", "opinions"]
+  },
+  {
+    id: "ht-new-13",
+    text: "You don’t owe anyone a reply just because they texted you.",
+    options: ["Agree – You're not customer support.", "Disagree – Basic decency.", "Depends – Unless it's your boss or mom."],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["communication", "social", "morality"]
+  },
+  {
+    id: "ht-new-14",
+    text: "It’s totally fine to go to a wedding just for the food and bounce.",
+    options: ["Agree – Paneer tikka > socializing.", "Disagree – That's rude AF.", "Depends – How close are you to the bride?"],
+    score: 1,
+    nsfwRating: 1,
+    categories: ["social", "food", "morality"]
+  },
+  {
+    id: "ht-new-15",
+    text: "Telling your partner everything is overrated – some secrets are healthy.",
+    options: ["Agree – Privacy ≠ betrayal.", "Disagree – No secrets in love.", "Depends – Are we talking exes or kinks?"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["relationships", "privacy", "opinions"]
+  },
+  {
+    id: "ht-new-16",
+    text: "If someone is over 30 and still living with their parents, it's a red flag.",
+    options: ["Agree – Grow up, Peter Pan.", "Disagree – Have you seen rent prices?", "Depends – Is it a brown household?"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["lifestyle", "dating", "opinions"]
+  },
+  {
+    id: "ht-new-17",
+    text: "You should be allowed to unfollow your boss on Instagram without it being awkward.",
+    options: ["Agree – Work-life boundary 101.", "Disagree – Networking is networking.", "Depends – Is your boss a meme page?"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["work", "social", "opinions"]
+  },
+  {
+    id: "ht-new-18",
+    text: "It's okay to ghost someone after one date if there’s no vibe.",
+    options: ["Agree – One and done.", "Disagree – Closure is classy.", "Depends – Was there sex involved?"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["dating", "communication", "morality"]
+  },
+  {
+    id: "ht-new-19",
+    text: "People who say 'I'm brutally honest' are just rude.",
+    options: ["Agree – You're not blunt, you're a jerk.", "Disagree – At least they’re real.", "Depends – Are they talking to HR or their BFF?"],
+    score: 1,
+    nsfwRating: 2,
+    categories: ["communication", "personality", "opinions"]
+  },
+  {
+    id: "ht-new-20",
+    text: "Sharing location with your partner 24/7 is toxic, not romantic.",
+    options: ["Agree – That’s surveillance, not love.", "Disagree – Transparency builds trust.", "Depends – Did someone cheat before?"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["relationships", "privacy", "technology"]
+  },
+  {
+    id: "ht-new-21",
+    text: "Marrying rich > marrying for love if you're broke.",
+    options: ["Agree – Love doesn’t pay rent.", "Disagree – That’s gold-digger logic.", "Depends – How rich are we talking?"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["relationships", "finance", "opinions"]
+  },
+  {
+    id: "ht-new-22",
+    text: "Having a 'work husband/wife' is lowkey emotional cheating.",
+    options: ["Agree – You’re building a whole side relationship.", "Disagree – It’s harmless office banter.", "Depends – Are you hiding it from your real partner?"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["relationships", "work", "morality"]
+  },
+  {
+    id: "ht-new-23",
+    text: "Therapy-speak is ruining normal arguments in relationships.",
+    options: ["Agree – Not everything is 'gaslighting'.", "Disagree – Emotional intelligence is sexy.", "Depends – Is it a fight or a TED talk?"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["relationships", "communication", "psychology"]
+  },
+  {
+    id: "ht-new-24",
+    text: "It’s worse to be boring in bed than to be bad at it.",
+    options: ["Agree – At least bad can improve.", "Disagree – Boring is subjective.", "Depends – How emotionally safe do you feel?"],
+    score: 1,
+    nsfwRating: 3,
+    categories: ["sex", "relationships", "opinions"]
+  },
+  {
+    id: "ht-new-25",
+    text: "Watching porn regularly in a relationship is not a big deal.",
+    options: ["Agree – It’s self-care, not betrayal.", "Disagree – That’s emotional distance.", "Depends – Do they watch more porn than talk to you?"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "relationships", "opinions"]
+  },
+  {
+    id: "ht-new-26",
+    text: "Flirting with someone else while in a relationship is only cheating if you get caught.",
+    options: ["Agree – No harm, no foul.", "Disagree – That’s emotional cheating.", "Depends – Is it harmless banter or serious intent?"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["relationships", "morality", "flirting"]
+  },
+  {
+    id: "ht-new-27",
+    text: "You should have to disclose your body count before sleeping with someone.",
+    options: ["Agree – Honesty is hygiene.", "Disagree – That’s private info.", "Depends – Is this a hookup or a relationship talk?"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "dating", "privacy"]
+  },
+  {
+    id: "ht-new-28",
+    text: "If you’re not giving head, you shouldn’t expect it.",
+    options: ["Agree – Equality starts in the bedroom.", "Disagree – Everyone has boundaries.", "Depends – Are both people clear on the rules?"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "relationships", "opinions"]
+  },
+  {
+    id: "ht-new-29",
+    text: "It’s totally fine to use toys in bed even if your partner feels insecure about them.",
+    options: ["Agree – Your pleasure matters too.", "Disagree – It can mess with their confidence.", "Depends – Have you talked about it openly?"],
+    score: 1,
+    nsfwRating: 4,
+    categories: ["sex", "relationships", "communication"]
+  },
+  {
+    id: "ht-new-30",
+    text: "You should tell your partner if their nudes weren’t hot.",
+    options: ["Agree – Constructive feedback = better sexts.", "Disagree – That's soul-crushing.", "Depends – Are they asking or are you roasting?"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "relationships", "communication"]
+  },
+  {
+    id: "ht-new-31",
+    text: "OnlyFans is a valid career path.",
+    options: ["Agree – It’s work, period.", "Disagree – That’s not sustainable.", "Depends – Are we talking feet pics or full nudity?"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["work", "social", "opinions"]
+  },
+  {
+    id: "ht-new-32",
+    text: "It’s okay to fantasize about someone else during sex with your partner.",
+    options: ["Agree – Fantasies aren’t cheating.", "Disagree – That’s mental cheating.", "Depends – Is it a celeb or your coworker?"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "relationships", "fantasy"]
+  },
+  {
+    id: "ht-new-33",
+    text: "Being kinky doesn't mean you're 'damaged'.",
+    options: ["Agree – It’s called self-awareness and spice.", "Disagree – Sometimes it is rooted in trauma.", "Depends – Are you unpacking it in therapy or just role-playing?"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["sex", "psychology", "opinions"]
+  },
+  {
+    id: "ht-new-34",
+    text: "Monogamy is outdated, but no one wants to say it out loud.",
+    options: ["Agree – We’re not wired for one person forever.", "Disagree – Commitment is hot.", "Depends – Are you bored or genuinely poly?"],
+    score: 1,
+    nsfwRating: 5,
+    categories: ["relationships", "sex", "opinions"]
   }
 ];
 
@@ -4299,4 +4499,4 @@ export const getQuestionsByMode = (mode: GameMode, count: number = 5, nsfwLevel:
   const result = shuffled.slice(0, count);
   console.log(`[getQuestionsByMode] Returning ${result.length} questions`);
   return result;
-}; 
+};

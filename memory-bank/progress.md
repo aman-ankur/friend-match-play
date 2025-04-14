@@ -122,6 +122,10 @@
     - Configured environment variables (`VITE_SOCKET_URL`) on both platforms for successful connection.
     - Implemented backend build process (`npm run build`) to handle TypeScript compilation and copy shared types, resolving TS6059 error.
     - Configured backend CORS to allow connections from deployed frontend URL.
+*   **Play Again Bug Fix:**
+    - Fixed issue where game stalled after Round 1 when playing again.
+    - Root cause: `hasClickedContinueThisRound` flag was not reset in the non-creator client's `handleRoomReset` handler, preventing the `playerReady` event from being sent.
+    - Fix: Added `setHasClickedContinueThisRound(false)` to `handleRoomReset` and verified it's also present in `handleNewRound`.
 
 ## Current Focus / Next Steps
 
@@ -146,6 +150,6 @@
 *   ~~Friend's prediction is not shown on the results screen in Prediction mode.~~ (Resolved)
 *   ~~Timer doesn't restart between rounds / counts down incorrectly.~~ (Resolved)
 *   ~~Exclusive mode questions repeating during gameplay.~~ (Resolved)
-*   ~~Cannot play another game after completing one.~~ (Resolved)
+*   ~~Cannot play another game after completing one.~~ (Resolved - See Play Again Bug Fix above)
 *   ~~Question text not properly displaying in results view.~~ (Resolved)
 *   Client-side state management needs to be replaced for true multiplayer.

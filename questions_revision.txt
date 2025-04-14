@@ -1,205 +1,114 @@
-[
-  {
-    "question": "Would you rather have your most embarrassing childhood secret go viral on Instagram or accidentally have a reality show follow your every move?",
-    "options": ["Childhood secret on Instagram", "Reality show documentary"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather accidentally send a screenshot of your private convo to your crush or have your most cringe-worthy selfie turned into an endless meme?",
-    "options": ["Screenshot to crush", "Selfie turned meme"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather have your worst date critiqued live on Instagram Stories or see it dissected on a popular talk show?",
-    "options": ["Instagram Stories roast", "Talk show exposure"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather be forced to wear a device that broadcasts your unfiltered thoughts on every Zoom call or have your entire search history splashed across your LinkedIn profile?",
-    "options": ["Thoughts on Zoom", "LinkedIn search history"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather accidentally reveal your secret hobby at a fancy work event or have your most cringeworthy habit exposed live on a friend's podcast?",
-    "options": ["Reveal secret hobby", "Cringe habit on podcast"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather your phone autocorrect every message to sound flirty, or sarcastic?",
-    "options": ["Flirty", "Sarcastic"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather all your thoughts show as pop-ups above your head, or play out loud in your voice?",
-    "options": ["Thought pop-ups", "Voice playback"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather your parents find your internet search history or your ex find your therapy notes?",
-    "options": ["Parents – history", "Ex – therapy notes"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather laugh uncontrollably during serious moments or cry during happy ones?",
-    "options": ["Laugh at serious stuff", "Cry at happy stuff"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather wear a shirt with your last text on it or your last voice note on loop?",
-    "options": ["Text on shirt", "Voice note loop"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather your inner monologue be narrated by your boss or your most judgmental cousin?",
-    "options": ["Boss narration", "Judgmental cousin"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather all your dreams be leaked as videos or your nightmares turned into podcasts?",
-    "options": ["Dream leaks", "Nightmare podcasts"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather your crush see your drunk texts or your browser bookmarks?",
-    "options": ["Drunk texts", "Bookmarks"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather have your worst ex as your therapist or your current boss as your roommate?",
-    "options": ["Ex therapist", "Boss roommate"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather get caught on camera flirting horribly or crying over cereal?",
-    "options": ["Flirty fail", "Cereal cry"],
-    "nsfw_level": 9
+{
+  "hot_takes": {
+    "nsfw_level_1": [
+      {
+        "question": "It's okay to mute family WhatsApp groups and never look back.",
+        "points_of_view": ["Agree – Mental health first.", "Disagree – It’s disrespectful to elders.", "Depends – Only if there are no birthdays coming up."]
+      },
+      {
+        "question": "If you don't post it on Instagram, did it even happen?",
+        "points_of_view": ["Agree – Pics or it didn’t happen.", "Disagree – Real life > social media.", "Depends – Was it a first date or a Maldives trip?"]
+      },
+      {
+        "question": "Every couple should live together before getting married.",
+        "points_of_view": ["Agree – Test drive before the lease.", "Disagree – Tradition matters.", "Depends – Are Indian parents involved?"]
+      },
+      {
+        "question": "You don’t owe anyone a reply just because they texted you.",
+        "points_of_view": ["Agree – You're not customer support.", "Disagree – Basic decency.", "Depends – Unless it's your boss or mom."]
+      },
+      {
+        "question": "It’s totally fine to go to a wedding just for the food and bounce.",
+        "points_of_view": ["Agree – Paneer tikka > socializing.", "Disagree – That's rude AF.", "Depends – How close are you to the bride?"]
+      }
+    ],
+    "nsfw_level_2": [
+      {
+        "question": "Telling your partner everything is overrated – some secrets are healthy.",
+        "points_of_view": ["Agree – Privacy ≠ betrayal.", "Disagree – No secrets in love.", "Depends – Are we talking exes or kinks?"]
+      },
+      {
+        "question": "If someone is over 30 and still living with their parents, it's a red flag.",
+        "points_of_view": ["Agree – Grow up, Peter Pan.", "Disagree – Have you seen rent prices?", "Depends – Is it a brown household?"]
+      },
+      {
+        "question": "You should be allowed to unfollow your boss on Instagram without it being awkward.",
+        "points_of_view": ["Agree – Work-life boundary 101.", "Disagree – Networking is networking.", "Depends – Is your boss a meme page?"]
+      },
+      {
+        "question": "It's okay to ghost someone after one date if there’s no vibe.",
+        "points_of_view": ["Agree – One and done.", "Disagree – Closure is classy.", "Depends – Was there sex involved?"]
+      },
+      {
+        "question": "People who say 'I'm brutally honest' are just rude.",
+        "points_of_view": ["Agree – You're not blunt, you're a jerk.", "Disagree – At least they’re real.", "Depends – Are they talking to HR or their BFF?"]
+      }
+    ],
+    "nsfw_level_3": [
+      {
+        "question": "Sharing location with your partner 24/7 is toxic, not romantic.",
+        "points_of_view": ["Agree – That’s surveillance, not love.", "Disagree – Transparency builds trust.", "Depends – Did someone cheat before?"]
+      },
+      {
+        "question": "Marrying rich > marrying for love if you're broke.",
+        "points_of_view": ["Agree – Love doesn’t pay rent.", "Disagree – That’s gold-digger logic.", "Depends – How rich are we talking?"]
+      },
+      {
+        "question": "Having a 'work husband/wife' is lowkey emotional cheating.",
+        "points_of_view": ["Agree – You’re building a whole side relationship.", "Disagree – It’s harmless office banter.", "Depends – Are you hiding it from your real partner?"]
+      },
+      {
+        "question": "Therapy-speak is ruining normal arguments in relationships.",
+        "points_of_view": ["Agree – Not everything is 'gaslighting'.", "Disagree – Emotional intelligence is sexy.", "Depends – Is it a fight or a TED talk?"]
+      },
+      {
+        "question": "It’s worse to be boring in bed than to be bad at it.",
+        "points_of_view": ["Agree – At least bad can improve.", "Disagree – Boring is subjective.", "Depends – How emotionally safe do you feel?"]
+      }
+    ],
+    "nsfw_level_4": [
+      {
+        "question": "Watching porn regularly in a relationship is not a big deal.",
+        "points_of_view": ["Agree – It’s self-care, not betrayal.", "Disagree – That’s emotional distance.", "Depends – Do they watch more porn than talk to you?"]
+      },
+      {
+        "question": "Flirting with someone else while in a relationship is only cheating if you get caught.",
+        "points_of_view": ["Agree – No harm, no foul.", "Disagree – That’s emotional cheating.", "Depends – Is it harmless banter or serious intent?"]
+      },
+      {
+        "question": "You should have to disclose your body count before sleeping with someone.",
+        "points_of_view": ["Agree – Honesty is hygiene.", "Disagree – That’s private info.", "Depends – Is this a hookup or a relationship talk?"]
+      },
+      {
+        "question": "If you’re not giving head, you shouldn’t expect it.",
+        "points_of_view": ["Agree – Equality starts in the bedroom.", "Disagree – Everyone has boundaries.", "Depends – Are both people clear on the rules?"]
+      },
+      {
+        "question": "It’s totally fine to use toys in bed even if your partner feels insecure about them.",
+        "points_of_view": ["Agree – Your pleasure matters too.", "Disagree – It can mess with their confidence.", "Depends – Have you talked about it openly?"]
+      }
+    ],
+    "nsfw_level_5": [
+      {
+        "question": "You should tell your partner if their nudes weren’t hot.",
+        "points_of_view": ["Agree – Constructive feedback = better sexts.", "Disagree – That's soul-crushing.", "Depends – Are they asking or are you roasting?"]
+      },
+      {
+        "question": "OnlyFans is a valid career path.",
+        "points_of_view": ["Agree – It’s work, period.", "Disagree – That’s not sustainable.", "Depends – Are we talking feet pics or full nudity?"]
+      },
+      {
+        "question": "It’s okay to fantasize about someone else during sex with your partner.",
+        "points_of_view": ["Agree – Fantasies aren’t cheating.", "Disagree – That’s mental cheating.", "Depends – Is it a celeb or your coworker?"]
+      },
+      {
+        "question": "Being kinky doesn't mean you're 'damaged'.",
+        "points_of_view": ["Agree – It’s called self-awareness and spice.", "Disagree – Sometimes it is rooted in trauma.", "Depends – Are you unpacking it in therapy or just role-playing?"]
+      },
+      {
+        "question": "Monogamy is outdated, but no one wants to say it out loud.",
+        "points_of_view": ["Agree – We’re not wired for one person forever.", "Disagree – Commitment is hot.", "Depends – Are you bored or genuinely poly?"]
+      }
+    ]
   }
-  {
-    "question": "Would you rather have your scandalous personal diary published as a best-selling tell-all or live-stream your meltdown in the middle of a huge family gathering?",
-    "options": ["Diary published", "Live-stream meltdown"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather be publicly shamed on national TV for a wardrobe malfunction or have your deepest personal confession recited during your wedding toast?",
-    "options": ["TV wardrobe malfunction", "Wedding toast confession"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather have your best friend announce a secret you're ashamed of at a major public event or accidentally see your most controversial text messages projected on a billboard?",
-    "options": ["Best friend announcement", "Text messages on billboard"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather be forced to reveal your wildest secret in a surprise company meeting or have a candid camera catch your most embarrassing moment at a family reunion?",
-    "options": ["Reveal secret at work", "Family reunion candid"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather have your memories constantly streamed on a public network or have an AI rank every decision you make throughout your day?",
-    "options": ["Memories streamed", "Decisions ranked"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather live in a future where your most embarrassing moments are replayed at random intervals or where your private failures are compiled into a public dossier?",
-    "options": ["Random embarrassing replays", "Public failure dossier"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather have a digital assistant that narrates your life’s mishaps live or a mirror that shows your future mistakes as they happen?",
-    "options": ["Live mishap narration", "Future mistake mirror"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather experience a device that forces you to confront your darkest secrets every morning or have an algorithm decide your life’s path with no input?",
-    "options": ["Morning secret confrontations", "Algorithm-dictated life"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather have a smart system that publicizes every thought in your head or a system that transforms your embarrassing actions into real-time public ratings?",
-    "options": ["Thoughts publicized", "Embarrassment public ratings"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather have your personal regrets automatically compiled and published daily or your life’s missteps voted on by an anonymous global panel?",
-    "options": ["Daily published regrets", "Global misstep voting"],
-    "nsfw_level": 9
-  },222
-  {
-    "question": "Would you rather be known as the one who defied digital surveillance or the one who willingly shared every digital footprint of their life?",
-    "options": ["Defied surveillance", "Shared every footprint"],
-    "nsfw_level": 9
-  },
-  {
-    "question": "Would you rather be forced to publicly vote on each personal decision via a global app or have a panel of strangers judge your choices in real time?",
-    "options": ["Global app decision votes", "Real-time stranger tribunal"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather experience a device that exposes your inner turmoil in every high-stakes meeting or a wearable that broadcasts your mood swings with pinpoint accuracy?",
-    "options": ["Meeting turmoil exposer", "Mood swing broadcaster"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather live in a world where an AI curates your reputation based solely on your private texts or where every misstep is punished by a live digital score update?",
-    "options": ["AI reputation curator", "Live digital mistake score"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather have a system that erases your worst memories but broadcasts your best ones for everyone to judge, or one that turns your deepest regrets into mandatory public lessons?",
-    "options": ["Erase worst, broadcast best", "Regrets turned to public lessons"],
-    "nsfw_level": 10
-  },
-  [
-  {
-    "question": "Would you rather have your deepest secret as your email signature or tattooed on your wrist?",
-    "options": ["Email signature", "Wrist tattoo"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather everyone hear your thoughts for a day, or relive your most embarrassing memory yearly?",
-    "options": ["Thoughts for a day", "Cringe anniversary"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather all your life choices be live-commentated or your ex narrate your bio?",
-    "options": ["Live commentary", "Ex bio narrator"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather swap lives with your worst enemy or your weirdest family member?",
-    "options": ["Worst enemy", "Weird family"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather live in a world where your jealousy is public or your regrets trend weekly?",
-    "options": ["Visible jealousy", "Trending regrets"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather your AI assistant leak your voice notes or remix them into a song?",
-    "options": ["Leak", "Remix song"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather face a roast by your exes or by your search history?",
-    "options": ["Exes roast", "Search history roast"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather have a clone who behaves better than you, or worse but is more popular?",
-    "options": ["Better clone", "Popular mess"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather your browser history be tattooed on your arm or your FYP shown on a date?",
-    "options": ["Tattooed history", "FYP date reveal"],
-    "nsfw_level": 10
-  },
-  {
-    "question": "Would you rather be the main character in your most awkward memory or sidekick in your enemy’s success story?",
-    "options": ["Awkward lead", "Enemy's sidekick"],
-    "nsfw_level": 10
-  }
-
-
-]
+}

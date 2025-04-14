@@ -1183,9 +1183,9 @@ const guessWhoIAmQuestions: GameQuestion[] = [
     "id": "gwia-new-87",
     "text": "What kind of NSFW 'bucket list' item secretly tempts me?",
     "options": [
-      "Join a secret club with *very specific* rules.",
-      "Hook up in a location that could go viral.",
-      "Try something that involves an ice cube and no mercy.",
+      "A secret beach tryst under a starry Goan sky",
+      "A flirty game of truth-or-dare that breaks all my rules",
+      "A blindfolded sensory adventure with candles and whispers",
       "Have a day with zero clothes and zero shame."
     ],
     "score": 1,

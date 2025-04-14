@@ -18,11 +18,11 @@ const AnswerSelection: React.FC<AnswerSelectionProps> = ({
         <Button
           key={index}
           variant="outline"
-          className="p-6 h-auto text-left justify-center text-center hover:bg-connection-light hover:text-connection-tertiary transition-all border-connection-light disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-6 h-auto justify-center text-center hover:bg-connection-light hover:text-connection-tertiary transition-all border-connection-light disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={() => onSelect(option)}
           disabled={disabled}
         >
-          <span className="text-md">{option}</span>
+          <span className="text-md whitespace-normal break-words">{option}</span>
         </Button>
       ))}
     </div>

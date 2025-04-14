@@ -3930,6 +3930,328 @@ const thisOrThatQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 7,
     categories: ["privacy", "family", "technology"]
+  },
+  
+  // New questions from questions_revision.txt
+  {
+    id: "tot-new-9101",
+    text: "Would you rather have your most embarrassing childhood secret go viral on Instagram or accidentally have a reality show follow your every move?",
+    options: ["Childhood secret on Instagram", "Reality show documentary"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["privacy", "social", "embarrassment"]
+  },
+  {
+    id: "tot-new-9102",
+    text: "Would you rather accidentally send a screenshot of your private convo to your crush or have your most cringe-worthy selfie turned into an endless meme?",
+    options: ["Screenshot to crush", "Selfie turned meme"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["social", "digital", "embarrassment"]
+  },
+  {
+    id: "tot-new-9103",
+    text: "Would you rather have your worst date critiqued live on Instagram Stories or see it dissected on a popular talk show?",
+    options: ["Instagram Stories roast", "Talk show exposure"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["dating", "social", "embarrassment"]
+  },
+  {
+    id: "tot-new-9104",
+    text: "Would you rather be forced to wear a device that broadcasts your unfiltered thoughts on every Zoom call or have your entire search history splashed across your LinkedIn profile?",
+    options: ["Thoughts on Zoom", "LinkedIn search history"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["privacy", "technology", "work"]
+  },
+  {
+    id: "tot-new-9105",
+    text: "Would you rather accidentally reveal your secret hobby at a fancy work event or have your most cringeworthy habit exposed live on a friend's podcast?",
+    options: ["Reveal secret hobby", "Cringe habit on podcast"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["work", "social", "embarrassment"]
+  },
+  {
+    id: "tot-new-9106",
+    text: "Would you rather your phone autocorrect every message to sound flirty, or sarcastic?",
+    options: ["Flirty", "Sarcastic"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["technology", "communication", "social"]
+  },
+  {
+    id: "tot-new-9107",
+    text: "Would you rather all your thoughts show as pop-ups above your head, or play out loud in your voice?",
+    options: ["Thought pop-ups", "Voice playback"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["privacy", "social", "embarrassment"]
+  },
+  {
+    id: "tot-new-9108",
+    text: "Would you rather your parents find your internet search history or your ex find your therapy notes?",
+    options: ["Parents – history", "Ex – therapy notes"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["privacy", "family", "relationships"]
+  },
+  {
+    id: "tot-new-9109",
+    text: "Would you rather laugh uncontrollably during serious moments or cry during happy ones?",
+    options: ["Laugh at serious stuff", "Cry at happy stuff"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["personal", "social", "embarrassment"]
+  },
+  {
+    id: "tot-new-9110",
+    text: "Would you rather wear a shirt with your last text on it or your last voice note on loop?",
+    options: ["Text on shirt", "Voice note loop"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["fashion", "social", "communication"]
+  },
+  {
+    id: "tot-new-9111",
+    text: "Would you rather your inner monologue be narrated by your boss or your most judgmental cousin?",
+    options: ["Boss narration", "Judgmental cousin"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["personal", "family", "work"]
+  },
+  {
+    id: "tot-new-9112",
+    text: "Would you rather all your dreams be leaked as videos or your nightmares turned into podcasts?",
+    options: ["Dream leaks", "Nightmare podcasts"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["privacy", "personal", "technology"]
+  },
+  {
+    id: "tot-new-9113",
+    text: "Would you rather your crush see your drunk texts or your browser bookmarks?",
+    options: ["Drunk texts", "Bookmarks"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["dating", "privacy", "technology"]
+  },
+  {
+    id: "tot-new-9114",
+    text: "Would you rather have your worst ex as your therapist or your current boss as your roommate?",
+    options: ["Ex therapist", "Boss roommate"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["relationships", "work", "awkward"]
+  },
+  {
+    id: "tot-new-9115",
+    text: "Would you rather get caught on camera flirting horribly or crying over cereal?",
+    options: ["Flirty fail", "Cereal cry"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["embarrassment", "social", "privacy"]
+  },
+  {
+    id: "tot-new-10101",
+    text: "Would you rather have your scandalous personal diary published as a best-selling tell-all or live-stream your meltdown in the middle of a huge family gathering?",
+    options: ["Diary published", "Live-stream meltdown"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["privacy", "family", "social"]
+  },
+  {
+    id: "tot-new-10102",
+    text: "Would you rather be publicly shamed on national TV for a wardrobe malfunction or have your deepest personal confession recited during your wedding toast?",
+    options: ["TV wardrobe malfunction", "Wedding toast confession"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["privacy", "embarrassment", "social"]
+  },
+  {
+    id: "tot-new-10103",
+    text: "Would you rather have your best friend announce a secret you're ashamed of at a major public event or accidentally see your most controversial text messages projected on a billboard?",
+    options: ["Best friend announcement", "Text messages on billboard"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["friendship", "privacy", "social"]
+  },
+  {
+    id: "tot-new-10104",
+    text: "Would you rather be forced to reveal your wildest secret in a surprise company meeting or have a candid camera catch your most embarrassing moment at a family reunion?",
+    options: ["Reveal secret at work", "Family reunion candid"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["work", "family", "privacy"]
+  },
+  {
+    id: "tot-new-9116",
+    text: "Would you rather have your memories constantly streamed on a public network or have an AI rank every decision you make throughout your day?",
+    options: ["Memories streamed", "Decisions ranked"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["privacy", "technology", "social"]
+  },
+  {
+    id: "tot-new-9117",
+    text: "Would you rather live in a future where your most embarrassing moments are replayed at random intervals or where your private failures are compiled into a public dossier?",
+    options: ["Random embarrassing replays", "Public failure dossier"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["privacy", "technology", "embarrassment"]
+  },
+  {
+    id: "tot-new-9118",
+    text: "Would you rather have a digital assistant that narrates your life's mishaps live or a mirror that shows your future mistakes as they happen?",
+    options: ["Live mishap narration", "Future mistake mirror"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["technology", "personal", "embarrassment"]
+  },
+  {
+    id: "tot-new-9119",
+    text: "Would you rather experience a device that forces you to confront your darkest secrets every morning or have an algorithm decide your life's path with no input?",
+    options: ["Morning secret confrontations", "Algorithm-dictated life"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["technology", "personal", "privacy"]
+  },
+  {
+    id: "tot-new-9120",
+    text: "Would you rather have a smart system that publicizes every thought in your head or a system that transforms your embarrassing actions into real-time public ratings?",
+    options: ["Thoughts publicized", "Embarrassment public ratings"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["technology", "privacy", "social"]
+  },
+  {
+    id: "tot-new-9121",
+    text: "Would you rather have your personal regrets automatically compiled and published daily or your life's missteps voted on by an anonymous global panel?",
+    options: ["Daily published regrets", "Global misstep voting"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["privacy", "social", "technology"]
+  },
+  {
+    id: "tot-new-9122",
+    text: "Would you rather be known as the one who defied digital surveillance or the one who willingly shared every digital footprint of their life?",
+    options: ["Defied surveillance", "Shared every footprint"],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["privacy", "technology", "social"]
+  },
+  {
+    id: "tot-new-10105",
+    text: "Would you rather be forced to publicly vote on each personal decision via a global app or have a panel of strangers judge your choices in real time?",
+    options: ["Global app decision votes", "Real-time stranger tribunal"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["privacy", "technology", "social"]
+  },
+  {
+    id: "tot-new-10106",
+    text: "Would you rather experience a device that exposes your inner turmoil in every high-stakes meeting or a wearable that broadcasts your mood swings with pinpoint accuracy?",
+    options: ["Meeting turmoil exposer", "Mood swing broadcaster"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["work", "technology", "privacy"]
+  },
+  {
+    id: "tot-new-10107",
+    text: "Would you rather live in a world where an AI curates your reputation based solely on your private texts or where every misstep is punished by a live digital score update?",
+    options: ["AI reputation curator", "Live digital mistake score"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["technology", "privacy", "social"]
+  },
+  {
+    id: "tot-new-10108",
+    text: "Would you rather have a system that erases your worst memories but broadcasts your best ones for everyone to judge, or one that turns your deepest regrets into mandatory public lessons?",
+    options: ["Erase worst, broadcast best", "Regrets turned to public lessons"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["technology", "privacy", "social"]
+  },
+  {
+    id: "tot-new-10109",
+    text: "Would you rather have your deepest secret as your email signature or tattooed on your wrist?",
+    options: ["Email signature", "Wrist tattoo"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["privacy", "social", "technology"]
+  },
+  {
+    id: "tot-new-10110",
+    text: "Would you rather everyone hear your thoughts for a day, or relive your most embarrassing memory yearly?",
+    options: ["Thoughts for a day", "Cringe anniversary"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["privacy", "personal", "embarrassment"]
+  },
+  {
+    id: "tot-new-10111",
+    text: "Would you rather all your life choices be live-commentated or your ex narrate your bio?",
+    options: ["Live commentary", "Ex bio narrator"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["privacy", "relationships", "social"]
+  },
+  {
+    id: "tot-new-10112",
+    text: "Would you rather swap lives with your worst enemy or your weirdest family member?",
+    options: ["Worst enemy", "Weird family"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["relationships", "family", "personal"]
+  },
+  {
+    id: "tot-new-10113",
+    text: "Would you rather live in a world where your jealousy is public or your regrets trend weekly?",
+    options: ["Visible jealousy", "Trending regrets"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["emotions", "social", "privacy"]
+  },
+  {
+    id: "tot-new-10114",
+    text: "Would you rather your AI assistant leak your voice notes or remix them into a song?",
+    options: ["Leak", "Remix song"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["technology", "privacy", "social"]
+  },
+  {
+    id: "tot-new-10115",
+    text: "Would you rather face a roast by your exes or by your search history?",
+    options: ["Exes roast", "Search history roast"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["relationships", "technology", "embarrassment"]
+  },
+  {
+    id: "tot-new-10116",
+    text: "Would you rather have a clone who behaves better than you, or worse but is more popular?",
+    options: ["Better clone", "Popular mess"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["personal", "social", "fantasy"]
+  },
+  {
+    id: "tot-new-10117",
+    text: "Would you rather your browser history be tattooed on your arm or your FYP shown on a date?",
+    options: ["Tattooed history", "FYP date reveal"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["technology", "dating", "privacy"]
+  },
+  {
+    id: "tot-new-10118",
+    text: "Would you rather be the main character in your most awkward memory or sidekick in your enemy's success story?",
+    options: ["Awkward lead", "Enemy's sidekick"],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["personal", "relationships", "social"]
   }
 ];
 

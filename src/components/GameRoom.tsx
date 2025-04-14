@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Home, User, Users, Settings, Clock, ShieldQuestion, UsersRound, Zap, Hourglass } from 'lucide-react';
+import { Home, User, Users, Settings, Clock, ShieldQuestion, UsersRound, Zap, Hourglass, Copy } from 'lucide-react';
 import { GameQuestion, GameMode as SpecificGameMode, GameStyle, Player } from '@/types/game';
 import GuessWhoIAm from './GuessWhoIAm';
 import HotTakes from './HotTakes';
@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { useSocket } from '@/context/SocketContext';
 import PinEntryModal from './PinEntryModal';
 import ConfirmationModal from './ConfirmationModal';
+import GameConfirmationDialog from "./GameConfirmationDialog";
 
 // Game descriptions for each mode, moved from the deleted file
 const GAME_DESCRIPTIONS: Record<SpecificGameMode, { title: string; description: string }> = {
@@ -133,6 +134,20 @@ const GameRoom: React.FC<GameRoomProps> = ({
   // Add state for confirmation modal
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
+  // New state variables for Player 2 confirmation flow
+  const [showPlayer2Confirmation, setShowPlayer2Confirmation] = useState<boolean>(false);
+  const [pendingGameSettings, setPendingGameSettings] = useState<{
+    gameMode: SpecificGameMode;
+    gameStyle: GameStyle;
+    nsfwLevel: number;
+    timerDuration: number | null;
+    totalRounds: number;
+    isExclusiveModeActive: boolean;
+    creatorName: string;
+  } | null>(null);
+  const [waitingForPlayer2, setWaitingForPlayer2] = useState<boolean>(false);
+  const [player2Name, setPlayer2Name] = useState<string>("");
+
   // Determine if the current player is the creator using the derived currentPlayerId
   const isCreator = gameMode === 'solo' || 
                    (players.length > 0 && !!currentPlayerId && players[0]?.id === currentPlayerId);
@@ -203,6 +218,10 @@ const GameRoom: React.FC<GameRoomProps> = ({
         setStatus('playing'); 
         setIsProcessing(false);
         
+        // Reset Player 2 confirmation state
+        setWaitingForPlayer2(false);
+        setPlayer2Name("");
+        
         // Set exclusive mode state if it's included in the data
         if (data.isExclusiveModeActive !== undefined) {
           setIsExclusiveModeActive(data.isExclusiveModeActive);
@@ -241,7 +260,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
     };
 
     // --- Listener for New Round --- 
-    const handleNewRound = (data: { currentRound: number; question: GameQuestion; timerDuration: number; isExclusiveModeActive?: boolean }) => {
+    const handleNewRound = (data: { currentRound: number; question?: GameQuestion; timerDuration?: number; isExclusiveModeActive?: boolean }) => {
         console.log(`[GameRoom] Received newRound event for round: ${data.currentRound}. Setting state.`);
         stopTimer(); // Stop timer for the previous round
         setCurrentRound(data.currentRound);
@@ -295,6 +314,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
     // --- Add Listener for Round Results --- 
     const handleRoundResults = (data: ResultsData) => {
         console.log('[GameRoom] Received roundResults event:', data);
+        console.log(`[GameRoom] Current round: ${currentRound}, hasClickedContinueThisRound: ${hasClickedContinueThisRound}`);
         stopTimer(); // Ensure timer is stopped
         
         // Store the current question's text before we lose it
@@ -308,7 +328,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
           questionText: currentQuestionText // Add the text directly to results
         });
         
-        setStatus('results'); // Change status to show results
+        // Ensure hasClickedContinueThisRound is reset when showing results
+        setHasClickedContinueThisRound(false);
+        
+        // Set status to show results
+        setStatus('results');
     };
 
     // General Error Listener
@@ -350,6 +374,36 @@ const GameRoom: React.FC<GameRoomProps> = ({
        }
     };
 
+    // Handler for when the game is ready for Player 2 to confirm
+    const handleGameReadyForPlayer2 = (data: {
+      gameMode: SpecificGameMode;
+      gameStyle: GameStyle;
+      nsfwLevel: number;
+      timerDuration: number;
+      totalRounds: number;
+      isExclusiveModeActive: boolean;
+      creatorName: string;
+    }) => {
+      console.log('[GameRoom] Received gameReadyForPlayer2 event:', data);
+      setPendingGameSettings(data);
+      setShowPlayer2Confirmation(true);
+    };
+
+    // Handler for creator waiting for Player 2 confirmation
+    const handleWaitingForPlayer2Confirmation = (data: {
+      player2Name: string;
+    }) => {
+      console.log('[GameRoom] Received waitingForPlayer2Confirmation event:', data);
+      setWaitingForPlayer2(true);
+      setPlayer2Name(data.player2Name);
+      // Show toast to indicate waiting
+      toast({
+        title: "Waiting for Player",
+        description: `Waiting for ${data.player2Name} to confirm the game settings.`,
+        duration: 5000
+      });
+    };
+
     socket.on('roomReady', handleRoomReady);
     socket.on('gameStarted', handleGameStarted);
     socket.on('playerLeft', handlePlayerLeft);
@@ -357,7 +411,12 @@ const GameRoom: React.FC<GameRoomProps> = ({
     socket.on('newRound', handleNewRound); // Add listener
     socket.on('roundComplete', handleRoundComplete); // Add listener for round completion
     socket.on('gameOver', handleGameOver); // Add listener
-    socket.on('roundResults', handleRoundResults); // <<< Add listener here
+    socket.on('roundResults', (data) => {
+      console.log('[GameRoom] Raw roundResults event received from server:', data);
+      handleRoundResults(data as ResultsData); // Call the actual handler
+    });
+    socket.on('gameReadyForPlayer2', handleGameReadyForPlayer2);
+    socket.on('waitingForPlayer2Confirmation', handleWaitingForPlayer2Confirmation);
 
     // Add exclusive mode event listeners
     const handleExclusiveModeActivated = (data: { isExclusiveModeActive: boolean }) => {
@@ -431,7 +490,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
       socket.off('newRound', handleNewRound); // Cleanup listener
       socket.off('roundComplete', handleRoundComplete); // Cleanup listener
       socket.off('gameOver', handleGameOver); // Cleanup listener
-      socket.off('roundResults', handleRoundResults); // <<< Add cleanup here
+      socket.off('roundResults');
       
       // Cleanup exclusive mode event listeners
       socket.off('exclusiveModeActivated', handleExclusiveModeActivated);
@@ -440,6 +499,9 @@ const GameRoom: React.FC<GameRoomProps> = ({
       
       // Cleanup room reset listener
       socket.off('roomReset', handleRoomReset);
+      
+      socket.off('gameReadyForPlayer2', handleGameReadyForPlayer2);
+      socket.off('waitingForPlayer2Confirmation', handleWaitingForPlayer2Confirmation);
       
       stopTimer(); // Ensure timer stops on component unmount or effect re-run
     };
@@ -521,11 +583,12 @@ const GameRoom: React.FC<GameRoomProps> = ({
   }, [timeLeft]);
 
   const handleGameModeSelect = (mode: SpecificGameMode) => {
-    // Allow anyone to select the mode visually, but only creator can *start* it
+    console.log('[GameRoom] Game mode selected:', mode);
     setSelectedGameMode(mode);
-    setSelectedGameStyle('reveal-only');
-    setRoundTimeLimitSelection(null);
     setStatus('style-selecting');
+    // Reset any Player 2 waiting state if the creator goes back to selection
+    setWaitingForPlayer2(false);
+    setPlayer2Name("");
   };
   
   // Renamed to reflect it's the creator action
@@ -682,10 +745,15 @@ const GameRoom: React.FC<GameRoomProps> = ({
     // Only emit and set state if the player hasn't already clicked
     if (socket && !hasClickedContinueThisRound) { 
       console.log('[GameRoom] Emitting playerReady');
+      console.log(`[GameRoom] Current round: ${currentRound}, Setting hasClickedContinueThisRound to true`);
       socket.emit('playerReady', { roomId });
       setHasClickedContinueThisRound(true); // Set state to true for button display
       // REMOVED: setRoundResults(null); 
       // REMOVED: setStatus('playing');
+    } else if (hasClickedContinueThisRound) {
+      console.log('[GameRoom] Already clicked continue this round, ignoring');
+    } else if (!socket) {
+      console.error('[GameRoom] Cannot continue: Socket not connected');
     }
   };
   
@@ -744,6 +812,20 @@ const GameRoom: React.FC<GameRoomProps> = ({
   // Function to confirm ending exclusive mode
   const confirmEndExclusiveMode = () => {
     socket.emit('endExclusiveMode', { roomId });
+  };
+
+  // Handle Player 2's confirmation
+  const handlePlayer2Confirm = () => {
+    if (!socket) {
+      console.error('[GameRoom] Cannot confirm: Socket not connected');
+      return;
+    }
+    
+    console.log('[GameRoom] Player 2 confirmed game settings');
+    socket.emit('player2Ready', { roomId });
+    setShowPlayer2Confirmation(false);
+    setPendingGameSettings(null);
+    setIsProcessing(true); // Show loading state until game starts
   };
 
   const renderHeader = () => {
@@ -834,6 +916,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
   
   const renderStyleAndSettingsSelection = () => {
       if (!selectedGameMode) return null; // Should not happen if status is 'style-selecting'
+
+      // If waiting for Player 2 confirmation, show that instead for the creator
+      if (waitingForPlayer2 && isCreator) {
+          return renderWaitingForPlayer2();
+      }
 
       if (!isCreator && gameMode === '2player') {
           return (
@@ -976,6 +1063,27 @@ const GameRoom: React.FC<GameRoomProps> = ({
               </div>
           </div>
       );
+  };
+
+  // Render waiting for Player 2 confirmation (Creator's view)
+  const renderWaitingForPlayer2 = () => {
+    return (
+      <GameCard 
+        title="Waiting for Confirmation" 
+        description={`${player2Name} is reviewing the game settings.`}
+      >
+        <div className="flex flex-col items-center py-6">
+          <div className="mb-6">
+            <div className="animate-pulse flex space-x-2 items-center">
+              <div className="h-3 w-3 bg-connection-primary rounded-full"></div>
+              <div className="h-3 w-3 bg-connection-primary rounded-full animation-delay-200"></div>
+              <div className="h-3 w-3 bg-connection-primary rounded-full animation-delay-400"></div>
+            </div>
+          </div>
+          <p className="text-center text-gray-600">The game will start once they click "Let's Play!"</p>
+        </div>
+      </GameCard>
+    );
   };
 
   const renderGameComponent = () => {
@@ -1189,6 +1297,21 @@ const GameRoom: React.FC<GameRoomProps> = ({
         confirmText="End Mode"
         cancelText="Cancel"
       />
+      
+      {/* Game Confirmation Dialog for Player 2 */}
+      {showPlayer2Confirmation && pendingGameSettings && (
+        <GameConfirmationDialog
+          open={showPlayer2Confirmation}
+          gameMode={pendingGameSettings.gameMode}
+          gameStyle={pendingGameSettings.gameStyle}
+          nsfwLevel={pendingGameSettings.nsfwLevel}
+          totalRounds={pendingGameSettings.totalRounds}
+          timerDuration={pendingGameSettings.timerDuration}
+          isExclusiveModeActive={pendingGameSettings.isExclusiveModeActive}
+          creatorName={pendingGameSettings.creatorName}
+          onConfirm={handlePlayer2Confirm}
+        />
+      )}
     </div>
   );
 };

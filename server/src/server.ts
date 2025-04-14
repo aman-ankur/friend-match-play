@@ -30,6 +30,7 @@ interface PlayerResult {
 interface RoundResult {
   questionId: string;
   players: PlayerResult[];
+  questionText: string;
 }
 
 interface Room {
@@ -54,6 +55,19 @@ interface Room {
   // Added for exclusive question mode
   isExclusiveModeActive?: boolean;
   exclusiveQuestionQueue?: GameQuestion[];
+  // Added for Player 2 confirmation flow
+  pendingPlayer2Confirmation?: boolean;
+  pendingGameSettings?: {
+    gameMode: SpecificGameMode;
+    gameStyle: GameStyle;
+    nsfwLevel: number;
+    timerDuration: number;
+    totalRounds: number;
+    isExclusiveModeActive?: boolean;
+    questions: GameQuestion[];
+    exclusiveQuestions?: GameQuestion[];
+    firstExclusiveQuestion?: GameQuestion;
+  };
 }
 
 // --- In-Memory Room Storage --- 
@@ -282,48 +296,98 @@ io.on('connection', (socket: Socket) => {
       room.isExclusiveModeActive = false;
     }
 
-    // Update Room State
-    room.status = 'playing';
-    room.selectedGameMode = gameMode;
-    room.selectedGameStyle = gameStyle;
-    room.nsfwLevel = nsfwLevel;
-    room.timerDuration = timerDuration;
-    room.totalRounds = totalRounds;
-    room.questions = questions;
-    room.currentRound = 1;
-    room.currentAnswers = {};
-    room.readyForNextRound = new Set<string>();
-    room.players.forEach(p => p.score = 0);
-    // Initialize predictions structure if in prediction mode
-    if (room.selectedGameStyle === 'prediction') {
-      room.currentPredictions = {};
-    } else {
-      // Ensure it's not present otherwise, making checks easier later
-      delete room.currentPredictions;
-    }
+    // Debug log to see what's happening with the gameMode value
+    console.log(`[${roomId}] Debug - Room gameMode: ${room.gameMode}, Players count: ${room.players.length}`);
 
-    console.log(`Starting game in room ${roomId}: Mode=${gameMode}, Style=${gameStyle}, Rounds=${totalRounds}, Timer=${timerDuration ?? 'None'}, Exclusive=${room.isExclusiveModeActive}`);
+    // If this is a solo game, or if there's only 1 player somehow, start immediately
+    if (room.gameMode === 'solo' || room.players.length < 2) {
+      console.log(`[${roomId}] Starting game immediately (solo mode or single player)`);
+      // Update Room State directly
+      room.status = 'playing';
+      room.selectedGameMode = gameMode;
+      room.selectedGameStyle = gameStyle;
+      room.nsfwLevel = nsfwLevel;
+      room.timerDuration = timerDuration;
+      room.totalRounds = totalRounds;
+      room.questions = questions;
+      room.currentRound = 1;
+      room.currentAnswers = {};
+      room.readyForNextRound = new Set<string>();
+      room.players.forEach(p => p.score = 0);
+      // Initialize predictions structure if in prediction mode
+      if (room.selectedGameStyle === 'prediction') {
+        room.currentPredictions = {};
+      } else {
+        // Ensure it's not present otherwise, making checks easier later
+        delete room.currentPredictions;
+      }
 
-    // Emit 'gameStarted' to all clients in the room
-    io.to(roomId).emit('gameStarted', {
-      gameMode: room.selectedGameMode,
-      gameStyle: room.selectedGameStyle,
-      currentRound: room.currentRound,
-      totalRounds: room.totalRounds,
-      players: room.players,
-      questions: room.isExclusiveModeActive && firstExclusiveQuestion ? 
-        // If exclusive mode is active, use the exclusive questions
-        [firstExclusiveQuestion] : // Send only the first exclusive question
-        room.questions,
-      timerDuration: room.timerDuration,
-      isExclusiveModeActive: room.isExclusiveModeActive
-    });
-    
-    // Log appropriate message based on exclusive mode
-    if (room.isExclusiveModeActive && firstExclusiveQuestion) {
-      console.log(`[${roomId}] Emitted gameStarted with exclusive question. First question: ${firstExclusiveQuestion.id}`);
+      console.log(`Starting game in room ${roomId}: Mode=${gameMode}, Style=${gameStyle}, Rounds=${totalRounds}, Timer=${timerDuration ?? 'None'}, Exclusive=${room.isExclusiveModeActive}`);
+
+      // Emit 'gameStarted' to all clients in the room
+      io.to(roomId).emit('gameStarted', {
+        gameMode: room.selectedGameMode,
+        gameStyle: room.selectedGameStyle,
+        currentRound: room.currentRound,
+        totalRounds: room.totalRounds,
+        players: room.players,
+        questions: room.isExclusiveModeActive && firstExclusiveQuestion ? 
+          // If exclusive mode is active, use the exclusive questions
+          [firstExclusiveQuestion] : // Send only the first exclusive question
+          room.questions,
+        timerDuration: room.timerDuration,
+        isExclusiveModeActive: room.isExclusiveModeActive
+      });
+      
+      // Log appropriate message based on exclusive mode
+      if (room.isExclusiveModeActive && firstExclusiveQuestion) {
+        console.log(`[${roomId}] Emitted gameStarted with exclusive question. First question: ${firstExclusiveQuestion.id}`);
+      } else {
+        console.log(`[${roomId}] Emitted gameStarted with ${room.questions.length} standard questions.`);
+      }
     } else {
-      console.log(`[${roomId}] Emitted gameStarted with ${room.questions.length} standard questions.`);
+      // For 2-player games, we first need Player 2's confirmation
+      console.log(`[${roomId}] Setting up game for Player 2 confirmation...`);
+      
+      // Store game settings for later use
+      room.pendingPlayer2Confirmation = true;
+      room.pendingGameSettings = {
+        gameMode,
+        gameStyle,
+        nsfwLevel,
+        timerDuration,
+        totalRounds,
+        isExclusiveModeActive: room.isExclusiveModeActive,
+        questions,
+        exclusiveQuestions,
+        firstExclusiveQuestion
+      };
+      
+      // Get Player 2's socket ID (the non-creator player)
+      const player2 = room.players.find(p => p.id !== room.players[0].id);
+      if (!player2) {
+        console.error(`[${roomId}] Cannot find Player 2 in room with ${room.players.length} players.`);
+        socket.emit('error', { message: 'Cannot find Player 2 in the room.' });
+        return;
+      }
+      
+      // Notify Player 2 to confirm the game settings
+      io.to(player2.id).emit('gameReadyForPlayer2', {
+        gameMode,
+        gameStyle,
+        nsfwLevel,
+        timerDuration,
+        totalRounds,
+        isExclusiveModeActive: room.isExclusiveModeActive,
+        creatorName: room.players[0].nickname
+      });
+      
+      // Notify the creator that we're waiting for Player 2
+      socket.emit('waitingForPlayer2Confirmation', {
+        player2Name: player2.nickname
+      });
+      
+      console.log(`[${roomId}] Sent gameReadyForPlayer2 event to ${player2.id} (${player2.nickname})`);
     }
   });
 
@@ -340,18 +404,27 @@ io.on('connection', (socket: Socket) => {
       return; // Prevent overwriting answer
     }
 
-    console.log(`[${roomId}] Player ${socket.id} submitted answer.`);
+    console.log(`[${roomId}] Player ${socket.id} submitted answer for round ${room.currentRound}.`);
     room.currentAnswers[socket.id] = answer;
+
+    // Log the current state of answers
+    console.log(`[${roomId}] Current answers: ${Object.keys(room.currentAnswers).length}/${room.players.length}`);
+    console.log(`[${roomId}] Players:`, room.players.map(p => p.id));
+    console.log(`[${roomId}] Answers:`, Object.keys(room.currentAnswers));
 
     // Check if all players have answered
     const allPlayersAnswered = room.players.every(player => room.currentAnswers[player.id]);
+    
+    console.log(`[${roomId}] All players answered: ${allPlayersAnswered}`);
     
     if (allPlayersAnswered) {
       console.log(`[${roomId}] All players answered for round ${room.currentRound}. Emitting roundComplete.`);
       io.to(roomId).emit('roundComplete', { roundNumber: room.currentRound }); // Notify clients round is complete (stop timers)
       
-      // Process results immediately (or could add a slight delay)
+      // Process results immediately
       processRoundResults(room);
+    } else {
+      console.log(`[${roomId}] Waiting for other players to answer for round ${room.currentRound}.`);
     }
   });
 
@@ -542,40 +615,60 @@ io.on('connection', (socket: Socket) => {
   socket.on('playerReady', (data: { roomId: string }) => {
     const { roomId } = data;
     const room = rooms[roomId];
-    if (!room) return; // Room might have been cleaned up
+    if (!room) {
+      console.log(`[${roomId}] playerReady: Room not found`);
+      socket.emit('error', { message: `Room not found.` });
+      return;
+    }
 
-    console.log(`[${roomId}] Received playerReady from ${socket.id}`); // Log who sent it
+    console.log(`[${roomId}] Received playerReady from ${socket.id} for round ${room.currentRound}`);
 
+    // Verify the player is in the room
+    const playerInRoom = room.players.some(p => p.id === socket.id);
+    if (!playerInRoom) {
+      console.log(`[${roomId}] playerReady: Player ${socket.id} not in room`);
+      socket.emit('error', { message: `You are not in this room.` });
+      return;
+    }
+
+    // Add player to ready set
     room.readyForNextRound.add(socket.id);
-    // console.log(`[${roomId}] Player ${socket.id} is ready for next round.`); // Original log, replaced by the one above
 
-    // *** Add detailed logging before the check ***
-    console.log(`[${roomId}] Checking if all players are ready...`);
-    console.log(`[${roomId}] Current room.players:`, JSON.stringify(room.players.map(p => p.id)));
-    console.log(`[${roomId}] Current room.readyForNextRound:`, JSON.stringify(Array.from(room.readyForNextRound)));
+    // Log detailed state information
+    console.log(`[${roomId}] Round ${room.currentRound} - Player ${socket.id} is now ready for next round.`);
+    console.log(`[${roomId}] Current room.players:`, room.players.map(p => ({ id: p.id, nickname: p.nickname })));
+    console.log(`[${roomId}] Current room.readyForNextRound:`, Array.from(room.readyForNextRound));
 
     // Check if all players are ready
     const allPlayersReady = room.players.every(player => room.readyForNextRound.has(player.id));
-
-    // Log the result of the check
-    console.log(`[${roomId}] Result of allPlayersReady check: ${allPlayersReady}`); 
+    console.log(`[${roomId}] All players ready check: ${allPlayersReady}`);
 
     if (allPlayersReady) {
-      console.log(`[${roomId}] All players ready. Clearing ready set and proceeding...`);
-      // *** Clear the ready set immediately upon proceeding ***
-      room.readyForNextRound.clear(); 
-      // Move to the next round
-      room.currentRound++;
+      console.log(`[${roomId}] All players ready for next round after round ${room.currentRound}. Proceeding to next round.`);
       
-      // In exclusive mode, continue until the queue is empty
-      // Only check totalRounds if NOT in exclusive mode
+      // Clear ready set for the next round
+      room.readyForNextRound.clear();
+      
+      // Clear answers and predictions
+      room.currentAnswers = {};
+      if (room.currentPredictions) {
+        room.currentPredictions = {};
+      }
+      
+      // Increment the round counter
+      room.currentRound++;
+      console.log(`[${roomId}] Advancing to round ${room.currentRound}`);
+      
+      // Check if game is over (standard mode, not exclusive)
       if (!room.isExclusiveModeActive && room.currentRound > room.totalRounds) {
-        // Game Over (standard mode)
+        console.log(`[${roomId}] Game over - reached round limit of ${room.totalRounds}`);
         endGame(room);
       } else {
-        // Start Next Round 
+        // Start next round
         startNextRound(room);
       }
+    } else {
+      console.log(`[${roomId}] Waiting for other players to be ready. Current: ${room.readyForNextRound.size}/${room.players.length}`);
     }
   });
 
@@ -631,6 +724,100 @@ io.on('connection', (socket: Socket) => {
           // For now, let's try processing anyway
           processRoundResults(room);
       }
+  });
+
+  // --- Player 2 Ready Confirmation Handler ---
+  socket.on('player2Ready', (data: { roomId: string }) => {
+    const { roomId } = data;
+    const room = rooms[roomId];
+    
+    // Validation
+    if (!room) {
+      socket.emit('error', { message: `Room ${roomId} not found for player2Ready.` });
+      return;
+    }
+    
+    // Debug log of players in room
+    console.log(`[${roomId}] player2Ready - Players in room:`, room.players.map(p => ({ id: p.id, nickname: p.nickname })));
+    console.log(`[${roomId}] player2Ready - Player requesting: ${socket.id}`);
+    
+    // Determine if the socket is Player 2 (not the creator)
+    const isCreator = room.players[0]?.id === socket.id;
+    const isPlayer2 = !isCreator && room.players.some(p => p.id === socket.id);
+    
+    // Only Player 2 can confirm
+    if (isCreator) {
+      socket.emit('error', { message: 'Only Player 2 can confirm game start.' });
+      return;
+    }
+    
+    if (!isPlayer2) {
+      socket.emit('error', { message: 'You are not Player 2 in this room.' });
+      return;
+    }
+    
+    // Check if we're actually waiting for confirmation
+    if (!room.pendingPlayer2Confirmation || !room.pendingGameSettings) {
+      console.log(`[${roomId}] player2Ready - Room is not pending confirmation:`, {
+        pendingConfirmation: room.pendingPlayer2Confirmation,
+        hasPendingSettings: !!room.pendingGameSettings
+      });
+      socket.emit('error', { message: 'No pending game confirmation required.' });
+      return;
+    }
+    
+    console.log(`[${roomId}] Received player2Ready from ${socket.id}`);
+    
+    // Extract the stored settings
+    const {
+      gameMode,
+      gameStyle,
+      nsfwLevel,
+      timerDuration,
+      totalRounds,
+      questions,
+      firstExclusiveQuestion
+    } = room.pendingGameSettings;
+    
+    // Update Room State
+    room.status = 'playing';
+    room.selectedGameMode = gameMode;
+    room.selectedGameStyle = gameStyle;
+    room.nsfwLevel = nsfwLevel;
+    room.timerDuration = timerDuration;
+    room.totalRounds = totalRounds;
+    room.questions = questions;
+    room.currentRound = 1;
+    room.currentAnswers = {};
+    room.readyForNextRound = new Set<string>();
+    room.players.forEach(p => p.score = 0);
+    // Initialize predictions structure if in prediction mode
+    if (room.selectedGameStyle === 'prediction') {
+      room.currentPredictions = {};
+    } else {
+      // Ensure it's not present otherwise, making checks easier later
+      delete room.currentPredictions;
+    }
+    
+    // Clear the pending flags
+    room.pendingPlayer2Confirmation = false;
+    room.pendingGameSettings = undefined;
+    
+    console.log(`Starting game in room ${roomId} after Player 2 confirmation: Mode=${gameMode}, Style=${gameStyle}`);
+    
+    // Emit 'gameStarted' to all clients in the room
+    io.to(roomId).emit('gameStarted', {
+      gameMode: room.selectedGameMode,
+      gameStyle: room.selectedGameStyle,
+      currentRound: room.currentRound,
+      totalRounds: room.totalRounds,
+      players: room.players,
+      questions: room.isExclusiveModeActive && firstExclusiveQuestion ? 
+        [firstExclusiveQuestion] : 
+        room.questions,
+      timerDuration: room.timerDuration,
+      isExclusiveModeActive: room.isExclusiveModeActive
+    });
   });
 
   // --- Disconnect Handler --- 
@@ -726,9 +913,30 @@ function calculateScore(room: Room): Record<string, number> {
 
 function processRoundResults(room: Room) {
   console.log(`[${room.id}] Processing results for round ${room.currentRound}. Style: ${room.selectedGameStyle}`);
+  
+  // Verify we have a valid question for the current round
+  if (!room.questions || room.questions.length < room.currentRound) {
+    console.error(`[${room.id}] ERROR: No question found for round ${room.currentRound}. Questions array length: ${room.questions?.length}`);
+    return;
+  }
+  
+  // Get the current question
+  const currentQuestion = room.questions[room.currentRound - 1];
+  console.log(`[${room.id}] Current question: ${currentQuestion.id} - ${currentQuestion.text.substring(0, 40)}...`);
+  
   // Calculate scores for the round
   const roundScores = calculateScore(room);
   const playerResults: PlayerResult[] = [];
+
+  // Verify all players have answers
+  const missingAnswerPlayers = room.players.filter(player => !room.currentAnswers[player.id]);
+  if (missingAnswerPlayers.length > 0) {
+    console.warn(`[${room.id}] Some players are missing answers:`, missingAnswerPlayers.map(p => p.id));
+    // Add default answers for these players
+    missingAnswerPlayers.forEach(player => {
+      room.currentAnswers[player.id] = "[No Answer]";
+    });
+  }
 
   // Update total scores and prepare results payload
   room.players.forEach(player => {
@@ -756,34 +964,46 @@ function processRoundResults(room: Room) {
 
   // Emit results to all players
   const roundResultPayload: RoundResult = {
-    questionId: room.questions[room.currentRound - 1].id, // Use currentRound - 1 for index
+    questionId: currentQuestion.id,
     players: playerResults,
+    questionText: currentQuestion.text
   };
+  
+  console.log(`[${room.id}] Emitting roundResults for round ${room.currentRound}:`, JSON.stringify(roundResultPayload, null, 2));
   io.to(room.id).emit('roundResults', roundResultPayload);
-  console.log(`[${room.id}] Emitted roundResults:`, JSON.stringify(roundResultPayload));
+  
+  // Log updated player scores
+  console.log(`[${room.id}] Updated player scores after round ${room.currentRound}:`, 
+    room.players.map(p => `${p.nickname}: ${p.score}`));
 
-  // Reset for next round (or game over)
-  room.currentAnswers = {};
-  if (room.currentPredictions) room.currentPredictions = {};
-  room.readyForNextRound.clear();
+  // Note: we don't reset state here anymore - that happens in playerReady handler
+  // when advancing to the next round
 }
 
 function startNextRound(room: Room) {
-  // Reset round-specific state
+  console.log(`[${room.id}] Starting round ${room.currentRound}/${room.totalRounds || 'unlimited'}`);
+  
+  // Ensure we have a clean state for the new round
   room.currentAnswers = {};
   if (room.currentPredictions) room.currentPredictions = {};
   room.readyForNextRound.clear();
 
+  // Track if we found a valid question
   let nextQuestion: GameQuestion | undefined;
-  
-  console.log(`[${room.id}] Starting round ${room.currentRound}. isExclusiveModeActive=${room.isExclusiveModeActive}`);
+  let questionSource: string = 'standard';
   
   // Use exclusive questions if active
   if (room.isExclusiveModeActive && room.exclusiveQuestionQueue && room.exclusiveQuestionQueue.length > 0) {
-    console.log(`[${room.id}] Exclusive mode is active with ${room.exclusiveQuestionQueue.length} questions in queue`);
+    console.log(`[${room.id}] Using exclusive mode question. Queue size: ${room.exclusiveQuestionQueue.length}`);
     // Get the next question from the exclusive queue
     nextQuestion = room.exclusiveQuestionQueue.shift();
-    console.log(`[${room.id}] Using exclusive question for round ${room.currentRound}: ${nextQuestion?.id} - ${nextQuestion?.text.substring(0, 40)}...`);
+    questionSource = 'exclusive';
+    
+    if (nextQuestion) {
+      console.log(`[${room.id}] Selected exclusive question for round ${room.currentRound}: ${nextQuestion.id} - ${nextQuestion.text.substring(0, 40)}...`);
+    } else {
+      console.error(`[${room.id}] Failed to get exclusive question despite queue check.`);
+    }
   } else if (room.isExclusiveModeActive && (!room.exclusiveQuestionQueue || room.exclusiveQuestionQueue.length === 0)) {
     // No more exclusive questions, end the game
     console.log(`[${room.id}] No more exclusive questions. Ending game.`);
@@ -791,23 +1011,40 @@ function startNextRound(room: Room) {
     return;
   } else {
     // Use normal question selection logic
-    console.log(`[${room.id}] Using standard question for round ${room.currentRound}/${room.totalRounds}`);
+    if (!room.questions || room.questions.length < room.currentRound) {
+      console.error(`[${room.id}] ERROR: No question available for round ${room.currentRound}. Total questions: ${room.questions?.length}`);
+      // Handle the error - perhaps end the game or generate a fallback question
+      endGame(room);
+      return;
+    }
+    
     nextQuestion = room.questions[room.currentRound - 1];
-    if (!nextQuestion) {
-      console.log(`[${room.id}] ERROR: No question found at index ${room.currentRound - 1}. Total questions: ${room.questions.length}`);
+    questionSource = 'standard';
+    
+    if (nextQuestion) {
+      console.log(`[${room.id}] Selected standard question for round ${room.currentRound}: ${nextQuestion.id} - ${nextQuestion.text.substring(0, 40)}...`);
     } else {
-      console.log(`[${room.id}] Standard question selected: ${nextQuestion.id} - ${nextQuestion.text.substring(0, 40)}...`);
+      console.error(`[${room.id}] No question found at index ${room.currentRound - 1}. Ending game.`);
+      endGame(room);
+      return;
     }
   }
 
-  console.log(`[${room.id}] Starting round ${room.currentRound} / ${room.totalRounds}`);
+  // Safety check - if we somehow don't have a question, don't start the round
+  if (!nextQuestion) {
+    console.error(`[${room.id}] Failed to get a question for round ${room.currentRound}. Ending game.`);
+    endGame(room);
+    return;
+  }
+
+  // Emit the new round event
+  console.log(`[${room.id}] Emitting newRound event for round ${room.currentRound} with ${questionSource} question.`);
   io.to(room.id).emit('newRound', {
     currentRound: room.currentRound,
     question: nextQuestion,
-    timerDuration: room.timerDuration, // Send timer duration again for the new round
-    isExclusiveModeActive: room.isExclusiveModeActive // Add this to the newRound event
+    timerDuration: room.timerDuration, 
+    isExclusiveModeActive: room.isExclusiveModeActive
   });
-   console.log(`[${room.id}] Emitted newRound with Q: ${nextQuestion?.id}`);
 }
 
 function endGame(room: Room, playerLeft = false) {

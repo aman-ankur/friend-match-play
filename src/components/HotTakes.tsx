@@ -132,10 +132,10 @@ const HotTakes: React.FC<HotTakesProps> = ({
       >
         <div className="text-center mb-6 px-4">
           {(currentPhase === 'answer' || (currentPhase === 'prediction' && gameStyle === 'reveal-only')) && (
-             <p className="text-xl md:text-2xl font-semibold text-gray-800">{currentQuestion?.text ?? 'Loading...'}</p>
+             <p className="text-xl md:text-2xl font-semibold text-gray-800 whitespace-normal break-words">{currentQuestion?.text ?? 'Loading...'}</p>
           )}
            {currentPhase === 'prediction' && gameStyle === 'predict-score' && (
-             <p className="text-xl md:text-2xl font-semibold text-indigo-700">{predictionPrompt}</p>
+             <p className="text-xl md:text-2xl font-semibold text-indigo-700 whitespace-normal break-words">{predictionPrompt}</p>
            )}
         </div>
 

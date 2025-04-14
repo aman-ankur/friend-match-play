@@ -37,7 +37,7 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
   return (
     <div className="w-full max-w-2xl mx-auto animate-scale-in">
       <GameCard title={showPredictions ? "Round Results & Predictions" : "Answer Reveal"}>
-        <p className="text-center text-gray-700 mb-6 text-lg font-medium italic border-b pb-3">
+        <p className="text-center text-gray-700 mb-6 text-lg font-medium italic border-b pb-3 whitespace-normal break-words">
           {questionText}
         </p>
         <div className="space-y-4">

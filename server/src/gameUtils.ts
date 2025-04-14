@@ -392,7 +392,7 @@ const guessWhoIAmQuestions: GameQuestion[] = [
   {
     id: "gwia-new-19",
     text: "What's my weirdest way of cheering myself up?",
-    options: ["Pretending I'm being interviewed about surviving emotional trauma—by Karan Johar", "Cocooning under the blanket while playing sad songs like it's my personal music video", "Talking to my ceiling fan like it's my therapist", "Calling my mom just to argue"],
+    options: ["Putting on a face mask and pretending that fixes my entire life.", "Cocooning under the blanket while playing sad songs like it's my personal music video", "Talking to my ceiling fan like it's my therapist", "Lighting a scented candle, making tea, and pretending I’m a misunderstood witch from a sad indie film."],
     score: 1,
     nsfwRating: 4,
     categories: ["personal", "funny"]
@@ -564,9 +564,9 @@ const guessWhoIAmQuestions: GameQuestion[] = [
     text: "What's the weirdest thing that could turn me on *way too fast*?",
     options: [
       "A voice that sounds like sin and bad decisions",
-      "Watching someone expertly fold laundry",
+      "Accidentally brushing hands and both of us pretending it didn’t happen — but we felt it",
       "Getting called 'sir/ma'am' in the wrong context",
-      "The sound of a belt unbuckling... in Dolby surround"
+      "That low, tired voice when they just woke up"
     ],
     score: 1,
     nsfwRating: 6,
@@ -1080,9 +1080,9 @@ const guessWhoIAmQuestions: GameQuestion[] = [
     text: "What's your signature move to test someone's vibe?",
     options: [
       "Send them a cursed meme and see if they survive",
-      "Ask 'Would you rather fight 100 duck-sized horses…'",
+      "Ask them their take on Ross and Rachel’s “we were on a break” — it’s the ultimate alignment test",
       "Pretend you're into astrology and judge their response",
-      "Invite them to karaoke and unleash chaos"
+      "Start a fake debate like “Is cereal a soup?” just to clock their brain speed"
     ],
     score: 1,
     nsfwRating: 6,
@@ -1419,8 +1419,8 @@ const guessWhoIAmQuestions: GameQuestion[] = [
     "options": [
       "Tripped in slow motion while making eye contact",
       "Voice cracked while trying to flirt",
-      "Spilled drink *on myself* mid-wink",
-      "Sexy sneeze? It's a thing. I swear."
+      "Thought I nailed a wink but just blinked awkwardly",
+      "Attempted a smooth exit and walked into a glass door"
     ],
     "score": 1,
     "nsfwRating": 10,

@@ -16,29 +16,39 @@ import { cn } from '@/lib/utils';
 import { useSocket } from '@/context/SocketContext';
 import PinEntryModal from './PinEntryModal';
 import ConfirmationModal from './ConfirmationModal';
+import RulesOverlay from './RulesOverlay';
 
 // Game descriptions for each mode, moved from the deleted file
 const GAME_DESCRIPTIONS: Record<SpecificGameMode, { title: string; description: string }> = {
   "guess-who-i-am": {
     title: "Guess Who I Am",
-    description: "Reveal hidden aspects of your personality! Answer personal questions about yourself, then predict how your friend would answer the same questions. Discover how well you truly know each other."
+    description: "Reveal hidden aspects of your personality! Answer personal questions about yourself and discover how well you and your friend truly know each other."
   },
   "hot-takes": {
     title: "Hot Takes",
-    description: "Test your ability to predict opinions! Share your stance on controversial topics and predict your friend's reactions. See who's better at reading each other's minds."
+    description: "Share your stance on controversial topics and see where you stand compared to your friend on hot button issues."
   },
   "this-or-that": {
     title: "This or That",
-    description: "Make tough choices and predict your friend's preferences! Face impossible dilemmas and discover how your choices align (or don't) with your friend's."
+    description: "Make tough choices between impossible dilemmas and discover how your preferences align (or don't) with your friend's."
   }
 };
+
+// Funny content level groups (pairs of numbers share the same description)
+const CONTENT_GROUPS = [
+  { range: [1, 2], name: "Church Mouse", description: "Won't raise any eyebrows" },
+  { range: [3, 4], name: "Slightly Saucy", description: "Might make your aunt blush" },
+  { range: [5, 6], name: "Comedy Club", description: "Things your friends say after midnight" },
+  { range: [7, 8], name: "Let's Get Weird", description: "Not for the faint of heart" },
+  { range: [9, 10], name: "Therapy Material", description: "You might need to talk about this later" }
+];
 
 // Define the game mode type locally or import if defined globally
 type AppGameMode = 'solo' | '2player';
 type RoundTimeLimit = 10 | 20 | 30 | null; // Add type
 
 // Define comprehensive status type
-type GameRoomStatus = 'waiting' | 'selecting' | 'style-selecting' | 'playing' | 'results' | 'completed';
+type GameRoomStatus = 'waiting' | 'selecting' | 'style-selecting' | 'rules-display' | 'playing' | 'results' | 'completed';
 
 // Define PlayerResult if not already present (adjust based on actual server structure if needed)
 interface PlayerResult {
@@ -191,6 +201,9 @@ const GameRoom: React.FC<GameRoomProps> = ({
         isExclusiveModeActive?: boolean; // Add this field
     }) => {
         console.log('[GameRoom] Received gameStarted event:', data);
+        // Log nsfwLevel specifically for debugging
+        console.log(`[GameRoom] Received nsfwLevel: ${data.nsfwLevel} (type: ${typeof data.nsfwLevel})`);
+        
         stopTimer(); // Stop any previous timer
         setPlayers(data.players);
         setSelectedGameMode(data.gameMode);
@@ -200,7 +213,6 @@ const GameRoom: React.FC<GameRoomProps> = ({
         setTotalRounds(data.totalRounds);
         setQuestions(data.questions);
         setCurrentRound(data.currentRound);
-        setStatus('playing'); 
         setIsProcessing(false);
         
         // Set exclusive mode state if it's included in the data
@@ -208,18 +220,26 @@ const GameRoom: React.FC<GameRoomProps> = ({
           setIsExclusiveModeActive(data.isExclusiveModeActive);
         }
         
+        // Show rules overlay to Player 2, but not to the Creator or in solo mode
+        if (!isCreator && gameMode as string !== 'solo') {
+          setStatus('rules-display');
+        } else {
+          setStatus('playing');
+        }
+        
         // --- Debugging Log --- 
         console.log(`[GameRoom] State AFTER set in handleGameStarted:`, { 
-            status: 'playing',
-            selectedGameMode: data.gameMode, // Log the value we just set
+            status: isCreator || gameMode as string === 'solo' ? 'playing' : 'rules-display',
+            selectedGameMode: data.gameMode,
             selectedGameStyle: data.gameStyle,
             currentRound: data.currentRound,
-            isExclusiveModeActive: data.isExclusiveModeActive
+            isExclusiveModeActive: data.isExclusiveModeActive,
+            nsfwLevel: data.nsfwLevel
         });
         // --- End Debugging Log ---
         
-        // Start timer if duration is set
-        if (data.timerDuration > 0) {
+        // Start timer only if we're going directly to playing state
+        if (data.timerDuration > 0 && (isCreator || gameMode as string === 'solo')) {
           // Reset initialization for clean start
           timerInitializedRef.current = false;
           
@@ -422,6 +442,21 @@ const GameRoom: React.FC<GameRoomProps> = ({
     
     socket.on('roomReset', handleRoomReset);
 
+    // Add listener for player ready event (after rules display)
+    const handlePlayerReady = () => {
+      console.log('[GameRoom] Player is ready to start after viewing rules');
+      setStatus('playing');
+      
+      // Start timer if it was set for the game
+      if (selectedTimerDuration > 0) {
+        console.log(`[GameRoom] Starting timer after rules with duration: ${selectedTimerDuration}`);
+        setTimeLeft(selectedTimerDuration);
+        setIsTimerRunning(true);
+      }
+    };
+    
+    socket.on('playerReady', handlePlayerReady);
+
     // Cleanup listeners and timer interval
     return () => {
       socket.off('roomReady', handleRoomReady);
@@ -440,11 +475,12 @@ const GameRoom: React.FC<GameRoomProps> = ({
       
       // Cleanup room reset listener
       socket.off('roomReset', handleRoomReset);
+      socket.off('playerReady', handlePlayerReady);
       
       stopTimer(); // Ensure timer stops on component unmount or effect re-run
     };
     // Add 'status' back to dependency array
-  }, [socket, gameMode, status, currentPlayerId, toast, selectedTimerDuration]);
+  }, [socket, gameMode, status, currentPlayerId, toast, selectedTimerDuration, isCreator]);
 
   // Effect for Timer Countdown Logic
   useEffect(() => {
@@ -568,12 +604,19 @@ const GameRoom: React.FC<GameRoomProps> = ({
     setIsProcessing(true); // Show loading state on button
 
     const finalTimerDuration = gameMode === 'solo' ? null : roundTimeLimitSelection;
+    
+    // Validate nsfwLevel to ensure it's a proper number
+    const validatedNsfwLevel = typeof nsfwLevel === 'number' && !isNaN(nsfwLevel)
+      ? Math.min(Math.max(Math.round(nsfwLevel), 1), 10) // Clamp between 1-10 and round
+      : 1; // Default to level 1 if invalid
+    
+    console.log(`[GameRoom] Validated nsfwLevel: ${nsfwLevel} → ${validatedNsfwLevel}`);
 
     const gameSettings = { 
         roomId, 
         gameMode: selectedGameMode, 
         gameStyle: selectedGameStyle, 
-        nsfwLevel, 
+        nsfwLevel: validatedNsfwLevel, // Use validated value
         timerDuration: finalTimerDuration, // Send the selected time limit 
         totalRounds,
         isExclusiveModeActive // Include exclusive mode status
@@ -746,6 +789,22 @@ const GameRoom: React.FC<GameRoomProps> = ({
     socket.emit('endExclusiveMode', { roomId });
   };
 
+  // Function to handle player continuing after rules display
+  const handleRulesContinue = () => {
+    if (!socket) return;
+    
+    console.log('[GameRoom] Player continuing after rules display');
+    socket.emit('playerReady', { roomId });
+    setStatus('playing');
+    
+    // Start timer if it was set for the game
+    if (selectedTimerDuration > 0) {
+      console.log(`[GameRoom] Starting timer after rules with duration: ${selectedTimerDuration}`);
+      setTimeLeft(selectedTimerDuration);
+      setIsTimerRunning(true);
+    }
+  };
+
   const renderHeader = () => {
     const player1 = players[0];
     const player2 = players.length > 1 ? players[1] : null;
@@ -884,7 +943,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
                       {/* NSFW Level */}
                       <div className="space-y-3">
                          <Label className="text-lg font-medium flex items-center">
-                             <Zap className="mr-2 h-5 w-5 text-connection-secondary" /> Spicy Level
+                             <Zap className="mr-2 h-5 w-5 text-connection-secondary" /> Spiciness Level
                          </Label>
                           <NSFWSlider value={nsfwLevel} onValueChange={handleNsfwLevelChange} />
                       </div>
@@ -1074,92 +1133,102 @@ const GameRoom: React.FC<GameRoomProps> = ({
     }
   };
 
+  const renderResults = () => {
+    if (!roundResults) return <div>Loading results...</div>; // Should be brief
+
+    // Create playerNames map
+    const playerNamesMap: Record<string, string> = players.reduce((acc, player) => {
+        acc[player.id] = player.nickname;
+        return acc;
+    }, {} as Record<string, string>);
+
+    return (
+      <ResultComparison 
+         result={roundResults} 
+         playerNames={playerNamesMap}
+         questionText={roundResults.questionText || "Question not available"}
+         showPredictions={selectedGameStyle === 'predict-score'}
+         hasClickedContinue={hasClickedContinueThisRound}
+         onContinue={handleContinueClick}
+      />
+    );
+  };
+
+  const renderGameComplete = () => {
+    return (
+      <GameCard title="Game Over!" description="Here are the final scores:">
+        <ul className="space-y-2 text-center">
+          {players.map((player) => (
+            <li key={player.id} className="text-lg">
+              <span className="font-semibold">{player.nickname}:</span> {finalScores?.[player.id] ?? player.score ?? 0} points
+            </li>
+          ))}
+        </ul>
+        <div className="mt-6 flex justify-center space-x-4">
+          {isCreator && (
+            <Button onClick={handlePlayAgain}>Play Again</Button>
+          )}
+          {!isCreator && (
+            <p className="text-gray-600">Waiting for {creatorName} to start a new game...</p>
+            // Alternatively, allow joiner to request play again:
+            // <Button onClick={() => socket?.emit('requestPlayAgain', { roomId })}>Request Play Again</Button>
+          )}
+          <Button variant="outline" onClick={handleGoHome}>Go Home</Button>
+        </div>
+      </GameCard>
+    );
+  };
+
   const renderContent = () => {
     switch (status) {
       case 'waiting':
         return (
-          <GameCard title="Waiting for Player 2" description="Share the room code with your friend!">
-            <div className="text-center py-8">
-              <p className="text-gray-600 mb-2">Room Code:</p>
-              <p className="text-4xl font-mono font-bold tracking-widest text-connection-tertiary select-all cursor-pointer" onClick={() => navigator.clipboard.writeText(roomId).then(() => toast({ 
-                  title: "Copied!", 
-                  description: "Room code copied to clipboard.",
-                  duration: 1500,
-                  className: "compact-toast"
-              })) }>
-                {roomId}
-              </p>
-              <p className="text-sm text-gray-500 mt-2">Click to copy</p>
+          <div className="text-center p-8 animate-fade-in">
+            <div className="mb-6">
+              <div className="inline-block p-4 bg-connection-light rounded-full mb-4">
+                <Users className="h-12 w-12 text-connection-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Waiting for Player 2</h2>
+              <p className="text-gray-600 mb-6">Share this room code with your friend to start playing.</p>
+              
+              <div className="flex justify-center">
+                <div className="bg-connection-light rounded-md p-4 flex items-center justify-center mb-4">
+                  <span className="text-3xl font-mono font-bold tracking-widest text-connection-tertiary">{roomId}</span>
+                </div>
+              </div>
             </div>
-          </GameCard>
+          </div>
         );
       case 'selecting':
         return renderGameSelection();
-      case 'style-selecting': // New status for selecting style/settings
-        return renderStyleAndSettingsSelection(); 
-      case 'playing':
-        if (!selectedGameMode) return <div>Error: Game mode not set.</div>;
-        
-        // Modify the title/header for ThisOrThat in exclusive mode
-        const gameTitle = isExclusiveModeActive 
-          ? "Exclusive Mode - Unlimited Questions" 
-          : `Round ${currentRound}/${totalRounds}`;
-          
-        return (
-          <div className="w-full">
-            {/* Optional round counter */}
-            <div className="text-center mb-2">
-              <span className="text-sm font-medium text-gray-600">
-                {gameTitle}
-              </span>
-            </div>
-            {renderGameComponent()}
-          </div>
-        );
-      case 'results':
-        if (!roundResults) return <div>Loading results...</div>; // Should be brief
+      case 'style-selecting':
+        return renderStyleAndSettingsSelection();
 
-        // Create playerNames map
-        const playerNamesMap: Record<string, string> = players.reduce((acc, player) => {
-            acc[player.id] = player.nickname;
-            return acc;
-        }, {} as Record<string, string>);
-
+      case 'rules-display':
+        if (!selectedGameMode) return <div>Loading game settings...</div>;
         return (
-          <ResultComparison 
-             result={roundResults} 
-             playerNames={playerNamesMap}
-             questionText={roundResults.questionText || "Question not available"}
-             showPredictions={selectedGameStyle === 'predict-score'}
-             hasClickedContinue={hasClickedContinueThisRound}
-             onContinue={handleContinueClick}
+          <RulesOverlay 
+            gameMode={selectedGameMode}
+            gameStyle={selectedGameStyle}
+            nsfwLevel={nsfwLevel}
+            totalRounds={totalRounds}
+            timerDuration={selectedTimerDuration || null}
+            creatorName={creatorName}
+            onContinue={handleRulesContinue}
           />
         );
+      
+      case 'playing':
+        return renderGameComponent();
+      
+      case 'results':
+        return renderResults();
+      
       case 'completed':
-        return (
-          <GameCard title="Game Over!" description="Here are the final scores:">
-             <ul className="space-y-2 text-center">
-              {players.map((player) => (
-                <li key={player.id} className="text-lg">
-                  <span className="font-semibold">{player.nickname}:</span> {finalScores?.[player.id] ?? player.score ?? 0} points
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 flex justify-center space-x-4">
-              {isCreator && (
-                 <Button onClick={handlePlayAgain}>Play Again</Button>
-              )}
-              {!isCreator && (
-                  <p className="text-gray-600">Waiting for {creatorName} to start a new game...</p>
-                  // Alternatively, allow joiner to request play again:
-                  // <Button onClick={() => socket?.emit('requestPlayAgain', { roomId })}>Request Play Again</Button>
-              )}
-              <Button variant="outline" onClick={handleGoHome}>Go Home</Button>
-            </div>
-          </GameCard>
-        );
+        return renderGameComplete();
+        
       default:
-        return <div>Loading...</div>;
+        return <div>Unknown game state</div>;
     }
   };
 

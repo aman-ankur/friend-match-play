@@ -6,6 +6,9 @@ import ResultComparison from './ResultComparison';
 import useGameLogic from '@/hooks/useGameLogic';
 import AnswerSelection from './AnswerSelection';
 
+// Helper for detecting if we're in development mode (works in Vite)
+const isDevelopment = import.meta.env.DEV || (typeof import.meta.env === 'undefined' && window.location.hostname === 'localhost');
+
 interface GuessWhoIAmProps {
   roomId: string;
   players: Player[];
@@ -95,6 +98,44 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
           <p className="text-lg text-gray-600 animate-pulse">
             {otherPlayer ? `Waiting for ${otherPlayer.nickname} to answer...` : 'Waiting for your friend...'}
           </p>
+          
+          {/* Development-only test button */}
+          {isDevelopment && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500 mb-2">Developer Testing: Simulate Round Results</p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  // Manually trigger a simulated round results event via socket
+                  const socket = (window as any).socket;
+                  if (socket) {
+                    console.log('[DEV] Sending test roundResults event');
+                    // Create a test result with current players
+                    const testResult = {
+                      questionId: currentQuestion.id,
+                      players: players.map(p => ({
+                        playerId: p.id,
+                        answer: p.id === currentPlayerId ? answers[currentQuestion.id] || 'Test Answer' : 'Their Answer',
+                        prediction: gameStyle === 'predict-score' ? 'Test Prediction' : undefined,
+                        isCorrect: Math.random() > 0.5,
+                        pointsEarned: Math.floor(Math.random() * 10)
+                      })),
+                      questionText: currentQuestion.text
+                    };
+                    // Emit to local handlers
+                    socket.emit('__test_roundResults', testResult);
+                    // Also manually trigger the handler
+                    socket.onevent({
+                      data: ['roundResults', testResult]
+                    });
+                  }
+                }}
+              >
+                Test Round Summary
+              </Button>
+            </div>
+          )}
         </div>
       </GameCard>
     );

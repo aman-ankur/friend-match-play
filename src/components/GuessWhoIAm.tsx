@@ -43,7 +43,8 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
     handleAnswerSelect,
     handlePredictionSelect,
     handleContinue,
-    getPlayerNameMap
+    getPlayerNameMap,
+    answers
   } = useGameLogic({
     roomId: roomId,
     players,
@@ -56,11 +57,13 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
     currentPlayerId
   });
 
-  console.log(`[GuessWhoIAm] Phase: ${currentPhase}, SubmittedAnswer: ${hasSubmittedAnswer}, SubmittedPrediction: ${hasSubmittedPrediction}`);
+  console.log(`[GuessWhoIAm] Phase: ${currentPhase}, SubmittedAnswer: ${hasSubmittedAnswer}, SubmittedPrediction: ${hasSubmittedPrediction}, GameStyle: ${gameStyle}`);
 
   // Determine if we should show the waiting state
   const showWaitingAfterAnswer = currentPhase === 'waiting' && !roundResult && !hasSubmittedPrediction;
   const showWaitingAfterPrediction = currentPhase === 'waiting' && hasSubmittedPrediction && !roundResult;
+  
+  console.log(`[GuessWhoIAm] Show states: waitingAfterAnswer=${showWaitingAfterAnswer}, waitingAfterPrediction=${showWaitingAfterPrediction}, prediction phase=${currentPhase === 'prediction'}`);
 
   // Determine if we should disable buttons while waiting (generally handled by phase logic now)
   // const isWaitingAfterSubmission = currentPhase === 'waiting' && !roundResult;
@@ -133,6 +136,38 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
   }
 
   // --- Render Answer/Prediction Phase ---
+  
+  // Special case for prediction phase
+  if (currentPhase === 'prediction' && gameStyle === 'predict-score' && !hasSubmittedPrediction) {
+    return (
+      <div className="w-full max-w-2xl mx-auto animate-fade-in">
+        <GameCard
+          title={`Round ${currentRound}/${totalRounds} - Prediction Phase`}
+          className="w-full max-w-2xl bg-indigo-50 border-indigo-200"
+        >
+          <div className="text-center mb-4">
+            <p className="text-xl md:text-2xl font-semibold text-indigo-700 whitespace-normal break-words">
+              {predictionPrompt}
+            </p>
+          </div>
+          
+          <div className="bg-white p-4 rounded-md mb-4 border border-indigo-100">
+            <p className="text-gray-700 mb-2"><span className="font-semibold">Question:</span> {currentQuestion?.text}</p>
+            <p className="text-gray-700 mb-2"><span className="font-semibold">Your answer:</span> {answers[currentPlayerId!] || "Not available"}</p>
+            <p className="text-sm text-indigo-600 font-medium mb-3">Now predict what {otherPlayer.nickname} answered:</p>
+          </div>
+
+          <AnswerSelection
+            options={currentQuestion.options}
+            onSelect={handlePredictionSelect}
+            layout="column"
+          />
+        </GameCard>
+      </div>
+    );
+  }
+  
+  // Regular answer phase
   return (
     <div className="w-full max-w-2xl mx-auto animate-fade-in">
       <GameCard
@@ -141,12 +176,9 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
       >
          {/* Header */}
          <div className="text-center mb-6 px-4">
-          {(currentPhase === 'answer' || (currentPhase === 'prediction' && gameStyle === 'reveal-only')) && (
-             <p className="text-xl md:text-2xl font-semibold text-gray-800 whitespace-normal break-words">{currentQuestion?.text ?? 'Loading...'}</p>
-          )}
-           {currentPhase === 'prediction' && gameStyle === 'predict-score' && (
-             <p className="text-xl md:text-2xl font-semibold text-indigo-700 whitespace-normal break-words">{predictionPrompt}</p>
-           )}
+          <p className="text-xl md:text-2xl font-semibold text-gray-800 whitespace-normal break-words">
+            {currentQuestion?.text ?? 'Loading...'}
+          </p>
         </div>
 
         {/* Options Grid - Use AnswerSelection Component */}
@@ -154,14 +186,6 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
           <AnswerSelection
             options={currentQuestion.options}
             onSelect={handleAnswerSelect}
-            layout="column"
-          />
-        )}
-
-        {currentPhase === 'prediction' && gameStyle === 'predict-score' && !hasSubmittedPrediction && (
-          <AnswerSelection
-            options={currentQuestion.options}
-            onSelect={handlePredictionSelect}
             layout="column"
           />
         )}

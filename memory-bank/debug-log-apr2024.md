@@ -74,4 +74,21 @@ This document summarizes the debugging process undertaken in April 2024, coverin
     2.  Ensured `handleContinueClick` *only* emitted `playerReady` and set the local `hasClickedContinueThisRound` state (it does *not* change the overall `status`).
     3.  Corrected the `handleNewRound` function to explicitly set `setStatus('playing')`, clear `setRoundResults(null)`, and reset `setHasClickedContinueThisRound(false)`.
     4.  Adjusted the main `useEffect` dependency array (ultimately adding `status` back) to ensure listeners had the correct scope when state updates occurred.
-- **Lesson:** State transitions driven by asynchronous events (like socket messages) require careful handling. Ensure event handlers update the correct state variables. Be mindful of `useEffect` dependencies and potential stale closures. Inline functions passed as props can sometimes obscure state management logic; dedicated handlers are often clearer. 
+- **Lesson:** State transitions driven by asynchronous events (like socket messages) require careful handling. Ensure event handlers update the correct state variables. Be mindful of `useEffect` dependencies and potential stale closures. Inline functions passed as props can sometimes obscure state management logic; dedicated handlers are often clearer.
+
+### 3.5. Prediction Mode Not Working (GameStyle Type Mismatch)
+
+- **Issue:** Even when starting the game with Prediction Mode selected, the game would only operate in Reveal Mode. The prediction phase never triggered, and prediction UI was never displayed, despite logs showing the setting was correctly applied.
+- **Analysis:** The root issue was a type mismatch between UI selections and backend code:
+    1. In the UI, the selection value for prediction mode was set as `'predict-score'`, but the `GameStyle` type was defined as `'prediction' | 'reveal-only'`.
+    2. The game components (GuessWhoIAm, ThisOrThat, HotTakes) were checking for `gameStyle === 'predict-score'` in their conditional rendering logic.
+    3. The server code was checking for `room.selectedGameStyle === 'prediction'` when determining if it should emit the `predictionPhase` event.
+    4. The `useGameLogic` hook was listening for `predictionPhase` events but only handling them if `gameStyle === 'prediction'`.
+- **Fix:**
+    1. Updated the `GameStyle` type definition in both client and server code to use `'predict-score' | 'reveal-only'`.
+    2. Updated all server-side code to check for `room.selectedGameStyle === 'predict-score'`.
+    3. Fixed the `submitAnswer` handler to emit a `predictionPhase` event when appropriate instead of immediately processing results.
+    4. Added extensive logging to trace the event flow from answer submission through prediction phase to results.
+    5. Enhanced the prediction UI with distinctive styling to make it more obvious when in prediction mode.
+    6. Fixed state transitions in the `useGameLogic` hook to properly handle the prediction phase.
+- **Lesson:** Type consistency is critical across the client-server boundary. When dealing with enums or string literals, ensure they match exactly throughout the codebase. Thorough testing of different game modes is necessary, as bugs may only surface in specific combinations of settings. Socket event tracing with detailed logs is invaluable for debugging asynchronous workflows. 

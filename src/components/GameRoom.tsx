@@ -1130,7 +1130,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
              result={roundResults} 
              playerNames={playerNamesMap}
              questionText={roundResults.questionText || "Question not available"}
-             showPredictions={selectedGameStyle === 'prediction'}
+             showPredictions={selectedGameStyle === 'predict-score'}
              hasClickedContinue={hasClickedContinueThisRound}
              onContinue={handleContinueClick}
           />

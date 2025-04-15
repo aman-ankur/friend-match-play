@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,10 @@ import { cn } from '@/lib/utils';
 import { useSocket } from '@/context/SocketContext';
 import PinEntryModal from './PinEntryModal';
 import ConfirmationModal from './ConfirmationModal';
+import RoundSummary from './RoundSummary';
+
+// Helper for detecting if we're in development mode (works in Vite)
+const isDevelopment = import.meta.env.DEV || (typeof import.meta.env === 'undefined' && window.location.hostname === 'localhost');
 
 // Game descriptions for each mode, moved from the deleted file
 const GAME_DESCRIPTIONS: Record<SpecificGameMode, { title: string; description: string }> = {
@@ -78,24 +82,40 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null); // Ref to store interval ID
   const timerInitializedRef = useRef<boolean>(false);
 
-  // Use socket.id as the source of truth for the current player's ID
   const currentPlayerId = socket?.id || null;
 
   // Determine initial state based on gameMode AND initialPlayersData
   const getInitialState = () => {
     if (initialPlayersData && initialPlayersData.length > 0) {
-      return {
-        status: 'selecting' as const, // Use status type
-        players: initialPlayersData 
-      };
+      // If we have initial players data, determine if this is a creator or joiner
+      const isJoiningExistingGame = initialPlayersData.length === 2 && initialPlayersData[0].id !== currentPlayerId;
+      
+      if (isJoiningExistingGame) {
+        // Player B joining - should see either 'selecting' or 'style-selecting' based on current game state
+        // The server should tell us the correct status via events later
+        console.log("[GameRoom] Initializing as joining player B with players:", initialPlayersData);
+        return {
+          status: 'selecting' as const, // Start with selecting, server will update if needed
+          players: initialPlayersData
+        };
+      } else {
+        // Creator with initialPlayersData or reconnecting
+        console.log("[GameRoom] Initializing with provided players data:", initialPlayersData);
+        return {
+          status: 'selecting' as const,
+          players: initialPlayersData
+        };
+      }
     } else if (gameMode === 'solo') {
-      // Use derived currentPlayerId for solo
+      // Solo mode initialization
+      console.log("[GameRoom] Initializing as solo player");
       return {
          status: 'selecting' as const,
          players: [{ id: currentPlayerId ?? 'solo-player', nickname: playerName, score: 0 }] 
       };
     } else {
-      // Use derived currentPlayerId for creator
+      // Default for creator of a new 2-player game
+      console.log("[GameRoom] Initializing as creator waiting for player 2");
       return {
         status: 'waiting' as const,
         players: [
@@ -106,7 +126,15 @@ const GameRoom: React.FC<GameRoomProps> = ({
     }
   };
 
-  const initialState = getInitialState();
+  // Use useMemo to ensure initial state is calculated only once
+  const initialState = useMemo(() => getInitialState(), [
+    // Include all dependencies that would warrant recalculation
+    gameMode, 
+    initialPlayersData, 
+    currentPlayerId, 
+    playerName
+  ]);
+  
   const [status, setStatus] = useState<GameRoomStatus>(initialState.status); // Use status type
   const [players, setPlayers] = useState<Player[]>(initialState.players);
   const [selectedGameMode, setSelectedGameMode] = useState<SpecificGameMode | null>(null);
@@ -132,6 +160,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const [pinEntryMode, setPinEntryMode] = useState<'activate' | 'config'>('activate');
   // Add state for confirmation modal
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [showRoundSummary, setShowRoundSummary] = useState<boolean>(false);
 
   // Determine if the current player is the creator using the derived currentPlayerId
   const isCreator = gameMode === 'solo' || 
@@ -159,22 +188,38 @@ const GameRoom: React.FC<GameRoomProps> = ({
     // Listener for when the room is ready (e.g., 2nd player joined)
     const handleRoomReady = (data: { players: Player[] }) => {
       console.log('[GameRoom] Received roomReady event:', data);
-      // Update state only if we are currently waiting (prevents overwriting joiner's initial state)
-      if (gameMode === '2player' && status === 'waiting') {
-          console.log("[GameRoom] Updating state from roomReady event.");
-          setPlayers(data.players);
+      
+      if (gameMode === '2player') {
+        // Update players array regardless of status to ensure both players have the same information
+        setPlayers(data.players);
+        
+        // If we're in waiting state (creator), transition to selecting
+        if (status === 'waiting') {
+          console.log("[GameRoom] Updating state from 'waiting' to 'selecting' (creator)");
           setStatus('selecting');
-          // Optional toast for the creator
+          
+          // Show toast for the creator
           if (data.players[0]?.id === currentPlayerId) { 
-              toast({ 
-                  title: "Player Joined!", 
-                  description: `${data.players[1]?.nickname || 'Someone'} has joined the room.`,
-                  duration: 2500,
-                  className: "compact-toast"
-              });
+            toast({ 
+              title: "Player Joined!", 
+              description: `${data.players[1]?.nickname || 'Someone'} has joined the room.`,
+              duration: 2500,
+              className: "compact-toast"
+            });
           }
+        } else {
+          // For joining player, make sure they have the right state if server sends roomReady
+          console.log("[GameRoom] Already in selecting or other state:", status);
+          
+          // If Player B (joiner) is in a weird state (not 'selecting'), force them to 'selecting'
+          const isPlayerB = data.players.length === 2 && data.players[1]?.id === currentPlayerId;
+          if (isPlayerB && status !== 'selecting' && status !== 'style-selecting' && status !== 'playing') {
+            console.log("[GameRoom] Forcing joiner to 'selecting' state");
+            setStatus('selecting');
+          }
+        }
       } else {
-          console.log("[GameRoom] Ignoring roomReady event (already joined or solo).");
+        console.log("[GameRoom] Ignoring roomReady event (solo mode)");
       }
     };
 
@@ -240,36 +285,71 @@ const GameRoom: React.FC<GameRoomProps> = ({
         });
     };
 
-    // --- Listener for New Round --- 
-    const handleNewRound = (data: { currentRound: number; question: GameQuestion; timerDuration: number; isExclusiveModeActive?: boolean }) => {
-        console.log(`[GameRoom] Received newRound event for round: ${data.currentRound}. Setting state.`);
-        stopTimer(); // Stop timer for the previous round
-        setCurrentRound(data.currentRound);
-        setRoundResults(null); // <<< Clear previous results
-        setHasClickedContinueThisRound(false); // Reset continue button state
-        setStatus('playing'); // <<< Set status back to playing
+    // --- Add Listener for Round Results --- 
+    const handleRoundResults = (data: ResultsData) => {
+        console.log('[GameRoom] Received roundResults event:', data);
+        stopTimer(); // Ensure timer is stopped
 
-        // In exclusive mode, we need to update the questions array with the new question
+        // Get current question text
+        const currentQuestionText = questions[currentRound - 1]?.text || "Question text unavailable";
+        console.log(`[GameRoom] Current question text: "${currentQuestionText}"`);
+        
+        // Create results with question text
+        const resultsWithText = {
+            ...data,
+            questionText: currentQuestionText
+        };
+        
+        console.log('[GameRoom] Setting state for round results');
+        
+        // Set all state in one go to avoid race conditions
+        setRoundResults(resultsWithText);
+        setStatus('results');
+        setHasClickedContinueThisRound(false);
+        
+        console.log('[GameRoom] Round results processed, entering results screen');
+    };
+
+    // --- Listener for New Round --- 
+    const handleNewRound = (data: {
+        currentRound: number;
+        question?: GameQuestion;
+        isExclusiveModeActive?: boolean;
+        timerDuration?: number;
+    }) => {
+        console.log(`[GameRoom] Received newRound event for round: ${data.currentRound}.`);
+        
+        // Stop any active timer
+        stopTimer();
+        
+        // Update state in a specific order to ensure clean transitions
+        // First, update non-UI state
         if (data.isExclusiveModeActive && data.question) {
-            // Add the new question to the questions array at the current round index
+            console.log(`[GameRoom] Adding exclusive question for round ${data.currentRound}`);
             setQuestions(prevQuestions => {
                 const newQuestions = [...prevQuestions];
                 newQuestions[data.currentRound - 1] = data.question;
                 return newQuestions;
             });
-            console.log(`[GameRoom] Updated questions array with new exclusive question: ${data.question.id}`);
         }
-
-        // Restart timer if a duration is set for the game
-        // Use timerDuration from the event data if provided, otherwise fallback to selectedTimerDuration
+        
+        // Then reset UI state in this order
+        setRoundResults(null);
+        setHasClickedContinueThisRound(false);
+        setCurrentRound(data.currentRound);
+        setStatus('playing');
+        
+        console.log(`[GameRoom] State updated for round ${data.currentRound}`);
+        
+        // Handle timer setup last
         const roundDuration = data.timerDuration ?? selectedTimerDuration;
         if (roundDuration > 0) {
-            console.log(`[GameRoom] Restarting timer for round ${data.currentRound} with duration ${roundDuration}`);
+            console.log(`[GameRoom] Starting timer for round ${data.currentRound} with duration ${roundDuration}`);
             setTimeLeft(roundDuration);
             timerInitializedRef.current = false;
-            setIsTimerRunning(true); // Ensure timer starts running
+            setIsTimerRunning(true);
         } else {
-            setTimeLeft(null); // Ensure timer is explicitly off if duration is 0
+            setTimeLeft(null);
             setIsTimerRunning(false);
         }
     };
@@ -290,25 +370,6 @@ const GameRoom: React.FC<GameRoomProps> = ({
         setTimeLeft(null); // Clear time left
         setFinalScores(data.finalScores);
         setStatus('completed'); 
-    };
-
-    // --- Add Listener for Round Results --- 
-    const handleRoundResults = (data: ResultsData) => {
-        console.log('[GameRoom] Received roundResults event:', data);
-        stopTimer(); // Ensure timer is stopped
-        
-        // Store the current question's text before we lose it
-        const currentQuestionText = 
-          questions[currentRound - 1]?.text || 
-          "Question text unavailable";
-        
-        // Store both the results and current question text
-        setRoundResults({
-          ...data,
-          questionText: currentQuestionText // Add the text directly to results
-        });
-        
-        setStatus('results'); // Change status to show results
     };
 
     // General Error Listener
@@ -399,51 +460,70 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
     // Add handler for room reset
     const handleRoomReset = (data: { status: GameRoomStatus, players: Player[] }) => {
-      console.log('[GameRoom] Received roomReset event');
-      // Only update state if not already in selecting state
-      if (status !== 'selecting') {
-        setStatus(data.status);
-        setPlayers(data.players);
-        setSelectedGameMode(null);
-        setSelectedGameStyle('reveal-only');
-        setQuestions([]);
-        setCurrentRound(1);
-        setFinalScores(null);
-        setIsExclusiveModeActive(false);
-        setHasClickedContinueThisRound(false);
-        
-        toast({
-          title: "Room Reset",
-          description: "The game room has been reset.",
-          duration: 2000
-        });
-      }
+        console.log('[GameRoom] Received roomReset event');
+        // Only update state if not already in selecting state
+        if (status !== 'selecting') {
+            setStatus(data.status);
+            setPlayers(data.players);
+            setSelectedGameMode(null);
+            setSelectedGameStyle('reveal-only');
+            setQuestions([]);
+            setCurrentRound(1);
+            setFinalScores(null);
+            setIsExclusiveModeActive(false);
+            setHasClickedContinueThisRound(false);
+            setShowRoundSummary(false); // Reset summary view flag
+            
+            toast({
+                title: "Room Reset",
+                description: "The game room has been reset.",
+                duration: 2000
+            });
+        }
     };
     
     socket.on('roomReset', handleRoomReset);
-
-    // Cleanup listeners and timer interval
+    
+    // For test/development - define test handlers
+    const handleTestRoundResults = isDevelopment 
+      ? (data: ResultsData) => {
+          console.log('[DEV] Received test roundResults event:', data);
+          handleRoundResults(data);
+        }
+      : undefined;
+    
+    // For development testing - listen for test events
+    if (isDevelopment && handleTestRoundResults) {
+      console.log('[GameRoom] Setting up test event listeners for development');
+      socket.on('__test_roundResults', handleTestRoundResults);
+    }
+    
+    // Cleanup all listeners on unmount
     return () => {
+      // Regular event cleanup
       socket.off('roomReady', handleRoomReady);
       socket.off('gameStarted', handleGameStarted);
       socket.off('playerLeft', handlePlayerLeft);
-      socket.off('error', handleErrorEvent); // Cleanup general error listener
-      socket.off('newRound', handleNewRound); // Cleanup listener
-      socket.off('roundComplete', handleRoundComplete); // Cleanup listener
-      socket.off('gameOver', handleGameOver); // Cleanup listener
-      socket.off('roundResults', handleRoundResults); // <<< Add cleanup here
+      socket.off('error', handleErrorEvent);
+      socket.off('newRound', handleNewRound);
+      socket.off('roundComplete', handleRoundComplete);
+      socket.off('gameOver', handleGameOver);
+      socket.off('roundResults', handleRoundResults);
       
-      // Cleanup exclusive mode event listeners
+      // Exclusive mode event cleanup
       socket.off('exclusiveModeActivated', handleExclusiveModeActivated);
       socket.off('exclusiveModeSuccess', handleExclusiveModeSuccess);
       socket.off('exclusiveModeFailed', handleExclusiveModeFailed);
-      
-      // Cleanup room reset listener
       socket.off('roomReset', handleRoomReset);
       
-      stopTimer(); // Ensure timer stops on component unmount or effect re-run
+      // Test event cleanup (development only)
+      if (isDevelopment && handleTestRoundResults) {
+        socket.off('__test_roundResults', handleTestRoundResults);
+      }
+      
+      // Stop any active timer
+      stopTimer();
     };
-    // Add 'status' back to dependency array
   }, [socket, gameMode, status, currentPlayerId, toast, selectedTimerDuration]);
 
   // Effect for Timer Countdown Logic
@@ -678,15 +758,25 @@ const GameRoom: React.FC<GameRoomProps> = ({
     // Questions are now fetched from the server when starting the game
   };
 
+  // Handle the continue button click on the results screen
   const handleContinueClick = () => {
-    // Only emit and set state if the player hasn't already clicked
-    if (socket && !hasClickedContinueThisRound) { 
-      console.log('[GameRoom] Emitting playerReady');
-      socket.emit('playerReady', { roomId });
-      setHasClickedContinueThisRound(true); // Set state to true for button display
-      // REMOVED: setRoundResults(null); 
-      // REMOVED: setStatus('playing');
+    // Guard clauses for invalid states
+    if (!socket) {
+      console.log('[GameRoom] Cannot continue - no socket connection');
+      return;
     }
+    
+    if (hasClickedContinueThisRound) {
+      console.log('[GameRoom] Continue already clicked, ignoring');
+      return;
+    }
+    
+    // Mark as clicked first (immediate UI feedback)
+    setHasClickedContinueThisRound(true);
+    
+    // Then emit the event
+    console.log('[GameRoom] Emitting playerReady');
+    socket.emit('playerReady', { roomId });
   };
   
   // Function to handle activating exclusive mode
@@ -798,10 +888,24 @@ const GameRoom: React.FC<GameRoomProps> = ({
   }
 
   const renderGameSelection = () => {
+    // For Player B in a 2-player game, show a waiting screen
     if (!isCreator && gameMode === '2player') {
+      // Make sure we show a more user-friendly waiting UI for Player B
+      const creatorNickname = players.length > 0 ? players[0]?.nickname || 'Creator' : 'Creator';
+      
       return (
-        <GameCard title={`Waiting for ${creatorName} to Choose Game Mode`} description="Hang tight! The game will start soon.">
-          <p className="text-center text-gray-600 mt-4">Room Code: <span className="font-mono font-semibold">{roomId}</span></p>
+        <GameCard 
+          title={`Waiting for ${creatorNickname} to Choose Game Mode`} 
+          description="Hang tight! The game will start soon."
+        >
+          <div className="flex flex-col items-center justify-center p-8 space-y-4">
+            <div className="flex items-center justify-center animate-pulse">
+              <div className="w-3 h-3 bg-connection-primary rounded-full mx-1"></div>
+              <div className="w-3 h-3 bg-connection-primary rounded-full mx-1 animate-delay-200"></div>
+              <div className="w-3 h-3 bg-connection-primary rounded-full mx-1 animate-delay-400"></div>
+            </div>
+            <p className="text-center text-gray-600">Room Code: <span className="font-mono font-semibold">{roomId}</span></p>
+          </div>
         </GameCard>
       );
     }
@@ -836,12 +940,23 @@ const GameRoom: React.FC<GameRoomProps> = ({
       if (!selectedGameMode) return null; // Should not happen if status is 'style-selecting'
 
       if (!isCreator && gameMode === '2player') {
+          // Enhanced waiting screen for Player B during game configuration
+          const creatorNickname = players.length > 0 ? players[0]?.nickname || 'Creator' : 'Creator';
+          const gameModeTitle = GAME_DESCRIPTIONS[selectedGameMode]?.title || 'Game';
+          
           return (
               <GameCard 
-                  title={`Waiting for ${creatorName} to Configure ${GAME_DESCRIPTIONS[selectedGameMode]?.title || 'Game'}`} 
-                  description="They are selecting the game style and settings."
+                  title={`Almost Ready to Play ${gameModeTitle}!`}
+                  description={`${creatorNickname} is setting up the game...`}
               >
-                  <p className="text-center text-gray-600 mt-4">Almost there!</p>
+                  <div className="flex flex-col items-center justify-center p-8 space-y-6">
+                      <div className="w-16 h-16 rounded-full border-4 border-connection-primary border-t-transparent animate-spin"></div>
+                      <div className="text-center space-y-2">
+                          <p className="text-connection-tertiary font-medium">Game Selected:</p>
+                          <p className="text-lg font-bold text-connection-primary">{gameModeTitle}</p>
+                          <p className="text-sm text-gray-500 mt-4">The creator is configuring game settings...</p>
+                      </div>
+                  </div>
               </GameCard>
           );
       }
@@ -1125,14 +1240,16 @@ const GameRoom: React.FC<GameRoomProps> = ({
             return acc;
         }, {} as Record<string, string>);
 
+        // Always show the summary component first, fallback to results if needed
+        // This ensures we always see the summary when we're in results state
         return (
-          <ResultComparison 
-             result={roundResults} 
-             playerNames={playerNamesMap}
-             questionText={roundResults.questionText || "Question not available"}
-             showPredictions={selectedGameStyle === 'predict-score'}
-             hasClickedContinue={hasClickedContinueThisRound}
-             onContinue={handleContinueClick}
+          <RoundSummary
+            result={roundResults}
+            playerNames={playerNamesMap}
+            questionText={roundResults.questionText || "Question not available"}
+            showPredictions={selectedGameStyle === 'predict-score'}
+            hasClickedContinue={hasClickedContinueThisRound}
+            onContinue={handleContinueClick}
           />
         );
       case 'completed':

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import io, { Socket } from 'socket.io-client';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 // Define the shape of the context value
 interface SocketContextType {
@@ -20,50 +20,65 @@ export const useSocket = () => {
 
 // Define the props for the provider component
 interface SocketProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-// Define the backend URL (adjust if your backend runs elsewhere)
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
+// Helper for detecting if we're in development mode (works in Vite)
+const isDevelopment = import.meta.env.DEV || (typeof import.meta.env === 'undefined' && window.location.hostname === 'localhost');
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // Initialize connection
-    // Explicitly type 'io' if needed, though often inferred
-    const newSocket: Socket = io(SOCKET_URL, {
-        transports: ['websocket'], // Prefer WebSocket transport
-        // autoConnect: false // Optionally control connection timing
+    // Determine server URL based on environment
+    const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+    
+    // Create socket connection
+    const socketInstance = io(serverUrl, {
+      transports: ['websocket'],
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
+    
+    // Set socket in state
+    setSocket(socketInstance);
+    
+    // For development testing only - expose socket globally
+    if (isDevelopment) {
+      (window as any).socket = socketInstance;
+      console.log('[SocketContext] Socket exposed globally for development');
+    }
 
-    setSocket(newSocket);
-
-    // Event listeners
-    newSocket.on('connect', () => {
-      console.log('Socket connected:', newSocket.id);
+    // Handle connect event
+    socketInstance.on('connect', () => {
+      console.log('[SocketContext] Connected to server with ID:', socketInstance.id);
       setIsConnected(true);
     });
 
-    newSocket.on('disconnect', (reason) => {
-      console.log('Socket disconnected:', reason);
+    // Handle disconnect event
+    socketInstance.on('disconnect', (reason) => {
+      console.log('[SocketContext] Disconnected from server. Reason:', reason);
       setIsConnected(false);
-      // Handle reconnection logic if needed
     });
 
-    newSocket.on('connect_error', (error) => {
-        console.error('Socket connection error:', error);
-        setIsConnected(false);
-        // Potentially show error to user or attempt reconnection
+    // Handle connect error
+    socketInstance.on('connect_error', (error) => {
+      console.error('[SocketContext] Connection error:', error);
+      setIsConnected(false);
     });
 
-    // Cleanup on component unmount
+    // Clean up on unmount
     return () => {
-      console.log('Disconnecting socket...');
-      newSocket.disconnect();
+      console.log('[SocketContext] Cleaning up socket connection');
+      socketInstance.off('connect');
+      socketInstance.off('disconnect');
+      socketInstance.off('connect_error');
+      socketInstance.disconnect();
     };
-  }, []); // Run only once on mount
+  }, []);
 
   const value = { socket, isConnected };
 

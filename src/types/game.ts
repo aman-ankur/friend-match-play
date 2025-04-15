@@ -1,5 +1,5 @@
 export type GameMode = 'guess-who-i-am' | 'hot-takes' | 'this-or-that';
-export type GameStyle = 'prediction' | 'reveal-only';
+export type GameStyle = 'predict-score' | 'reveal-only';
 
 export interface GameQuestion {
   id: string;

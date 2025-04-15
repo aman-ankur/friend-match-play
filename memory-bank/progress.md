@@ -24,6 +24,14 @@
     - Server waits for all players to be ready.
     - Server emits `newRound` or `gameOver`.
     - Clients receive event and update round or display final scores.
+- **Prediction Mode Gameplay:**
+    - Players first submit answers as in Reveal-Only mode.
+    - When all answers are in, server emits `predictionPhase` event.
+    - Clients transition to prediction UI with distinct styling.
+    - Players emit `submitPrediction` for what they think the other player answered.
+    - Server collects predictions and calculates scores (1 point per correct prediction).
+    - Server emits `roundResults` with prediction and score data.
+    - ResultComparison displays both answers and predictions with correctness indicators.
 - **Exclusive Mode:**
     - PIN-protected mode for "This or That" games with adult content
     - Can be activated during setup or gameplay (only by creator)
@@ -41,12 +49,6 @@
 
 ## 2. What's Left to Build / Refine
 
-- **Prediction Mode Logic:**
-    - Implement UI for prediction phase in game components.
-    - Add `submitPrediction` event/handler.
-    - Add server-side score calculation based on predictions and answers.
-    - Update `roundResults` and `gameOver` events to include scores.
-    - Update `ResultComparison` to display prediction results/scores.
 - **Solo Mode Gameplay:**
     - Implement actual gameplay loop for solo mode (currently just lands on game selection).
     - Decide if it's reflection-only or needs simple AI/logic.
@@ -65,21 +67,29 @@
 
 ## 3. Current Status
 
-- **Core Multiplayer Flow Implemented:** Create, join, synchronized game start, reveal-only round progression, and game completion flow are functional using Socket.IO.
+- **Core Multiplayer Flow Implemented:** Create, join, synchronized game start, both reveal-only and prediction mode round progression, and game completion flow are functional using Socket.IO.
 - **Server Authoritative:** Backend manages the core game state.
 - **Exclusive Mode:** Working implementation of PIN-protected adult content.
 - **Room Reset:** Implemented functionality to reset room after game completion.
-- **Key Missing Features:** Prediction mode logic, robust solo play, data persistence.
+- **Prediction Mode:** Complete implementation of prediction phase, scoring, and results display.
+- **Key Missing Features:** Robust solo play, data persistence.
 
 ## 4. Known Issues / Blockers
 
-- Prediction mode is not implemented.
 - Solo mode doesn't have gameplay logic.
 - Game state is lost on server restart.
 - Limited error feedback to the user.
 
 ## Completed Tasks (Recent)
 
+*   **Prediction Mode Implementation:**
+    - Fixed GameStyle type inconsistency between client and server (standardized on 'predict-score' | 'reveal-only')
+    - Implemented predictionPhase event emission from server after all answers are submitted
+    - Added client-side handling for predictionPhase events in useGameLogic hook
+    - Created distinctive UI for prediction phase with enhanced styling and clear instructions
+    - Implemented submitPrediction event handling on server with proper validation
+    - Added scoring logic (1 point for correct predictions)
+    - Enhanced ResultComparison to show predictions with correctness indicators
 *   **Exclusive Mode Implementation:**
     - Added PIN protection ("s3xy") for adult content
     - Implemented server-side question filtering/management
@@ -129,7 +139,6 @@
 
 ## Current Focus / Next Steps
 
-*   Implement Prediction Mode logic (server-side scoring, client-side prediction UI/events).
 *   Refine Solo Mode gameplay.
 *   Consider adding data persistence.
 *   Improve UI feedback (e.g., showing who is waiting).

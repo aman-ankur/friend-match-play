@@ -91,4 +91,32 @@ This document summarizes the debugging process undertaken in April 2024, coverin
     4. Added extensive logging to trace the event flow from answer submission through prediction phase to results.
     5. Enhanced the prediction UI with distinctive styling to make it more obvious when in prediction mode.
     6. Fixed state transitions in the `useGameLogic` hook to properly handle the prediction phase.
-- **Lesson:** Type consistency is critical across the client-server boundary. When dealing with enums or string literals, ensure they match exactly throughout the codebase. Thorough testing of different game modes is necessary, as bugs may only surface in specific combinations of settings. Socket event tracing with detailed logs is invaluable for debugging asynchronous workflows. 
+- **Lesson:** Type consistency is critical across the client-server boundary. When dealing with enums or string literals, ensure they match exactly throughout the codebase. Thorough testing of different game modes is necessary, as bugs may only surface in specific combinations of settings. Socket event tracing with detailed logs is invaluable for debugging asynchronous workflows.
+
+### 3.6. Content Level Display Issues in Rules Overlay
+
+- **Issue:** When Player 2 joined a game with a high content level (level 10) selected by the creator, the rules overlay showed incorrect information for the content level.
+- **Analysis:** The issue had multiple root causes:
+    1. The `nsfwLevel` value was being passed through the system without proper validation at various stages.
+    2. There was no robust error handling for edge cases (invalid or extreme values).
+    3. The groups-based approach for content levels had inconsistent implementation across components.
+    4. The server was sending the raw `nsfwLevel` value in some cases but not in the `gameStarted` event.
+- **Fix:**
+    1. **Client-side validation (NSFWSlider component)**:
+       - Added proper validation to ensure values are always within 1-10 range
+       - Added better error handling for non-numeric or invalid inputs
+       - Improved display to show the actual numeric level alongside the descriptive name
+    2. **Rules display (RulesOverlay component)**:
+       - Added comprehensive validation for content level values
+       - Created a utility function to handle all edge cases
+       - Improved the UI to clearly show both the level name and numeric value
+       - Added detailed logging to track values through the system
+    3. **Game start logic (GameRoom component)**:
+       - Added validation before sending nsfwLevel to the server
+       - Added debugging to track the value through the system
+       - Ensured correct validation in the handleCreatorStartGame function
+    4. **Server-side validation (server.ts)**:
+       - Added validation of nsfwLevel in the startGame handler
+       - Made sure the validated value is used throughout the server code
+       - Added the validated nsfwLevel to the gameStarted event sent to clients
+- **Lesson:** Validation should happen at every level of the stack (client input, client-to-server transmission, server processing, server-to-client transmission, and client display). Fun, descriptive names for content levels need consistent implementation across all components. Proper logging throughout the system helps trace values and identify where inconsistencies are introduced. 

@@ -93,11 +93,11 @@ const Index = () => {
                 </div>
                 <div className="flex items-start">
                   <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">3</div>
-                  <p>Answer questions about yourself and predict how your friend will respond</p>
+                  <p>Answer questions about yourself and engage with thought-provoking content</p>
                 </div>
                 <div className="flex items-start">
                   <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">4</div>
-                  <p>Earn points for correct predictions and discover new insights about each other</p>
+                  <p>Compare answers with your friend and discover new insights about each other</p>
                 </div>
               </div>
             </div>
@@ -109,21 +109,21 @@ const Index = () => {
               <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
                 <h3 className="text-xl font-bold mb-2">Guess Who I Am</h3>
                 <p className="text-gray-600">
-                  Answer personality-based questions and predict how well you know each other.
+                  Reveal hidden aspects of your personality and discover how well you and your friend truly know each other.
                 </p>
               </div>
               
               <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
                 <h3 className="text-xl font-bold mb-2">Hot Takes</h3>
                 <p className="text-gray-600">
-                  Share your opinions on various topics and see if your friend can predict your stance.
+                  Share your stance on controversial topics and see where you stand compared to your friend on hot button issues.
                 </p>
               </div>
               
               <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
                 <h3 className="text-xl font-bold mb-2">This or That</h3>
                 <p className="text-gray-600">
-                  Make binary choices on hypothetical scenarios and predict your friend's preferences.
+                  Make tough choices between impossible dilemmas and discover how your preferences align with your friend's.
                 </p>
               </div>
             </div>

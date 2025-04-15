@@ -222,31 +222,41 @@ io.on('connection', (socket: Socket) => {
     const { roomId, gameMode, gameStyle, nsfwLevel, timerDuration, totalRounds, isExclusiveModeActive } = data;
     const room = rooms[roomId];
 
+    // Log the received data for debugging
+    console.log(`[${roomId}] Start game request received with nsfwLevel: ${nsfwLevel} (type: ${typeof nsfwLevel})`);
+
     // Validation
     if (!room) {
       socket.emit('error', { message: `Room ${roomId} not found for startGame.` });
       return;
     }
     if (room.players.length < (room.gameMode === 'solo' ? 1 : 2)) {
-        socket.emit('error', { message: `Not enough players in room ${roomId} to start.` });
-        return;
+      socket.emit('error', { message: `Not enough players in room ${roomId} to start.` });
+      return;
     }
     // Only allow creator (first player) to start the game in 2p mode
     if (room.gameMode === '2player' && room.players[0]?.id !== socket.id) {
-        socket.emit('error', { message: `Only the room creator can start the game.` });
-        return;
+      socket.emit('error', { message: `Only the room creator can start the game.` });
+      return;
     }
     if (room.status !== 'selecting') {
-        socket.emit('error', { message: `Game in room ${roomId} cannot be started (current status: ${room.status}).` });
-        return;
+      socket.emit('error', { message: `Game in room ${roomId} cannot be started (current status: ${room.status}).` });
+      return;
     }
 
+    // Validate nsfwLevel to ensure it's a proper number
+    const validatedNsfwLevel = typeof nsfwLevel === 'number' && !isNaN(nsfwLevel)
+      ? Math.min(Math.max(Math.round(nsfwLevel), 1), 10) // Clamp between 1-10 and round
+      : 1; // Default to level 1 if invalid
+    
+    console.log(`[${roomId}] Validated nsfwLevel: ${nsfwLevel} → ${validatedNsfwLevel}`);
+
     // Generate Questions
-    const questions = getQuestionsByMode(gameMode, totalRounds, nsfwLevel);
+    const questions = getQuestionsByMode(gameMode, totalRounds, validatedNsfwLevel);
     if (!questions || questions.length < totalRounds) {
-        socket.emit('error', { message: `Could not generate enough questions for the selected settings.` });
-        console.error(`Failed to get enough questions for room ${roomId}, mode ${gameMode}, count ${totalRounds}, nsfw ${nsfwLevel}`);
-        return;
+      socket.emit('error', { message: `Could not generate enough questions for the selected settings.` });
+      console.error(`Failed to get enough questions for room ${roomId}, mode ${gameMode}, count ${totalRounds}, nsfw ${validatedNsfwLevel}`);
+      return;
     }
     
     // Handle exclusive mode if requested
@@ -286,7 +296,7 @@ io.on('connection', (socket: Socket) => {
     room.status = 'playing';
     room.selectedGameMode = gameMode;
     room.selectedGameStyle = gameStyle;
-    room.nsfwLevel = nsfwLevel;
+    room.nsfwLevel = validatedNsfwLevel;
     room.timerDuration = timerDuration;
     room.totalRounds = totalRounds;
     room.questions = questions;
@@ -302,7 +312,7 @@ io.on('connection', (socket: Socket) => {
       delete room.currentPredictions;
     }
 
-    console.log(`Starting game in room ${roomId}: Mode=${gameMode}, Style=${gameStyle}, Rounds=${totalRounds}, Timer=${timerDuration ?? 'None'}, Exclusive=${room.isExclusiveModeActive}`);
+    console.log(`Starting game in room ${roomId}: Mode=${gameMode}, Style=${gameStyle}, Rounds=${totalRounds}, Timer=${timerDuration ?? 'None'}, Exclusive=${room.isExclusiveModeActive}, NsfwLevel=${validatedNsfwLevel}`);
 
     // Emit 'gameStarted' to all clients in the room
     io.to(roomId).emit('gameStarted', {
@@ -316,6 +326,7 @@ io.on('connection', (socket: Socket) => {
         [firstExclusiveQuestion] : // Send only the first exclusive question
         room.questions,
       timerDuration: room.timerDuration,
+      nsfwLevel: validatedNsfwLevel,
       isExclusiveModeActive: room.isExclusiveModeActive
     });
     

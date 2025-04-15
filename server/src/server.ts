@@ -15,7 +15,7 @@ interface Player {
 }
 
 type AppGameMode = 'solo' | '2player';
-type GameStyle = 'prediction' | 'reveal-only';
+type GameStyle = 'predict-score' | 'reveal-only';
 type RoomStatus = 'waiting' | 'selecting' | 'playing' | 'completed';
 
 interface PlayerResult {
@@ -295,7 +295,7 @@ io.on('connection', (socket: Socket) => {
     room.readyForNextRound = new Set<string>();
     room.players.forEach(p => p.score = 0);
     // Initialize predictions structure if in prediction mode
-    if (room.selectedGameStyle === 'prediction') {
+    if (room.selectedGameStyle === 'predict-score') {
       room.currentPredictions = {};
     } else {
       // Ensure it's not present otherwise, making checks easier later
@@ -340,7 +340,7 @@ io.on('connection', (socket: Socket) => {
       return; // Prevent overwriting answer
     }
 
-    console.log(`[${roomId}] Player ${socket.id} submitted answer.`);
+    console.log(`[${roomId}] Player ${socket.id} submitted answer: "${answer.substring(0, 20)}${answer.length > 20 ? '...' : ''}"`);
     room.currentAnswers[socket.id] = answer;
 
     // Check if all players have answered
@@ -348,10 +348,23 @@ io.on('connection', (socket: Socket) => {
     
     if (allPlayersAnswered) {
       console.log(`[${roomId}] All players answered for round ${room.currentRound}. Emitting roundComplete.`);
+      
+      // Log the game style for debugging
+      console.log(`[${roomId}] Current game style: ${room.selectedGameStyle}`);
+      
       io.to(roomId).emit('roundComplete', { roundNumber: room.currentRound }); // Notify clients round is complete (stop timers)
       
-      // Process results immediately (or could add a slight delay)
-      processRoundResults(room);
+      // Check if we're in prediction mode
+      if (room.selectedGameStyle === 'predict-score') {
+        console.log(`[${roomId}] Game is in predict-score mode. Emitting predictionPhase for round ${room.currentRound}.`);
+        // Move to prediction phase instead of results
+        io.to(roomId).emit('predictionPhase', { round: room.currentRound });
+        console.log(`[${roomId}] predictionPhase event emitted. Waiting for predictions...`);
+      } else {
+        // For reveal-only mode, process results immediately
+        console.log(`[${roomId}] Game is in reveal-only mode. Processing results immediately.`);
+        processRoundResults(room);
+      }
     }
   });
 
@@ -359,35 +372,54 @@ io.on('connection', (socket: Socket) => {
   socket.on('submitPrediction', (data: { roomId: string; predictedPlayerId: string; prediction: string }) => {
     const { roomId, predictedPlayerId, prediction } = data;
     const room = rooms[roomId];
-    if (!room || room.status !== 'playing' || room.selectedGameStyle !== 'prediction') {
+    
+    console.log(`[${roomId}] Received submitPrediction request. Room exists: ${!!room}, Status: ${room?.status}, GameStyle: ${room?.selectedGameStyle}`);
+    
+    if (!room || room.status !== 'playing' || room.selectedGameStyle !== 'predict-score') {
+      console.log(`[${roomId}] Cannot submit prediction. Invalid room state.`);
       socket.emit('error', { message: `Cannot submit prediction for room ${roomId}.` });
       return;
     }
-    if (!room.currentPredictions) room.currentPredictions = {}; // Ensure structure exists
+    
+    if (!room.currentPredictions) {
+      console.log(`[${roomId}] Initializing currentPredictions object for the first time.`);
+      room.currentPredictions = {}; // Ensure structure exists
+    }
+    
     if (room.currentPredictions[socket.id]) {
+      console.log(`[${roomId}] Player ${socket.id} already submitted a prediction.`);
       socket.emit('error', { message: `You have already submitted a prediction for this round.` });
       return; // Prevent overwriting prediction
     }
+    
     // Validate predictedPlayerId exists in the room and is not the predictor
     if (!room.players.some(p => p.id === predictedPlayerId) || predictedPlayerId === socket.id) {
+        console.log(`[${roomId}] Invalid prediction target. Self-prediction not allowed.`);
         socket.emit('error', { message: 'Invalid player selected for prediction.' });
         return;
     }
 
-    console.log(`[${roomId}] Player ${socket.id} submitted prediction for ${predictedPlayerId}.`);
+    console.log(`[${roomId}] Player ${socket.id} submitted prediction for ${predictedPlayerId}: "${prediction.substring(0, 20)}${prediction.length > 20 ? '...' : ''}"`);
     room.currentPredictions[socket.id] = { predictedPlayerId, prediction };
 
     // Check if all players have submitted *both* answer and prediction
+    const playersWithAnswers = room.players.filter(player => room.currentAnswers[player.id]);
+    const playersWithPredictions = room.players.filter(player => room.currentPredictions![player.id]);
+    
+    console.log(`[${roomId}] Players with answers: ${playersWithAnswers.length}/${room.players.length}, with predictions: ${playersWithPredictions.length}/${room.players.length}`);
+    
     const allPlayersSubmitted = room.players.every(
       player => room.currentAnswers[player.id] && room.currentPredictions![player.id]
     );
 
     if (allPlayersSubmitted) {
-      console.log(`[${roomId}] All players answered and predicted for round ${room.currentRound}. Emitting roundComplete.`);
+      console.log(`[${roomId}] All players answered and predicted for round ${room.currentRound}. Processing results.`);
       io.to(roomId).emit('roundComplete', { roundNumber: room.currentRound }); // Notify clients round is complete (stop timers)
       
       // Process results immediately
       processRoundResults(room); // This function now handles both modes
+    } else {
+      console.log(`[${roomId}] Still waiting for some players to complete their predictions.`);
     }
   });
 
@@ -590,7 +622,7 @@ io.on('connection', (socket: Socket) => {
       // Determine which players did *not* submit an answer/prediction in time
       const playersWhoDidNotSubmit = room.players.filter(p => !room.currentAnswers[p.id]);
       // In prediction mode, also check predictions
-      const playersWhoDidNotPredict = room.selectedGameStyle === 'prediction' ? room.players.filter(p => !room.currentPredictions?.[p.id]) : [];
+      const playersWhoDidNotPredict = room.selectedGameStyle === 'predict-score' ? room.players.filter(p => !room.currentPredictions?.[p.id]) : [];
 
       if (playersWhoDidNotSubmit.length > 0) {
           console.log(`[${roomId}] Players who didn't answer:`, playersWhoDidNotSubmit.map(p => p.id));
@@ -599,6 +631,18 @@ io.on('connection', (socket: Socket) => {
               if (!room.currentAnswers[p.id]) room.currentAnswers[p.id] = "[Time Expired]";
           });
       }
+      
+      // If all players have submitted answers, but we're still in answer phase (not prediction phase yet)
+      // and this is a predict-score game, we need to transition to prediction phase
+      const allPlayersAnswered = room.players.every(p => room.currentAnswers[p.id]);
+      if (room.selectedGameStyle === 'predict-score' && allPlayersAnswered && playersWhoDidNotPredict.length === room.players.length) {
+          console.log(`[${roomId}] Timer expired during answer phase in predict-score mode. Moving to prediction phase.`);
+          // Move to prediction phase
+          io.to(roomId).emit('predictionPhase', { round: room.currentRound });
+          return; // Don't process results yet - wait for prediction phase
+      }
+      
+      // If we're already in prediction phase (at least one prediction exists)
       if (playersWhoDidNotPredict.length > 0) {
            console.log(`[${roomId}] Players who didn't predict:`, playersWhoDidNotPredict.map(p => p.id));
            playersWhoDidNotPredict.forEach(p => {
@@ -617,7 +661,7 @@ io.on('connection', (socket: Socket) => {
       // Check if everyone has now effectively submitted (even if by timeout)
       const allConsideredSubmitted = room.players.every(p => 
           room.currentAnswers[p.id] && 
-          (room.selectedGameStyle !== 'prediction' || room.currentPredictions?.[p.id])
+          (room.selectedGameStyle !== 'predict-score' || room.currentPredictions?.[p.id])
       );
       
       if (allConsideredSubmitted) {
@@ -694,7 +738,7 @@ function calculateScore(room: Room): Record<string, number> {
   const playerScores: Record<string, number> = {};
   room.players.forEach(p => playerScores[p.id] = 0); // Initialize scores for this round
 
-  if (room.selectedGameStyle === 'prediction' && room.currentPredictions) {
+  if (room.selectedGameStyle === 'predict-score' && room.currentPredictions) {
     // Prediction Mode Scoring:
     // Award points for correct predictions
     for (const predictorId in room.currentPredictions) {
@@ -742,7 +786,7 @@ function processRoundResults(room: Room) {
     };
 
     // Add prediction info if applicable
-    if (room.selectedGameStyle === 'prediction' && room.currentPredictions && room.currentPredictions[player.id]) {
+    if (room.selectedGameStyle === 'predict-score' && room.currentPredictions && room.currentPredictions[player.id]) {
       const predictionData = room.currentPredictions[player.id];
       result.prediction = predictionData.prediction;
       result.predictedPlayerId = predictionData.predictedPlayerId;

@@ -95,14 +95,21 @@ const useGameLogic = ({
     };
     
     const handlePredictionPhase = (data: { round: number }) => {
-        if (data.round === currentRound && gameStyle === 'prediction') {
-            console.log(`[useGameLogic] Received predictionPhase for round ${data.round}`);
-            setState(prev => ({
-                ...prev,
-                currentPhase: 'prediction',
-                hasSubmittedAnswer: false,
-                hasSubmittedPrediction: false
-            }));
+        console.log(`[useGameLogic] Received predictionPhase for round ${data.round}. Current gameStyle: ${gameStyle}, currentRound: ${currentRound}`);
+        
+        if (data.round === currentRound && gameStyle === 'predict-score') {
+            console.log(`[useGameLogic] Matching prediction phase, transitioning state to prediction phase`);
+            setState(prev => {
+                console.log(`[useGameLogic] Current state before prediction phase: phase=${prev.currentPhase}, hasSubmittedAnswer=${prev.hasSubmittedAnswer}`);
+                return {
+                    ...prev,
+                    currentPhase: 'prediction',
+                    hasSubmittedPrediction: false,
+                    // Keep hasSubmittedAnswer as true
+                };
+            });
+        } else {
+            console.log(`[useGameLogic] Skipping predictionPhase - gameStyle=${gameStyle}, round mismatch=${data.round !== currentRound}`);
         }
     };
 
@@ -146,18 +153,37 @@ const useGameLogic = ({
       currentQ: !!currentQuestion,
       socket: !!socket,
       cpId: currentPlayerId,
-      op: !!otherPlayer
+      op: !!otherPlayer,
+      gameStyle
     });
     
-    if (!socket || !currentQuestion || !currentPlayerId || !otherPlayer || state.hasSubmittedPrediction) {
-      console.warn('[useGameLogic] Prediction blocked:', { 
-        socket: !!socket, 
-        currentQuestion: !!currentQuestion, 
-        currentPlayerId, 
-        otherPlayer: !!otherPlayer, 
-        submittedPrediction: state.hasSubmittedPrediction,
-        phase: state.currentPhase 
-      });
+    if (!socket) {
+      console.warn('[useGameLogic] Prediction blocked: No socket connection');
+      return;
+    }
+    
+    if (!currentQuestion) {
+      console.warn('[useGameLogic] Prediction blocked: No current question');
+      return;
+    }
+    
+    if (!currentPlayerId) {
+      console.warn('[useGameLogic] Prediction blocked: No current player ID');
+      return;
+    }
+    
+    if (!otherPlayer) {
+      console.warn('[useGameLogic] Prediction blocked: No other player to predict for');
+      return;
+    }
+    
+    if (state.hasSubmittedPrediction) {
+      console.warn('[useGameLogic] Prediction blocked: Already submitted prediction');
+      return;
+    }
+    
+    if (state.currentPhase !== 'prediction') {
+      console.warn(`[useGameLogic] Prediction blocked: Wrong phase (${state.currentPhase})`);
       return;
     }
 
@@ -168,12 +194,16 @@ const useGameLogic = ({
         predictedPlayerId: otherPlayer.id
     });
 
-    setState(prev => ({
-      ...prev,
-      hasSubmittedPrediction: true,
-      predictions: { ...prev.predictions, [currentPlayerId]: option },
-    }));
-  }, [socket, roomId, currentQuestion, currentPlayerId, otherPlayer, state.hasSubmittedPrediction]);
+    setState(prev => {
+      console.log('[useGameLogic] Setting state after prediction submission');
+      return {
+        ...prev,
+        hasSubmittedPrediction: true,
+        predictions: { ...prev.predictions, [currentPlayerId]: option },
+        currentPhase: 'waiting'  // Change phase to waiting after prediction
+      };
+    });
+  }, [socket, roomId, currentQuestion, currentPlayerId, otherPlayer, state.hasSubmittedPrediction, state.currentPhase, gameStyle]);
 
   const handleContinue = useCallback(() => {
     if (state.currentPhase === 'results' && !state.hasClickedContinue && socket) {

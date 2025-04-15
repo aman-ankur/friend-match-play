@@ -47,4 +47,31 @@ Add a feature where after every round ends, a summary screen shows the question 
 
 ## Next Steps
 *   Identify current game state management and round progression logic.
-*   Begin implementing Step 1 (State Management) based on the existing architecture. 
+*   Begin implementing Step 1 (State Management) based on the existing architecture.
+
+## Recent Implementation: Rules Overlay Feature
+
+As a related feature, we've successfully implemented a Rules Overlay that shows game information to Player 2 before the round begins:
+
+### Implementation Details
+
+1. **New Component:**
+   - Created a `RulesOverlay` component that displays comprehensive game information
+   - Shows game mode, game style, content level, round count, and timer settings
+   - Features a "Continue" button for Player 2 to acknowledge and proceed
+
+2. **Game Flow Integration:**
+   - Added a new 'rules-display' state to the game flow
+   - Integrated with existing playerReady event handling
+   - Created appropriate transitions between states
+
+3. **Content Level Improvements:**
+   - Replaced numeric "spiciness" levels with fun, descriptive group-based names
+   - Implemented comprehensive validation for content level values
+   - Added improved UI for displaying content levels across the app
+
+4. **Server-Side Support:**
+   - Enhanced server validation of game settings
+   - Added proper handling of playerReady events
+
+This feature serves as a good template for the Round Summary feature, following similar patterns for state management, overlay display, and continuation flow. 

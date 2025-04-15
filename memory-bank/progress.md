@@ -82,6 +82,15 @@
 
 ## Completed Tasks (Recent)
 
+*   **Rules Overlay & Content Level Improvements:**
+    - Implemented Rules Overlay feature for Player 2 to view game rules and settings before game starts
+    - Added proper validation for content level values throughout the application
+    - Replaced numeric spiciness levels with fun, group-based content level names
+    - Fixed display issues with extreme content level values
+    - Added comprehensive error handling for edge cases
+    - Updated game descriptions to be more accurate and focused on gameplay rather than prediction aspects
+    - Ensured consistent validation across client and server components
+
 *   **Prediction Mode Implementation:**
     - Fixed GameStyle type inconsistency between client and server (standardized on 'predict-score' | 'reveal-only')
     - Implemented predictionPhase event emission from server after all answers are submitted

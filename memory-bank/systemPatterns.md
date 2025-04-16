@@ -61,6 +61,11 @@ graph TD
 - **State Machine Pattern:** Room status transitions follow a finite state machine model: waiting → selecting → playing → results → (back to playing or to completed) → selecting (after reset).
 - **Feature Flagging:** The exclusive mode feature is implemented as a flag in the Room interface, allowing dynamic enabling/disabling of the feature.
 - **PIN Protection:** Access to sensitive content (exclusive mode) is protected by a PIN code, implementing a simple authentication mechanism.
+- **Temporary Disconnect Handling (Planned):** A grace period approach using `setTimeout` within the server's disconnect handler will allow players to reconnect to in-progress games without data loss.
+- **Content Classification System:** A group-based naming system for content appropriateness levels replaces the numeric "spiciness" scale, improving user understanding and experience.
+- **Rules Overlay Pattern:** A dedicated UI state and flow for displaying game information before gameplay begins, especially for the second player.
+- **Form Validation Pattern:** Comprehensive client and server-side validation for content levels and other game settings.
+- **Enhanced Event Propagation:** Game sessions pass through more discrete event phases (e.g., rules display, prediction phase) with dedicated events and handlers.
 
 ## 4. Component Relationships & Data Flow (Simplified)
 
@@ -76,14 +81,18 @@ graph TD
     - Creator selects game mode -> UI changes locally (`style-selecting` status).
     - Creator configures style/timer/NSFW -> emits `startGame`.
     - Listens for `gameStarted` -> updates local state (questions, round, etc.) from server data -> Renders specific game component (e.g., `ThisOrThat.tsx`).
-4.  **Gameplay (`ThisOrThat.tsx` + `useGameLogic.ts`):
+4.  **Rules Display (for Joiner):**
+    - After `gameStarted` event, joiner enters 'rules-display' state
+    - `RulesOverlay` component shows comprehensive game information
+    - Player clicks "Continue" -> emits `playerReady` -> server transitions to gameplay
+5.  **Gameplay (`ThisOrThat.tsx` + `useGameLogic.ts`):
     - Receives game state props (`currentRound`, `questions`) from `GameRoom`.
     - Player selects answer -> `handleAnswerSelect` emits `submitAnswer` -> Sets local `hasSubmittedAnswer` state.
     - Listens for `roundResults` -> updates local state to show results (`ResultComparison.tsx`).
     - Player clicks continue -> `handleContinue` emits `playerReady` -> sets local `hasClickedContinue`.
     - Listens for `newRound` -> `GameRoom` updates `currentRound` prop -> `useGameLogic` resets local state via `useEffect`.
     - Listens for `gameOver` -> Calls `onComplete` prop.
-5.  **Exclusive Mode Flow:**
+6.  **Exclusive Mode Flow:**
     - Creator clicks exclusive mode button -> Opens PIN modal (`PinEntryModal.tsx`)
     - Creator enters PIN -> Emits `attemptExclusiveMode` with PIN
     - Server validates PIN -> Emits `exclusiveModeActivated` (success) or `exclusiveModeFailed` (wrong PIN)
@@ -91,11 +100,19 @@ graph TD
     - During gameplay, questions are drawn from exclusive queue instead of regular questions
     - Game continues indefinitely until queue is empty or creator ends mode
     - Creator can end mode at any time by clicking "End Round" button -> Emits `endExclusiveMode`
-6.  **Room Reset Flow:**
+7.  **Room Reset Flow:**
     - After game completion, creator clicks "Play Again" -> Emits `resetRoom`
     - Server resets room state (status, questions, scores, etc.) -> Emits `roomReset`
     - All clients update their state to show game selection UI
-7.  **Disconnection:** `disconnect` event on server removes player, emits `playerLeft`, clients show toast/update UI.
+8.  **Temporary Disconnect Handling (Planned):**
+    - Player disconnects (socket `disconnect` event)
+    - Server identifies disconnect during active game, starts grace period timer
+    - Server emits `playerDisconnected` to remaining players
+    - If player reconnects within grace period, they emit `attemptReconnection` with original player ID
+    - Server matches the reconnection request, clears the timeout, updates socket ID
+    - Server emits `playerReconnected` and game continues
+    - If grace period expires, server follows original disconnect logic (remove player, end game)
+9.  **Disconnection:** `disconnect` event on server removes player, emits `playerLeft`, clients show toast/update UI.
 
 ## 5. Room Status State Machine
 
@@ -124,6 +141,7 @@ Each state has specific UI components and allowed actions:
 - **waiting**: Shows room code for sharing, waiting for player 2 to join
 - **selecting**: Shows game mode selection options (This or That, etc.)
 - **style-selecting**: Shows game style, timer, NSFW settings 
+- **rules-display**: (For Player 2) Shows game rules and settings before gameplay
 - **playing**: Shows active game UI with current question
 - **results**: Shows round results with player answers/predictions
 - **completed**: Shows final scores and "Play Again" button
@@ -132,7 +150,8 @@ Each state has specific UI components and allowed actions:
 
 - **Database Integration:** Replace in-memory `rooms` storage.
 - **Error Handling:** More specific error events and client-side handling.
-- **Prediction Mode:** Implement server-side logic and client-side UI/state for predictions.
+- **Round Summary Feature:** Implement dedicated screen for round summaries with animation and sharing.
+- **Temporary Disconnect Handling:** Implement the grace period approach for reconnections.
 - **Scalability:** Consider stateless server design if scaling becomes necessary (storing session state externally, e.g., Redis).
 - **Security:** Input validation, rate limiting, authentication (if users are added).
 - **Testing:** Unit/Integration tests for backend logic, E2E tests for frontend flows.

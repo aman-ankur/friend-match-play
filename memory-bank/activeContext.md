@@ -1,4 +1,61 @@
-# Active Context: Card Connection (Initial Setup)
+# Active Context - Friend Match Play
+
+## Current Focus (as of May 2024)
+
+1. **Round Summary Feature Development**
+   - Creating a dedicated summary screen to display after each round
+   - Implementing animation for better user experience
+   - Planning share/save functionality for future development
+
+2. **Temporary Disconnection Handling**
+   - Implementing grace period for player disconnections
+   - Adding reconnection mechanism for players to rejoin in-progress games
+   - Enhancing client-side feedback during disconnection periods
+
+3. **Content Enhancement**
+   - Continued expansion of question libraries across all game modes
+   - Refinement of question quality to improve engagement
+   - Better organization of question content
+
+4. **Solo Mode Refinement**
+   - Actual gameplay loop for solo mode players
+   - Decision on reflection-only vs. simple AI/logic
+
+## Recently Completed Features
+
+1. **Question Set Expansion & Enhancement** (April 2024)
+   - Added new "Hot Takes" questions to improve gameplay engagement
+   - Updated "Would You Rather" and "Guess Who I Am" question sets
+   - Enhanced NSFW content with more engaging options
+
+2. **Rules Overlay & Content Level System**
+   - Implemented comprehensive rules display for Player 2
+   - Replaced numeric content levels with descriptive group-based names
+   - Improved validation across client and server components
+
+3. **GameRoom and UI Enhancements**
+   - Improved gameplay experience across components
+   - Updated game style terminology for consistency
+   - Enhanced prediction phase handling
+
+4. **Technical Improvements**
+   - Resolved text wrapping issues in game selection cards
+   - Fixed state synchronization bugs in GameRoom.tsx
+   - Improved timer functionality and reset mechanics
+
+## Current Technical Challenges
+
+1. **Client-Server State Synchronization**
+   - Ensuring consistent state across disconnections/reconnections
+   - Managing complex timer and round progression state
+
+2. **React Effects & State Management**
+   - Managing complex dependencies in useEffect
+   - Preventing stale closures in asynchronous operations
+
+3. **Server-Side Memory**
+   - In-memory game state management without persistence
+   - Need for database integration for production reliability
 
 ## 1. Current Focus
 

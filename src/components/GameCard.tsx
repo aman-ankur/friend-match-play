@@ -11,6 +11,7 @@ interface GameCardProps {
   footer?: React.ReactNode;
   children: React.ReactNode;
   colorScheme?: 'default' | 'purple' | 'orange' | 'blue';
+  showLogo?: boolean;
 }
 
 const GameCard = ({ 
@@ -21,7 +22,8 @@ const GameCard = ({
   onClick,
   footer,
   children,
-  colorScheme = 'default'
+  colorScheme = 'default',
+  showLogo = false
 }: GameCardProps) => {
   const getHeaderClass = () => {
     switch (colorScheme) {
@@ -60,7 +62,16 @@ const GameCard = ({
       onClick={onClick}
     >
       {(title || description) && (
-        <CardHeader className={getHeaderClass()}>
+        <CardHeader className={cn(getHeaderClass(), "relative")}>
+          {showLogo && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-30">
+              <img
+                src="/images/Logo Redesign Image Apr 16 2025.jpeg"
+                alt="Cards Against Maturity Logo"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+          )}
           {title && <CardTitle className={getTitleClass()}>{title}</CardTitle>}
           {description && <CardDescription className="whitespace-normal break-words">{description}</CardDescription>}
         </CardHeader>

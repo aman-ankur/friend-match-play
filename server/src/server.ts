@@ -82,7 +82,8 @@ const httpServer = http.createServer(app);
 const allowedOrigins = [
     process.env.VITE_SOCKET_URL, // Dynamically read Vercel Frontend URL from env var set on Render
     'http://localhost:5173',     // Local development frontend
-    'http://localhost:8081'      // Adding additional local development frontend
+    'http://localhost:8081',     // Adding additional local development frontend
+    'http://localhost:8080'      // Adding localhost:8080
 ].filter(Boolean); // Filter out undefined/null if VITE_SOCKET_URL isn't set
 
 const corsOptions = {

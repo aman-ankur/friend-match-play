@@ -2031,6 +2031,206 @@ const hotTakesQuestions: GameQuestion[] = [
     score: 1,
     nsfwRating: 5,
     categories: ["relationships", "sex", "opinions"]
+  },
+  {
+    id: "ht-new-35",
+    text: "Faking it in bed is more polite than honest feedback.",
+    options: ["It saves egos and keeps the vibe going — you fix things later.", "It builds a fake reality and no one grows from that.", "If it’s a casual hookup? Maybe. But not in a long-term thing."],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "relationships", "communication", "morality"]
+  },
+  {
+    id: "ht-new-36",
+    text: "Having a 'celebrity free pass' is emotionally cheating.",
+    options: ["Even fantasy betrayal is still betrayal if you're planning it.", "It’s pure fantasy — let people dream.", "If you're obsessing over the celeb daily… then yeah, it’s sus."],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["relationships", "fantasy", "morality"]
+  },
+  {
+    id: "ht-new-37",
+    text: "Sex toys should be part of every couple’s drawer.",
+    options: ["Why not level up the experience if it helps both partners?", "Toys make things feel robotic or replace connection.", "Depends on comfort and the level of openness in the relationship."],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "relationships", "toys"]
+  },
+  {
+    id: "ht-new-38",
+    text: "Sexting with AI/chatbots is just modern self-care.",
+    options: ["It’s safe, judgment-free, and kind of therapeutic.", "That’s just weird. You're talking to a code.", "As long as you're not replacing real intimacy with it."],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "technology", "personal"]
+  },
+  {
+    id: "ht-new-39",
+    text: "Kinks should be disclosed on the first few dates.",
+    options: ["Why waste time if you're not sexually compatible?", "That’s way too soon. Let the bond build first.", "Some light hints? Okay. Full list? Maybe wait a bit."],
+    score: 1,
+    nsfwRating: 6,
+    categories: ["sex", "dating", "kinks", "communication"]
+  },
+  {
+    id: "ht-new-40",
+    text: "Watching porn together should be normalized in relationships.",
+    options: ["It opens up new ideas, fantasies, and reduces shame.", "That kills the mystery — intimacy should be personal.", "If both are into it, why not? But never force it."],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "relationships", "porn"]
+  },
+  {
+    id: "ht-new-41",
+    text: "Dating apps should have a 'kink compatibility' filter.",
+    options: ["Cut the small talk — match freak levels early.", "That’s too niche and might reduce the magic of discovery.", "Great for hookups, risky for long-term romance."],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["dating", "sex", "kinks", "technology"]
+  },
+  {
+    id: "ht-new-42",
+    text: "Roleplay is underrated and most people are too shy to admit they’re into it.",
+    options: ["Everyone wants to act out fantasies — it’s just stigma stopping them.", "It’s cringe unless you're both theater kids or drunk.", "It works with the right person. Otherwise? Awkward city."],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "roleplay", "fantasy", "opinions"]
+  },
+  {
+    id: "ht-new-43",
+    text: "Liking rough play doesn’t mean someone has issues — it’s just a preference.",
+    options: ["Stop psychoanalyzing everything — it’s a vibe, not trauma.", "Sometimes it *is* rooted in something deeper and needs unpacking.", "Depends on how far it goes and how often it’s needed."],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "kinks", "psychology", "opinions"]
+  },
+  {
+    id: "ht-new-44",
+    text: "It's okay to sleep with an ex if the sex was elite.",
+    options: ["We’re grown. Emotional closure and sexual chemistry can coexist.", "That’s emotional backsliding and you know it.", "If you're both over it emotionally? Go off."],
+    score: 1,
+    nsfwRating: 7,
+    categories: ["sex", "relationships", "exes", "morality"]
+  },
+  {
+    id: "ht-new-45",
+    text: "Being into voyeurism or exhibitionism is more common than people admit.",
+    options: ["We're all curious. It's just buried under shame.", "That’s a serious boundary issue. Keep it in the bedroom.", "As long as it’s consensual and not illegal, it’s valid."],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kinks", "voyeurism", "exhibitionism", "opinions"]
+  },
+  {
+    id: "ht-new-46",
+    text: "Monogamy is a social construct that limits sexual growth.",
+    options: ["It’s outdated — open dynamics are healthier for some.", "Monogamy is structure. Chaos isn’t always freedom.", "It depends on what *you* want, not what society says."],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["relationships", "sex", "monogamy", "opinions"]
+  },
+  {
+    id: "ht-new-47",
+    text: "Foot fetishes are unfairly judged and way more common than people think.",
+    options: ["It's just another body part — let people live.", "Nope. Still weird and I don't want toes in my DMs.", "Harmless in private, but don’t make it everyone’s business."],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "kinks", "fetish", "opinions"]
+  },
+  {
+    id: "ht-new-48",
+    text: "Dirty talk is essential, not optional.",
+    options: ["It fuels the mood and connects the physical and mental.", "It’s awkward and feels like bad improv.", "Depends on the delivery. Cringe kills the vibe."],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "communication", "opinions"]
+  },
+  {
+    id: "ht-new-49",
+    text: "Being into 'taboo' scenarios doesn’t mean you support them in real life.",
+    options: ["Fantasy ≠ Reality. People need to separate the two.", "Some things shouldn’t even be fantasized.", "Depends on the taboo. There are limits, obviously."],
+    score: 1,
+    nsfwRating: 8,
+    categories: ["sex", "fantasy", "taboo", "morality"]
+  },
+  {
+    id: "ht-new-50",
+    text: "Openly sharing your OnlyFans earnings is less taboo than your body count.",
+    options: ["Money talks louder than shame these days.", "Nah. Both are still judged, just differently.", "Depends on the audience — Twitter? Maybe. Mom? Never."],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["social", "sex", "work", "privacy", "opinions"]
+  },
+  {
+    id: "ht-new-51",
+    text: "Pegging is still too taboo because of fragile masculinity.",
+    options: ["It challenges gender roles, and men hate being vulnerable.", "Some things just aren’t for everyone. Stop blaming masculinity.", "If you’re secure in yourself, you’ll explore without fear."],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "kinks", "gender", "opinions"]
+  },
+  {
+    id: "ht-new-52",
+    text: "Group sex should be discussed as openly as threesomes.",
+    options: ["It’s just more people — what’s the big deal?", "It’s too messy and not for polite conversation.", "Openly? Maybe not. But normalize the curiosity at least."],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "group", "communication", "opinions"]
+  },
+  {
+    id: "ht-new-53",
+    text: "Submissive men are still seen as less masculine — and that’s messed up.",
+    options: ["Toxic masculinity makes soft power seem weak.", "It's just a preference, not a masculinity issue.", "Depends on the context — society’s still catching up."],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "kinks", "gender", "opinions"]
+  },
+  {
+    id: "ht-new-54",
+    text: "Sex parties are the new networking events — just more honest.",
+    options: ["At least you know what everyone’s really there for.", "No way. Mixing social life and sex is a recipe for chaos.", "Depends on your industry — tech bros? Maybe."],
+    score: 1,
+    nsfwRating: 9,
+    categories: ["sex", "social", "opinions"]
+  },
+  {
+    id: "ht-new-55",
+    text: "Incest roleplay is valid as a fantasy, even if deeply taboo.",
+    options: ["It’s roleplay — taboo makes it hotter, not real.", "That crosses a psychological line. Just no.", "Only if both fully separate fantasy from reality."],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "fantasy", "roleplay", "taboo"]
+  },
+  {
+    id: "ht-new-56",
+    text: "Bestiality jokes are still weirdly common — and that’s disturbing.",
+    options: ["It’s not edgy. It’s creepy and needs to stop.", "People joke about dark stuff to push boundaries — it’s not that deep.", "Some jokes are fine, but there’s a line between dark humor and therapy needs."],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["humor", "morality", "taboo", "opinions"]
+  },
+  {
+    id: "ht-new-57",
+    text: "People kinkshame more when the kink doesn’t turn *them* on.",
+    options: ["It’s not about morals, it’s about personal taste.", "Some kinks deserve side-eyes — sorry not sorry.", "Judging is fine if it’s dangerous or non-consensual."],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "kinks", "psychology", "opinions"]
+  },
+  {
+    id: "ht-new-58",
+    text: "Watching your partner with someone else (cuckolding) can strengthen your relationship.",
+    options: ["It builds trust and removes jealousy if done right.", "That’s pure humiliation. No way it ends well.", "If all three are clear on the boundaries, it can work."],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "relationships", "kinks", "cuckolding"]
+  },
+  {
+    id: "ht-new-59",
+    text: "Taboo porn trends (stepsibling, teacher-student) reflect society’s weirdest obsessions.",
+    options: ["It’s a mirror of suppressed fantasies and power dynamics.", "It’s just what gets clicks — don’t overanalyze.", "Some are cultural trends, some are genuinely alarming."],
+    score: 1,
+    nsfwRating: 10,
+    categories: ["sex", "porn", "taboo", "social", "opinions"]
   }
 ];
 

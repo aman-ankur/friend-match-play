@@ -42,6 +42,19 @@
     - After game completion, room can be reset to play again
     - Server reset ensures proper room state transitions
     - All players get synchronized back to game selection
+- **Rules Overlay:**
+    - Informative overlay for Player 2 to understand game rules before starting
+    - Shows comprehensive game settings including mode, style, content level, etc.
+    - Integrated with game flow and playerReady events
+- **Enhanced Content Level System:**
+    - Replaced numeric "spiciness" levels with fun, descriptive group-based names
+    - Improved validation across client and server components
+    - Better UI representation of content levels
+- **Improved Question Sets:**
+    - Expanded question libraries for all game modes
+    - Added new "Hot Takes" questions for enhanced engagement
+    - Updated existing questions for better gameplay experience
+    - Enhanced NSFW content with more engaging options
 - **Disconnection Handling:** Server removes disconnected players and notifies the remaining player (`playerLeft` event).
 - **Solo Mode Path:** Basic flow for creating a solo game exists (skips waiting).
 - **UI Component Foundation:** Shadcn/ui components for UI elements.
@@ -54,7 +67,7 @@
     - Decide if it's reflection-only or needs simple AI/logic.
 - **Data Persistence:** Implement database (e.g., Redis, Postgres) to store room/game state beyond server restarts.
 - **Error Handling:** Improve robustness of error handling on both client and server (more specific error events, better user feedback).
-- **"Play Again" Functionality:** Implement server/client logic for restarting a game with the same players.
+- **Temporary Disconnection Handling:** Implement grace period for disconnections to allow players to rejoin ongoing games.
 - **UI Refinements:**
     - Indicate who has submitted an answer/is ready for the next round.
     - Improve loading states.
@@ -72,15 +85,26 @@
 - **Exclusive Mode:** Working implementation of PIN-protected adult content.
 - **Room Reset:** Implemented functionality to reset room after game completion.
 - **Prediction Mode:** Complete implementation of prediction phase, scoring, and results display.
-- **Key Missing Features:** Robust solo play, data persistence.
+- **Enhanced Content:** Expanded question libraries across all game modes with improved engagement.
+- **Rules Overlay:** Player 2 can now view comprehensive game information before starting.
+- **Key Missing Features:** Robust solo play, data persistence, temporary disconnection handling.
 
 ## 4. Known Issues / Blockers
 
 - Solo mode doesn't have gameplay logic.
 - Game state is lost on server restart.
 - Limited error feedback to the user.
+- No grace period for temporary disconnections - players cannot rejoin ongoing games.
 
 ## Completed Tasks (Recent)
+
+*   **Question Set Expansion & Enhancement (April 2024):**
+    - Added new "Hot Takes" questions to improve gameplay engagement
+    - Updated and expanded "Would You Rather" question sets with new entries
+    - Enhanced "Guess Who I Am" questions for better player interaction
+    - Added new NSFW questions with improved content variety
+    - Revised overall question structure for more engaging gameplay
+    - Updated metadata for better game organization
 
 *   **Rules Overlay & Content Level Improvements:**
     - Implemented Rules Overlay feature for Player 2 to view game rules and settings before game starts
@@ -91,6 +115,13 @@
     - Updated game descriptions to be more accurate and focused on gameplay rather than prediction aspects
     - Ensured consistent validation across client and server components
 
+*   **GameRoom and Component Enhancements:**
+    - Enhanced GameRoom component for improved gameplay experience
+    - Improved GuessWhoIAm component for better usability
+    - Updated game style terminology for consistency
+    - Enhanced prediction phase handling for smoother gameplay
+    - Added intro screen for better onboarding experience
+
 *   **Prediction Mode Implementation:**
     - Fixed GameStyle type inconsistency between client and server (standardized on 'predict-score' | 'reveal-only')
     - Implemented predictionPhase event emission from server after all answers are submitted
@@ -99,6 +130,7 @@
     - Implemented submitPrediction event handling on server with proper validation
     - Added scoring logic (1 point for correct predictions)
     - Enhanced ResultComparison to show predictions with correctness indicators
+
 *   **Exclusive Mode Implementation:**
     - Added PIN protection ("s3xy") for adult content
     - Implemented server-side question filtering/management
@@ -106,11 +138,13 @@
     - Added UI indicators and creator-only controls
     - Implemented unlimited round handling
     - Added proper state management for exclusive questions
+
 *   **Room Reset Functionality:**
     - Added client-side reset request on "Play Again"
     - Implemented server-side room state reset
     - Added synchronization of all clients after reset
     - Fixed issue with game state after multiple plays
+
 *   **Project Name Change:** Updated project name references.
 *   **Solo/2P Mode Selection:** Added UI and state for choosing game mode.
 *   **Backend Setup:** Created Node.js/Express/Socket.IO server.
@@ -148,19 +182,22 @@
 
 ## Current Focus / Next Steps
 
-*   Refine Solo Mode gameplay.
-*   Consider adding data persistence.
-*   Improve UI feedback (e.g., showing who is waiting).
+*   Implement Round Summary feature for enhanced gameplay experience
+*   Develop temporary disconnection handling with grace period
+*   Refine Solo Mode gameplay
+*   Consider adding data persistence
+*   Improve UI feedback (e.g., showing who is waiting)
 
 ## Potential Future Features
 
-*   Different question packs/themes.
-*   User accounts and saving game history.
-*   Custom game modes or rules.
-*   Spectator mode.
-*   More sophisticated scoring options.
-*   Enhanced PIN protection/authentication for exclusive content.
-*   Admin interface for managing questions.
+*   Different question packs/themes
+*   User accounts and saving game history
+*   Custom game modes or rules
+*   Spectator mode
+*   More sophisticated scoring options
+*   Enhanced PIN protection/authentication for exclusive content
+*   Admin interface for managing questions
+*   Round summary sharing functionality
 
 ## Blockers / Issues
 

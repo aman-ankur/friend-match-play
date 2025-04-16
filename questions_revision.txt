@@ -1,114 +1,212 @@
 {
-  "hot_takes": {
-    "nsfw_level_1": [
-      {
-        "question": "It's okay to mute family WhatsApp groups and never look back.",
-        "points_of_view": ["Agree – Mental health first.", "Disagree – It’s disrespectful to elders.", "Depends – Only if there are no birthdays coming up."]
-      },
-      {
-        "question": "If you don't post it on Instagram, did it even happen?",
-        "points_of_view": ["Agree – Pics or it didn’t happen.", "Disagree – Real life > social media.", "Depends – Was it a first date or a Maldives trip?"]
-      },
-      {
-        "question": "Every couple should live together before getting married.",
-        "points_of_view": ["Agree – Test drive before the lease.", "Disagree – Tradition matters.", "Depends – Are Indian parents involved?"]
-      },
-      {
-        "question": "You don’t owe anyone a reply just because they texted you.",
-        "points_of_view": ["Agree – You're not customer support.", "Disagree – Basic decency.", "Depends – Unless it's your boss or mom."]
-      },
-      {
-        "question": "It’s totally fine to go to a wedding just for the food and bounce.",
-        "points_of_view": ["Agree – Paneer tikka > socializing.", "Disagree – That's rude AF.", "Depends – How close are you to the bride?"]
+  "nsfw_6": [
+    {
+      "question": "Faking it in bed is more polite than honest feedback.",
+      "takes": {
+        "Agree": "It saves egos and keeps the vibe going — you fix things later.",
+        "Disagree": "It builds a fake reality and no one grows from that.",
+        "Depends": "If it’s a casual hookup? Maybe. But not in a long-term thing."
       }
-    ],
-    "nsfw_level_2": [
-      {
-        "question": "Telling your partner everything is overrated – some secrets are healthy.",
-        "points_of_view": ["Agree – Privacy ≠ betrayal.", "Disagree – No secrets in love.", "Depends – Are we talking exes or kinks?"]
-      },
-      {
-        "question": "If someone is over 30 and still living with their parents, it's a red flag.",
-        "points_of_view": ["Agree – Grow up, Peter Pan.", "Disagree – Have you seen rent prices?", "Depends – Is it a brown household?"]
-      },
-      {
-        "question": "You should be allowed to unfollow your boss on Instagram without it being awkward.",
-        "points_of_view": ["Agree – Work-life boundary 101.", "Disagree – Networking is networking.", "Depends – Is your boss a meme page?"]
-      },
-      {
-        "question": "It's okay to ghost someone after one date if there’s no vibe.",
-        "points_of_view": ["Agree – One and done.", "Disagree – Closure is classy.", "Depends – Was there sex involved?"]
-      },
-      {
-        "question": "People who say 'I'm brutally honest' are just rude.",
-        "points_of_view": ["Agree – You're not blunt, you're a jerk.", "Disagree – At least they’re real.", "Depends – Are they talking to HR or their BFF?"]
+    },
+    {
+      "question": "Having a 'celebrity free pass' is emotionally cheating.",
+      "takes": {
+        "Agree": "Even fantasy betrayal is still betrayal if you're planning it.",
+        "Disagree": "It’s pure fantasy — let people dream.",
+        "Depends": "If you're obsessing over the celeb daily… then yeah, it’s sus."
       }
-    ],
-    "nsfw_level_3": [
-      {
-        "question": "Sharing location with your partner 24/7 is toxic, not romantic.",
-        "points_of_view": ["Agree – That’s surveillance, not love.", "Disagree – Transparency builds trust.", "Depends – Did someone cheat before?"]
-      },
-      {
-        "question": "Marrying rich > marrying for love if you're broke.",
-        "points_of_view": ["Agree – Love doesn’t pay rent.", "Disagree – That’s gold-digger logic.", "Depends – How rich are we talking?"]
-      },
-      {
-        "question": "Having a 'work husband/wife' is lowkey emotional cheating.",
-        "points_of_view": ["Agree – You’re building a whole side relationship.", "Disagree – It’s harmless office banter.", "Depends – Are you hiding it from your real partner?"]
-      },
-      {
-        "question": "Therapy-speak is ruining normal arguments in relationships.",
-        "points_of_view": ["Agree – Not everything is 'gaslighting'.", "Disagree – Emotional intelligence is sexy.", "Depends – Is it a fight or a TED talk?"]
-      },
-      {
-        "question": "It’s worse to be boring in bed than to be bad at it.",
-        "points_of_view": ["Agree – At least bad can improve.", "Disagree – Boring is subjective.", "Depends – How emotionally safe do you feel?"]
+    },
+    {
+      "question": "Sex toys should be part of every couple’s drawer.",
+      "takes": {
+        "Agree": "Why not level up the experience if it helps both partners?",
+        "Disagree": "Toys make things feel robotic or replace connection.",
+        "Depends": "Depends on comfort and the level of openness in the relationship."
       }
-    ],
-    "nsfw_level_4": [
-      {
-        "question": "Watching porn regularly in a relationship is not a big deal.",
-        "points_of_view": ["Agree – It’s self-care, not betrayal.", "Disagree – That’s emotional distance.", "Depends – Do they watch more porn than talk to you?"]
-      },
-      {
-        "question": "Flirting with someone else while in a relationship is only cheating if you get caught.",
-        "points_of_view": ["Agree – No harm, no foul.", "Disagree – That’s emotional cheating.", "Depends – Is it harmless banter or serious intent?"]
-      },
-      {
-        "question": "You should have to disclose your body count before sleeping with someone.",
-        "points_of_view": ["Agree – Honesty is hygiene.", "Disagree – That’s private info.", "Depends – Is this a hookup or a relationship talk?"]
-      },
-      {
-        "question": "If you’re not giving head, you shouldn’t expect it.",
-        "points_of_view": ["Agree – Equality starts in the bedroom.", "Disagree – Everyone has boundaries.", "Depends – Are both people clear on the rules?"]
-      },
-      {
-        "question": "It’s totally fine to use toys in bed even if your partner feels insecure about them.",
-        "points_of_view": ["Agree – Your pleasure matters too.", "Disagree – It can mess with their confidence.", "Depends – Have you talked about it openly?"]
+    },
+    {
+      "question": "Sexting with AI/chatbots is just modern self-care.",
+      "takes": {
+        "Agree": "It’s safe, judgment-free, and kind of therapeutic.",
+        "Disagree": "That’s just weird. You're talking to a code.",
+        "Depends": "As long as you're not replacing real intimacy with it."
       }
-    ],
-    "nsfw_level_5": [
-      {
-        "question": "You should tell your partner if their nudes weren’t hot.",
-        "points_of_view": ["Agree – Constructive feedback = better sexts.", "Disagree – That's soul-crushing.", "Depends – Are they asking or are you roasting?"]
-      },
-      {
-        "question": "OnlyFans is a valid career path.",
-        "points_of_view": ["Agree – It’s work, period.", "Disagree – That’s not sustainable.", "Depends – Are we talking feet pics or full nudity?"]
-      },
-      {
-        "question": "It’s okay to fantasize about someone else during sex with your partner.",
-        "points_of_view": ["Agree – Fantasies aren’t cheating.", "Disagree – That’s mental cheating.", "Depends – Is it a celeb or your coworker?"]
-      },
-      {
-        "question": "Being kinky doesn't mean you're 'damaged'.",
-        "points_of_view": ["Agree – It’s called self-awareness and spice.", "Disagree – Sometimes it is rooted in trauma.", "Depends – Are you unpacking it in therapy or just role-playing?"]
-      },
-      {
-        "question": "Monogamy is outdated, but no one wants to say it out loud.",
-        "points_of_view": ["Agree – We’re not wired for one person forever.", "Disagree – Commitment is hot.", "Depends – Are you bored or genuinely poly?"]
+    },
+    {
+      "question": "Kinks should be disclosed on the first few dates.",
+      "takes": {
+        "Agree": "Why waste time if you're not sexually compatible?",
+        "Disagree": "That’s way too soon. Let the bond build first.",
+        "Depends": "Some light hints? Okay. Full list? Maybe wait a bit."
       }
-    ]
-  }
+    }
+  ],
+  "nsfw_7": [
+    {
+      "question": "Watching porn together should be normalized in relationships.",
+      "takes": {
+        "Agree": "It opens up new ideas, fantasies, and reduces shame.",
+        "Disagree": "That kills the mystery — intimacy should be personal.",
+        "Depends": "If both are into it, why not? But never force it."
+      }
+    },
+    {
+      "question": "Dating apps should have a 'kink compatibility' filter.",
+      "takes": {
+        "Agree": "Cut the small talk — match freak levels early.",
+        "Disagree": "That’s too niche and might reduce the magic of discovery.",
+        "Depends": "Great for hookups, risky for long-term romance."
+      }
+    },
+    {
+      "question": "Roleplay is underrated and most people are too shy to admit they’re into it.",
+      "takes": {
+        "Agree": "Everyone wants to act out fantasies — it’s just stigma stopping them.",
+        "Disagree": "It’s cringe unless you're both theater kids or drunk.",
+        "Depends": "It works with the right person. Otherwise? Awkward city."
+      }
+    },
+    {
+      "question": "Liking rough play doesn’t mean someone has issues — it’s just a preference.",
+      "takes": {
+        "Agree": "Stop psychoanalyzing everything — it’s a vibe, not trauma.",
+        "Disagree": "Sometimes it *is* rooted in something deeper and needs unpacking.",
+        "Depends": "Depends on how far it goes and how often it’s needed."
+      }
+    },
+    {
+      "question": "It's okay to sleep with an ex if the sex was elite.",
+      "takes": {
+        "Agree": "We’re grown. Emotional closure and sexual chemistry can coexist.",
+        "Disagree": "That’s emotional backsliding and you know it.",
+        "Depends": "If you're both over it emotionally? Go off."
+      }
+    }
+  ],
+  "nsfw_8": [
+    {
+      "question": "Being into voyeurism or exhibitionism is more common than people admit.",
+      "takes": {
+        "Agree": "We're all curious. It's just buried under shame.",
+        "Disagree": "That’s a serious boundary issue. Keep it in the bedroom.",
+        "Depends": "As long as it’s consensual and not illegal, it’s valid."
+      }
+    },
+    {
+      "question": "Monogamy is a social construct that limits sexual growth.",
+      "takes": {
+        "Agree": "It’s outdated — open dynamics are healthier for some.",
+        "Disagree": "Monogamy is structure. Chaos isn’t always freedom.",
+        "Depends": "It depends on what *you* want, not what society says."
+      }
+    },
+    {
+      "question": "Foot fetishes are unfairly judged and way more common than people think.",
+      "takes": {
+        "Agree": "It's just another body part — let people live.",
+        "Disagree": "Nope. Still weird and I don't want toes in my DMs.",
+        "Depends": "Harmless in private, but don’t make it everyone’s business."
+      }
+    },
+    {
+      "question": "Dirty talk is essential, not optional.",
+      "takes": {
+        "Agree": "It fuels the mood and connects the physical and mental.",
+        "Disagree": "It’s awkward and feels like bad improv.",
+        "Depends": "Depends on the delivery. Cringe kills the vibe."
+      }
+    },
+    {
+      "question": "Being into 'taboo' scenarios doesn’t mean you support them in real life.",
+      "takes": {
+        "Agree": "Fantasy ≠ Reality. People need to separate the two.",
+        "Disagree": "Some things shouldn’t even be fantasized.",
+        "Depends": "Depends on the taboo. There are limits, obviously."
+      }
+    }
+  ],
+  "nsfw_9": [
+    {
+      "question": "Openly sharing your OnlyFans earnings is less taboo than your body count.",
+      "takes": {
+        "Agree": "Money talks louder than shame these days.",
+        "Disagree": "Nah. Both are still judged, just differently.",
+        "Depends": "Depends on the audience — Twitter? Maybe. Mom? Never."
+      }
+    },
+    {
+      "question": "Pegging is still too taboo because of fragile masculinity.",
+      "takes": {
+        "Agree": "It challenges gender roles, and men hate being vulnerable.",
+        "Disagree": "Some things just aren’t for everyone. Stop blaming masculinity.",
+        "Depends": "If you’re secure in yourself, you’ll explore without fear."
+      }
+    },
+    {
+      "question": "Group sex should be discussed as openly as threesomes.",
+      "takes": {
+        "Agree": "It’s just more people — what’s the big deal?",
+        "Disagree": "It’s too messy and not for polite conversation.",
+        "Depends": "Openly? Maybe not. But normalize the curiosity at least."
+      }
+    },
+    {
+      "question": "Submissive men are still seen as less masculine — and that’s messed up.",
+      "takes": {
+        "Agree": "Toxic masculinity makes soft power seem weak.",
+        "Disagree": "It's just a preference, not a masculinity issue.",
+        "Depends": "Depends on the context — society’s still catching up."
+      }
+    },
+    {
+      "question": "Sex parties are the new networking events — just more honest.",
+      "takes": {
+        "Agree": "At least you know what everyone’s really there for.",
+        "Disagree": "No way. Mixing social life and sex is a recipe for chaos.",
+        "Depends": "Depends on your industry — tech bros? Maybe."
+      }
+    }
+  ],
+  "nsfw_10": [
+    {
+      "question": "Incest roleplay is valid as a fantasy, even if deeply taboo.",
+      "takes": {
+        "Agree": "It’s roleplay — taboo makes it hotter, not real.",
+        "Disagree": "That crosses a psychological line. Just no.",
+        "Depends": "Only if both fully separate fantasy from reality."
+      }
+    },
+    {
+      "question": "Bestiality jokes are still weirdly common — and that’s disturbing.",
+      "takes": {
+        "Agree": "It’s not edgy. It’s creepy and needs to stop.",
+        "Disagree": "People joke about dark stuff to push boundaries — it’s not that deep.",
+        "Depends": "Some jokes are fine, but there’s a line between dark humor and therapy needs."
+      }
+    },
+    {
+      "question": "People kinkshame more when the kink doesn’t turn *them* on.",
+      "takes": {
+        "Agree": "It’s not about morals, it’s about personal taste.",
+        "Disagree": "Some kinks deserve side-eyes — sorry not sorry.",
+        "Depends": "Judging is fine if it’s dangerous or non-consensual."
+      }
+    },
+    {
+      "question": "Watching your partner with someone else (cuckolding) can strengthen your relationship.",
+      "takes": {
+        "Agree": "It builds trust and removes jealousy if done right.",
+        "Disagree": "That’s pure humiliation. No way it ends well.",
+        "Depends": "If all three are clear on the boundaries, it can work."
+      }
+    },
+    {
+      "question": "Taboo porn trends (stepsibling, teacher-student) reflect society’s weirdest obsessions.",
+      "takes": {
+        "Agree": "It’s a mirror of suppressed fantasies and power dynamics.",
+        "Disagree": "It’s just what gets clicks — don’t overanalyze.",
+        "Depends": "Some are cultural trends, some are genuinely alarming."
+      }
+    }
+  ]
 }

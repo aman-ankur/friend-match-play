@@ -58,6 +58,13 @@ const Index = () => {
       <header className="py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/images/Logo Redesign Image Apr 16 2025.jpeg" 
+                alt="Cards Against Maturity Logo" 
+                className="h-24 md:h-32 object-contain"
+              />
+            </div>
             <h1 className="text-4xl md:text-5xl font-bold text-connection-tertiary mb-4">
               Welcome to <span className="font-bold font-sans">Cards Against Maturity</span>
             </h1>

@@ -817,7 +817,12 @@ const GameRoom: React.FC<GameRoomProps> = ({
         <Button variant="outline" size="sm" onClick={handleGoHome} className="border-connection-secondary text-connection-secondary hover:bg-connection-light">
           <Home className="mr-2 h-4 w-4" /> Exit Room
         </Button>
-        <div className="text-center">
+        <div className="flex flex-col items-center">
+          <img 
+            src="/images/Logo Redesign Image Apr 16 2025.jpeg" 
+            alt="Cards Against Maturity Logo" 
+            className="h-10 w-auto object-contain mb-1"
+          />
           <div className="text-xs text-gray-500">Room Code</div>
           <div className="font-mono text-lg font-semibold tracking-widest text-connection-tertiary">{roomId}</div>
         </div>
@@ -859,7 +864,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
   const renderGameSelection = () => {
     if (!isCreator && gameMode === '2player') {
       return (
-        <GameCard title={`Waiting for ${creatorName} to Choose Game Mode`} description="Hang tight! The game will start soon.">
+        <GameCard 
+          title={`Waiting for ${creatorName} to Choose Game Mode`} 
+          description="Hang tight! The game will start soon."
+          showLogo={true}
+        >
           <p className="text-center text-gray-600 mt-4">Room Code: <span className="font-mono font-semibold">{roomId}</span></p>
         </GameCard>
       );
@@ -867,7 +876,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
     return (
       <div className="space-y-8 animate-fade-in">
-        <GameCard title="Choose Your Game" description="Select a game mode to play.">
+        <GameCard 
+          title="Choose Your Game" 
+          description="Select a game mode to play."
+          showLogo={true}
+        >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-full">
             {(Object.keys(GAME_DESCRIPTIONS) as SpecificGameMode[]).map((mode) => (
               <Button
@@ -899,6 +912,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
               <GameCard 
                   title={`Waiting for ${creatorName} to Configure ${GAME_DESCRIPTIONS[selectedGameMode]?.title || 'Game'}`} 
                   description="They are selecting the game style and settings."
+                  showLogo={true}
               >
                   <p className="text-center text-gray-600 mt-4">Almost there!</p>
               </GameCard>
@@ -911,6 +925,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
               <GameCard 
                   title={`Configure: ${GAME_DESCRIPTIONS[selectedGameMode]?.title || 'Game'}`} 
                   description="Choose how you want to play."
+                  showLogo={true}
               >
                   <div className="space-y-6">
                       {/* Game Style (Prediction Mode) */}
@@ -1156,7 +1171,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
   const renderGameComplete = () => {
     return (
-      <GameCard title="Game Over!" description="Here are the final scores:">
+      <GameCard 
+        title="Game Over!" 
+        description="Here are the final scores:"
+        showLogo={true}
+      >
         <ul className="space-y-2 text-center">
           {players.map((player) => (
             <li key={player.id} className="text-lg">
@@ -1186,7 +1205,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
           <div className="text-center p-8 animate-fade-in">
             <div className="mb-6">
               <div className="inline-block p-4 bg-connection-light rounded-full mb-4">
-                <Users className="h-12 w-12 text-connection-primary" />
+                <img 
+                  src="/images/Logo Redesign Image Apr 16 2025.jpeg" 
+                  alt="Cards Against Maturity Logo" 
+                  className="h-16 w-auto object-contain"
+                />
               </div>
               <h2 className="text-2xl font-bold mb-2">Waiting for Player 2</h2>
               <p className="text-gray-600 mb-6">Share this room code with your friend to start playing.</p>

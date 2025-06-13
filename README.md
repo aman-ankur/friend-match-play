@@ -8,8 +8,8 @@ A real-time multiplayer web game where friends test how well they know each othe
 *   **Multiple Game Modes:** Choose from "This or That," "Guess Who I Am," and "Hot Takes" games.
 *   **Game Styles:** Play in reveal-only mode or prediction mode where you guess your friends' answers.
 *   **Engaging Question Sets:** Answer a variety of questions designed to spark conversation and reveal interesting insights.
-*   **Customizable Content:** Adjust content level with fun, group-based descriptive categories.
-*   **Exclusive Mode:** Access adult-themed questions with PIN protection for mature players.
+*   **Customizable Content:** Adjust intensity level with fun, group-based descriptive categories.
+*   **Special Mode:** Access enhanced questions with PIN protection for premium content.
 *   **Dynamic Round Flow:** Progress through multiple rounds with distinct phases for answering, predicting, and viewing results.
 *   **Rules Overlay:** View comprehensive game rules and settings before starting gameplay.
 *   **Room Management:** Create and join game rooms with unique codes for private sessions.
@@ -89,9 +89,9 @@ The frontend application will typically be available at `http://localhost:5173` 
 *   **Room Management:** Each game session exists in a "Room" with unique ID
 *   **Game State Flow:** Rooms transition through states (waiting → selecting → playing → results → completed)
 *   **Event System:** Client actions trigger server events, which broadcast updates to all players
-*   **Exclusive Mode:** PIN-protected adult content with special question queue
+*   **Special Mode:** PIN-protected enhanced content with special question queue
 *   **Reset Functionality:** Rooms can be reset after game completion for continuous play
-*   **Content Levels:** Fun, group-based naming system for customizable content appropriateness
+*   **Intensity Levels:** Fun, group-based naming system for customizable content engagement
 *   **Rules Display:** Comprehensive game information displayed to Player 2 before gameplay begins
 *   **Prediction Mechanics:** Enhanced prediction flow with clear scoring and result indicators
 
@@ -99,7 +99,7 @@ The frontend application will typically be available at `http://localhost:5173` 
 
 *   **Enhanced Question Sets:** Added new questions across all game modes for improved engagement
 *   **Rules Overlay System:** Added comprehensive game rules display for better player experience
-*   **Content Level Improvements:** Replaced numeric levels with fun, descriptive categories
+*   **Intensity Level Improvements:** Replaced numeric levels with fun, descriptive categories
 *   **GameRoom Enhancements:** Improved user interface and gameplay experience
 *   **Prediction Mode Refinements:** Better handling of prediction phase for smoother gameplay
 

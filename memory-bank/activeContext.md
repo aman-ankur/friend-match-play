@@ -26,11 +26,11 @@
 1. **Question Set Expansion & Enhancement** (April 2024)
    - Added new "Hot Takes" questions to improve gameplay engagement
    - Updated "Would You Rather" and "Guess Who I Am" question sets
-   - Enhanced NSFW content with more engaging options
+   - Enhanced premium content with more engaging options
 
 2. **Rules Overlay & Content Level System**
    - Implemented comprehensive rules display for Player 2
-   - Replaced numeric content levels with descriptive group-based names
+   - Replaced numeric intensity levels with descriptive group-based names
    - Improved validation across client and server components
 
 3. **GameRoom and UI Enhancements**

@@ -66,7 +66,7 @@ As a related feature, we've successfully implemented a Rules Overlay that shows 
    - Created appropriate transitions between states
 
 3. **Content Level Improvements:**
-   - Replaced numeric "spiciness" levels with fun, descriptive group-based names
+   - Replaced numeric levels with fun, descriptive group-based names
    - Implemented comprehensive validation for content level values
    - Added improved UI for displaying content levels across the app
 

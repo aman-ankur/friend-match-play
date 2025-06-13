@@ -59,10 +59,10 @@ graph TD
 - **Single Source of Truth (Backend):** The server maintains the definitive game state.
 - **State Synchronization Issues (Client):** Recent timer fixes highlighted complexities in managing client-side state derived from server events, especially involving `useEffect` dependencies and state updates (`isTimerRunning`, `timeLeft`). Required careful management of dependencies and state reset logic. Debugging the 'Play Again' flow further revealed that client-side UI state (like button readiness flags - e.g., `hasClickedContinueThisRound`) must also be explicitly reset in response to server-driven state changes (like `roomReset` or `newRound`) to prevent desynchronization, even when core game state seems correct.
 - **State Machine Pattern:** Room status transitions follow a finite state machine model: waiting → selecting → playing → results → (back to playing or to completed) → selecting (after reset).
-- **Feature Flagging:** The exclusive mode feature is implemented as a flag in the Room interface, allowing dynamic enabling/disabling of the feature.
-- **PIN Protection:** Access to sensitive content (exclusive mode) is protected by a PIN code, implementing a simple authentication mechanism.
+- **Feature Flagging:** The special mode feature is implemented as a flag in the Room interface, allowing dynamic enabling/disabling of the feature.
+- **PIN Protection:** Access to enhanced content (special mode) is protected by a PIN code, implementing a simple authentication mechanism.
 - **Temporary Disconnect Handling (Planned):** A grace period approach using `setTimeout` within the server's disconnect handler will allow players to reconnect to in-progress games without data loss.
-- **Content Classification System:** A group-based naming system for content appropriateness levels replaces the numeric "spiciness" scale, improving user understanding and experience.
+- **Content Classification System:** A group-based naming system for content intensity levels replaces the numeric scale, improving user understanding and experience.
 - **Rules Overlay Pattern:** A dedicated UI state and flow for displaying game information before gameplay begins, especially for the second player.
 - **Form Validation Pattern:** Comprehensive client and server-side validation for content levels and other game settings.
 - **Enhanced Event Propagation:** Game sessions pass through more discrete event phases (e.g., rules display, prediction phase) with dedicated events and handlers.
@@ -92,12 +92,12 @@ graph TD
     - Player clicks continue -> `handleContinue` emits `playerReady` -> sets local `hasClickedContinue`.
     - Listens for `newRound` -> `GameRoom` updates `currentRound` prop -> `useGameLogic` resets local state via `useEffect`.
     - Listens for `gameOver` -> Calls `onComplete` prop.
-6.  **Exclusive Mode Flow:**
-    - Creator clicks exclusive mode button -> Opens PIN modal (`PinEntryModal.tsx`)
+6.  **Special Mode Flow:**
+    - Creator clicks special mode button -> Opens PIN modal (`PinEntryModal.tsx`)
     - Creator enters PIN -> Emits `attemptExclusiveMode` with PIN
     - Server validates PIN -> Emits `exclusiveModeActivated` (success) or `exclusiveModeFailed` (wrong PIN)
-    - On success, server loads exclusive questions (filtered by `nsfwRating: 11`)
-    - During gameplay, questions are drawn from exclusive queue instead of regular questions
+    - On success, server loads enhanced questions (filtered by `nsfwRating: 11`)
+    - During gameplay, questions are drawn from special queue instead of regular questions
     - Game continues indefinitely until queue is empty or creator ends mode
     - Creator can end mode at any time by clicking "End Round" button -> Emits `endExclusiveMode`
 7.  **Room Reset Flow:**

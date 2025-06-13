@@ -75,7 +75,7 @@ const ThisOrThat: React.FC<ThisOrThatProps> = ({
   const showWaitingAfterPrediction = currentPhase === 'waiting' && hasSubmittedPrediction && !roundResult;
 
   const predictionPrompt = `Predict what ${otherPlayer.nickname} chose:`;
-  const cardTitle = isExclusiveModeActive ? "Exclusive Mode" : `Round ${currentRound}/${totalRounds}`;
+      const cardTitle = isExclusiveModeActive ? "Exclusive Mode" : `Round ${currentRound}/${totalRounds}`;
 
   if (showWaitingAfterAnswer) {
     return (

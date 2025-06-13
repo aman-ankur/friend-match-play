@@ -32,8 +32,8 @@
     - Server collects predictions and calculates scores (1 point per correct prediction).
     - Server emits `roundResults` with prediction and score data.
     - ResultComparison displays both answers and predictions with correctness indicators.
-- **Exclusive Mode:**
-    - PIN-protected mode for "This or That" games with adult content
+- **Special Mode:**
+    - PIN-protected mode for "This or That" games with enhanced content
     - Can be activated during setup or gameplay (only by creator)
     - Special set of questions with `nsfwRating: 11`
     - Unlimited rounds that continue until questions exhausted or manually ended
@@ -46,15 +46,15 @@
     - Informative overlay for Player 2 to understand game rules before starting
     - Shows comprehensive game settings including mode, style, content level, etc.
     - Integrated with game flow and playerReady events
-- **Enhanced Content Level System:**
-    - Replaced numeric "spiciness" levels with fun, descriptive group-based names
+- **Enhanced Intensity Level System:**
+    - Replaced numeric levels with fun, descriptive group-based names
     - Improved validation across client and server components
-    - Better UI representation of content levels
+    - Better UI representation of intensity levels
 - **Improved Question Sets:**
     - Expanded question libraries for all game modes
     - Added new "Hot Takes" questions for enhanced engagement
     - Updated existing questions for better gameplay experience
-    - Enhanced NSFW content with more engaging options
+    - Enhanced premium content with more engaging options
 - **Disconnection Handling:** Server removes disconnected players and notifies the remaining player (`playerLeft` event).
 - **Solo Mode Path:** Basic flow for creating a solo game exists (skips waiting).
 - **UI Component Foundation:** Shadcn/ui components for UI elements.
@@ -82,7 +82,7 @@
 
 - **Core Multiplayer Flow Implemented:** Create, join, synchronized game start, both reveal-only and prediction mode round progression, and game completion flow are functional using Socket.IO.
 - **Server Authoritative:** Backend manages the core game state.
-- **Exclusive Mode:** Working implementation of PIN-protected adult content.
+- **Special Mode:** Working implementation of PIN-protected enhanced content.
 - **Room Reset:** Implemented functionality to reset room after game completion.
 - **Prediction Mode:** Complete implementation of prediction phase, scoring, and results display.
 - **Enhanced Content:** Expanded question libraries across all game modes with improved engagement.
@@ -109,7 +109,7 @@
 *   **Rules Overlay & Content Level Improvements:**
     - Implemented Rules Overlay feature for Player 2 to view game rules and settings before game starts
     - Added proper validation for content level values throughout the application
-    - Replaced numeric spiciness levels with fun, group-based content level names
+    - Replaced numeric levels with fun, group-based intensity level names
     - Fixed display issues with extreme content level values
     - Added comprehensive error handling for edge cases
     - Updated game descriptions to be more accurate and focused on gameplay rather than prediction aspects
@@ -131,8 +131,8 @@
     - Added scoring logic (1 point for correct predictions)
     - Enhanced ResultComparison to show predictions with correctness indicators
 
-*   **Exclusive Mode Implementation:**
-    - Added PIN protection ("s3xy") for adult content
+*   **Special Mode Implementation:**
+    - Added PIN protection for enhanced content
     - Implemented server-side question filtering/management
     - Created activation flow via modal dialog
     - Added UI indicators and creator-only controls
@@ -195,7 +195,7 @@
 *   Custom game modes or rules
 *   Spectator mode
 *   More sophisticated scoring options
-*   Enhanced PIN protection/authentication for exclusive content
+*   Enhanced PIN protection/authentication for special content
 *   Admin interface for managing questions
 *   Round summary sharing functionality
 

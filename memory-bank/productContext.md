@@ -22,7 +22,7 @@ Cards Against Maturity is a web-based party game where players connect and test 
 3.  **Gameplay Styles (2-Player):**
     *   **Prediction Mode:** (Future) Earn points by predicting answers.
     *   **Reveal-only Mode:** Answer and compare for discussion.
-4.  **NSFW/Spice Level Control:** Filter question pool by desired intensity.
+4.  **Intensity Level Control:** Filter question pool by desired engagement level.
 5.  **Answer Timer (Optional):** Add time pressure to rounds.
 6.  **Real-time Communication (2-Player):** Uses a Node.js backend with Socket.IO for instant updates on player joins, game start, answers, results, and disconnects.
 7.  **Room Creation/Joining (2-Player):** Simple code-based room system managed by the server.
@@ -55,7 +55,7 @@ Cards Against Maturity is a web-based party game where players connect and test 
     *   Player 1 receives `roomReady`, updates players list, sets status to `'selecting'`. 
     *   Both players see the "Choose a Game Mode" screen.
     *   Player 1 selects a game mode (e.g., "This or That"). UI updates locally to `'style-selecting'`. 
-    *   Player 1 sees customization options (Style, NSFW, Timer). Player 2 sees "Waiting for Host...".
+    *   Player 1 sees customization options (Style, Intensity, Timer). Player 2 sees "Waiting for Host...".
     *   Player 1 configures options, clicks "Start Game".
     *   Frontend sends `startGame` event to backend with settings.
     *   Backend validates, generates questions, updates room state (`status='playing'`, `currentRound=1`, etc.).

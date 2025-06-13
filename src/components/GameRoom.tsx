@@ -1096,7 +1096,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
             {isExclusiveModeActive && (
               <div className="absolute top-0 left-0 right-0 flex justify-center z-10">
                 <div className="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-medium">
-                  Exclusive Mode Active
+                                          Exclusive Mode Active
                 </div>
               </div>
             )}
@@ -1112,7 +1112,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
                 onClick={handleActivateExclusiveMode}
                 className="absolute top-2 right-2 z-10 bg-pink-100 text-pink-800 border-pink-300 hover:bg-pink-200 font-medium"
               >
-                🔥 Exclusive Mode
+                                                🔥 Exclusive Mode
               </Button>
             )}
             
@@ -1265,10 +1265,10 @@ const GameRoom: React.FC<GameRoomProps> = ({
         isOpen={isPinModalOpen}
         onClose={() => setIsPinModalOpen(false)}
         onSubmit={handlePinSubmit}
-        title="Enter Exclusive Mode PIN"
+                    title="Enter Exclusive Mode PIN"
         message={pinEntryMode === 'activate' 
-          ? "Enter the 4-digit PIN to activate exclusive mode"
-          : "Enter the 4-digit PIN to configure exclusive mode"}
+                      ? "Enter the 4-digit PIN to activate exclusive mode"
+            : "Enter the 4-digit PIN to configure exclusive mode"}
       />
       
       {/* Confirmation Modal */}
@@ -1276,8 +1276,8 @@ const GameRoom: React.FC<GameRoomProps> = ({
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={confirmEndExclusiveMode}
-        title="End Exclusive Mode"
-        message="Are you sure you want to end the exclusive questions round? This will end the current game."
+                  title="End Exclusive Mode"
+                                     message="Are you sure you want to end the exclusive questions round? This will end the current game."
         confirmText="End Mode"
         cancelText="Cancel"
       />

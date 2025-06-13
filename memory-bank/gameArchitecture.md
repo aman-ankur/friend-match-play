@@ -135,13 +135,13 @@ The `useGameLogic` hook encapsulates game-specific logic:
 
 This separation allows the same game logic to be reused across different game components.
 
-## Exclusive Mode Implementation
+## Special Mode Implementation
 
-Exclusive mode is a special feature for "This or That" games with adult content:
+Special mode is a special feature for "This or That" games with enhanced content:
 
 1. **Activation**
    - Can happen during setup or gameplay
-   - Protected by PIN ("s3xy")
+   - Protected by PIN
    - Only available to room creator
    - Only works with "This or That" game mode
 
@@ -153,7 +153,7 @@ Exclusive mode is a special feature for "This or That" games with adult content:
 
 3. **State Management**
    - Server tracks `isExclusiveModeActive` and `exclusiveQuestionQueue`
-   - Client shows indicators and special UI for exclusive mode
+   - Client shows indicators and special UI for special mode
    - Round counter shows "Unlimited" instead of round numbers
    - Game continues indefinitely until questions exhausted
 

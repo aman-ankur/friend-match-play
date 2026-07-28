@@ -1,6 +1,11 @@
 // server/src/gameUtils.ts
 // Import types from the single source of truth (expected to be copied locally during build)
 import { GameQuestion as ImportedGameQuestion, GameMode as ImportedGameMode } from './types/game';
+import {
+  highLevelGuessWhoIAmQuestions,
+  highLevelHotTakesQuestions,
+  highLevelThisOrThatQuestions
+} from './highLevelQuestions';
 
 // Re-export the types for use by other server modules
 export type GameQuestion = ImportedGameQuestion;
@@ -4656,9 +4661,9 @@ const thisOrThatQuestions: GameQuestion[] = [
 ];
 
 const allQuestions: Record<GameMode, GameQuestion[]> = {
-  "guess-who-i-am": guessWhoIAmQuestions,
-  "hot-takes": hotTakesQuestions,
-  "this-or-that": thisOrThatQuestions
+  "guess-who-i-am": [...guessWhoIAmQuestions, ...highLevelGuessWhoIAmQuestions],
+  "hot-takes": [...hotTakesQuestions, ...highLevelHotTakesQuestions],
+  "this-or-that": [...thisOrThatQuestions, ...highLevelThisOrThatQuestions]
 };
 
 // --- Function to get questions (Exported for server use) ---

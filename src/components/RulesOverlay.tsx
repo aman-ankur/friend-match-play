@@ -28,6 +28,10 @@ const GAME_DESCRIPTIONS: Record<GameMode, { title: string; description: string }
   "dealbreaker-draft": {
     title: "Dealbreaker Draft",
     description: "Draft one complete package per round. Every option combines a tempting advantage with a revealing drawback."
+  },
+  "red-flag-radar": {
+    title: "Red Flag Radar",
+    description: "Rate each behavior as a green flag, something that needs context, a red flag, or an instant exit—then compare your boundaries."
   }
 };
 

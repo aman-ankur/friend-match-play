@@ -43,6 +43,10 @@ const GAME_DESCRIPTIONS: Record<SpecificGameMode, { title: string; description: 
   "dealbreaker-draft": {
     title: "Dealbreaker Draft",
     description: "Draft the best complete package when every irresistible benefit comes with a dangerously revealing drawback."
+  },
+  "red-flag-radar": {
+    title: "Red Flag Radar",
+    description: "Judge ambiguous dating behavior from green flag to instant exit—then discover exactly where your friend's boundaries sit."
   }
 };
 
@@ -1136,6 +1140,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
           />
         );
       case 'dealbreaker-draft':
+      case 'red-flag-radar':
         return (
           <GuessWhoIAm
             roomId={roomId}

@@ -10,7 +10,8 @@ import { refreshQuestionPool } from './questionRefresh';
 import {
   dealbreakerDraftQuestions,
   howWouldIReactQuestions,
-  mostLikelyToQuestions
+  mostLikelyToQuestions,
+  redFlagRadarQuestions
 } from './newGameQuestions';
 
 // Re-export the types for use by other server modules
@@ -4681,7 +4682,8 @@ const allQuestions: Record<GameMode, GameQuestion[]> = {
   ),
   "how-would-i-react": howWouldIReactQuestions,
   "most-likely-to": mostLikelyToQuestions,
-  "dealbreaker-draft": dealbreakerDraftQuestions
+  "dealbreaker-draft": dealbreakerDraftQuestions,
+  "red-flag-radar": redFlagRadarQuestions
 };
 
 // --- Function to get questions (Exported for server use) ---

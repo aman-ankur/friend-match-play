@@ -4,7 +4,8 @@ export type GameMode =
   | 'this-or-that'
   | 'how-would-i-react'
   | 'most-likely-to'
-  | 'dealbreaker-draft';
+  | 'dealbreaker-draft'
+  | 'red-flag-radar';
 export type GameStyle = 'predict-score' | 'reveal-only';
 
 export interface GameQuestion {
@@ -101,5 +102,11 @@ export const gameModeConfig: Record<GameMode, {
     description: 'Draft the best dangerously flawed option',
     color: 'text-amber-600',
     bgColor: 'bg-amber-50'
+  },
+  'red-flag-radar': {
+    title: 'Red Flag Radar',
+    description: 'Rate the warning signs before they become a plot',
+    color: 'text-red-600',
+    bgColor: 'bg-red-50'
   }
 };

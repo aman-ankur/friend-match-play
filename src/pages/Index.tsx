@@ -95,7 +95,7 @@ const Index = () => {
                 </div>
                 <div className="flex items-start">
                   <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">2</div>
-                  <p>Select from six game modes built for revealing, hilarious conversations</p>
+                  <p>Select from seven game modes built for revealing, hilarious conversations</p>
                 </div>
                 <div className="flex items-start">
                   <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">3</div>
@@ -151,6 +151,13 @@ const Index = () => {
                 <h3 className="text-xl font-bold mb-2">Dealbreaker Draft</h3>
                 <p className="text-gray-600">
                   Draft irresistible packages with unavoidable drawbacks and discover which flaws your friend would accept.
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
+                <h3 className="text-xl font-bold mb-2">Red Flag Radar</h3>
+                <p className="text-gray-600">
+                  Judge messy, ambiguous dating behavior and discover where your friend's real boundaries begin.
                 </p>
               </div>
             </div>

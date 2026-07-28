@@ -16,6 +16,18 @@ const GAME_DESCRIPTIONS: Record<GameMode, { title: string; description: string }
   "this-or-that": {
     title: "This or That",
     description: "Make tough choices between impossible dilemmas and discover how your preferences align (or don't) with your friend's."
+  },
+  "how-would-i-react": {
+    title: "How Would I React?",
+    description: "Choose your real reaction to each scenario, then see whether your friend can predict you under pressure."
+  },
+  "most-likely-to": {
+    title: "Most Likely To",
+    description: "Secretly choose which player is most likely, or decide that both—or neither—fit the accusation."
+  },
+  "dealbreaker-draft": {
+    title: "Dealbreaker Draft",
+    description: "Draft one complete package per round. Every option combines a tempting advantage with a revealing drawback."
   }
 };
 
@@ -176,4 +188,4 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({
   );
 };
 
-export default RulesOverlay; 
+export default RulesOverlay;

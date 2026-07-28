@@ -31,6 +31,18 @@ const GAME_DESCRIPTIONS: Record<SpecificGameMode, { title: string; description: 
   "this-or-that": {
     title: "This or That",
     description: "Make tough choices between impossible dilemmas and discover how your preferences align (or don't) with your friend's."
+  },
+  "how-would-i-react": {
+    title: "How Would I React?",
+    description: "Face awkward, dramatic, and spicy scenarios—then predict exactly how your friend would respond under pressure."
+  },
+  "most-likely-to": {
+    title: "Most Likely To",
+    description: "Choose who is truly most likely to do it: you, your friend, both of you, or absolutely neither."
+  },
+  "dealbreaker-draft": {
+    title: "Dealbreaker Draft",
+    description: "Draft the best complete package when every irresistible benefit comes with a dangerously revealing drawback."
   }
 };
 
@@ -1059,6 +1071,11 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
     // Define dummy onComplete function
     const handleGameComplete = () => { /* console.log("Game component reported complete."); */ };
+    const getMostLikelyOptionLabel = (option: string) => {
+      if (option === "{{player1}}") return players[0]?.nickname || "Player 1";
+      if (option === "{{player2}}") return players[1]?.nickname || "Player 2";
+      return option;
+    };
 
     switch (selectedGameMode) {
       case 'guess-who-i-am':
@@ -1087,6 +1104,49 @@ const GameRoom: React.FC<GameRoomProps> = ({
             gameStyle={selectedGameStyle}
             onUpdateScore={handleUpdateScore}
             onComplete={handleGameComplete} // Pass dummy prop
+          />
+        );
+      case 'how-would-i-react':
+        return (
+          <GuessWhoIAm
+            roomId={roomId}
+            players={players}
+            currentPlayerId={currentPlayerId!}
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            gameStyle={selectedGameStyle}
+            onUpdateScore={handleUpdateScore}
+            onComplete={handleGameComplete}
+          />
+        );
+      case 'most-likely-to':
+        return (
+          <GuessWhoIAm
+            roomId={roomId}
+            players={players}
+            currentPlayerId={currentPlayerId!}
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            gameStyle={selectedGameStyle}
+            onUpdateScore={handleUpdateScore}
+            onComplete={handleGameComplete}
+            getOptionLabel={getMostLikelyOptionLabel}
+          />
+        );
+      case 'dealbreaker-draft':
+        return (
+          <GuessWhoIAm
+            roomId={roomId}
+            players={players}
+            currentPlayerId={currentPlayerId!}
+            questions={questions}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            gameStyle={selectedGameStyle}
+            onUpdateScore={handleUpdateScore}
+            onComplete={handleGameComplete}
           />
         );
       case 'this-or-that':

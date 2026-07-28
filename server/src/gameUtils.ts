@@ -7,6 +7,11 @@ import {
   highLevelThisOrThatQuestions
 } from './highLevelQuestions';
 import { refreshQuestionPool } from './questionRefresh';
+import {
+  dealbreakerDraftQuestions,
+  howWouldIReactQuestions,
+  mostLikelyToQuestions
+} from './newGameQuestions';
 
 // Re-export the types for use by other server modules
 export type GameQuestion = ImportedGameQuestion;
@@ -4673,7 +4678,10 @@ const allQuestions: Record<GameMode, GameQuestion[]> = {
   "this-or-that": refreshQuestionPool(
     "this-or-that",
     [...thisOrThatQuestions, ...highLevelThisOrThatQuestions]
-  )
+  ),
+  "how-would-i-react": howWouldIReactQuestions,
+  "most-likely-to": mostLikelyToQuestions,
+  "dealbreaker-draft": dealbreakerDraftQuestions
 };
 
 // --- Function to get questions (Exported for server use) ---

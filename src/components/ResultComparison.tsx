@@ -11,6 +11,7 @@ interface ResultComparisonProps {
   showPredictions?: boolean;
   hasClickedContinue?: boolean;
   questionText: string;
+  getOptionLabel?: (option: string) => string;
 }
 
 const ResultComparison: React.FC<ResultComparisonProps> = ({ 
@@ -19,7 +20,8 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
   onContinue,
   showPredictions = true,
   hasClickedContinue = false,
-  questionText
+  questionText,
+  getOptionLabel = (option) => option
 }) => {
 
   // Safety check
@@ -55,7 +57,7 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
                 <div className="mb-3">
                   <p className="text-sm font-medium text-gray-500">Answer:</p>
                   <p className="text-xl font-semibold text-connection-tertiary ml-2 mt-1">
-                    {playerResult.answer || <span className="text-gray-400 italic text-base">No answer</span>}
+                    {playerResult.answer ? getOptionLabel(playerResult.answer) : <span className="text-gray-400 italic text-base">No answer</span>}
                   </p>
                 </div>
 
@@ -66,7 +68,7 @@ const ResultComparison: React.FC<ResultComparisonProps> = ({
                     </p>
                     <div className="flex justify-between items-center mt-1 ml-2">
                       <p className="text-lg font-semibold text-gray-700">
-                        {playerResult.prediction || <span className="text-gray-400 italic text-base">No prediction</span>}
+                        {playerResult.prediction ? getOptionLabel(playerResult.prediction) : <span className="text-gray-400 italic text-base">No prediction</span>}
                       </p>
                       {playerResult.isCorrect !== undefined ? (
                         playerResult.isCorrect ? (

@@ -44,7 +44,6 @@ const Index = () => {
     return (
       <GameRoom
         roomId={roomId}
-        currentPlayerId={currentUserId}
         playerName={playerName}
         gameMode={gameMode}
         initialPlayersData={initialPlayersState}
@@ -96,7 +95,7 @@ const Index = () => {
                 </div>
                 <div className="flex items-start">
                   <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">2</div>
-                  <p>Select from three different game modes designed to foster meaningful connections</p>
+                  <p>Select from six game modes built for revealing, hilarious conversations</p>
                 </div>
                 <div className="flex items-start">
                   <div className="bg-connection-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">3</div>
@@ -112,7 +111,7 @@ const Index = () => {
           
           <div className="mt-16">
             <h2 className="text-2xl font-bold mb-6 text-center">Game Modes</h2>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
                 <h3 className="text-xl font-bold mb-2">Guess Who I Am</h3>
                 <p className="text-gray-600">
@@ -131,6 +130,27 @@ const Index = () => {
                 <h3 className="text-xl font-bold mb-2">This or That</h3>
                 <p className="text-gray-600">
                   Make tough choices between impossible dilemmas and discover how your preferences align with your friend's.
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
+                <h3 className="text-xl font-bold mb-2">How Would I React?</h3>
+                <p className="text-gray-600">
+                  Face awkward and spicy scenarios, choose your real reaction, and predict exactly how your friend would respond.
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
+                <h3 className="text-xl font-bold mb-2">Most Likely To</h3>
+                <p className="text-gray-600">
+                  Decide whether you, your friend, both, or neither deserve each hilarious accusation.
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-connection-light hover:border-connection-primary transition-all">
+                <h3 className="text-xl font-bold mb-2">Dealbreaker Draft</h3>
+                <p className="text-gray-600">
+                  Draft irresistible packages with unavoidable drawbacks and discover which flaws your friend would accept.
                 </p>
               </div>
             </div>

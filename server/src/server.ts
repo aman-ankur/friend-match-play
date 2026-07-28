@@ -83,7 +83,8 @@ const allowedOrigins = [
     process.env.VITE_SOCKET_URL, // Dynamically read Vercel Frontend URL from env var set on Render
     'http://localhost:5173',     // Local development frontend
     'http://localhost:8081',     // Adding additional local development frontend
-    'http://localhost:8080'      // Adding localhost:8080
+    'http://localhost:8080',     // Adding localhost:8080
+    'http://127.0.0.1:8080'      // Vite when explicitly bound to loopback
 ].filter(Boolean); // Filter out undefined/null if VITE_SOCKET_URL isn't set
 
 const corsOptions = {
@@ -694,7 +695,7 @@ io.on('connection', (socket: Socket) => {
     console.log(`Client disconnected: ${socket.id}, Reason: ${reason}`);
     
     // Find the room this socket was in (if any)
-    for (let roomId in rooms) {
+    for (const roomId in rooms) {
       const room = rooms[roomId];
       const playerIndex = room.players.findIndex(p => p.id === socket.id);
       
@@ -892,4 +893,4 @@ function endGame(room: Room, playerLeft = false) {
 // Start the server
 httpServer.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-}); 
+});

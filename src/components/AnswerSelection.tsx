@@ -5,12 +5,15 @@ interface AnswerSelectionProps {
   options: string[];
   onSelect: (selectedOption: string) => void;
   disabled?: boolean; // Optional disabled state
+  getOptionLabel?: (option: string) => string;
+  layout?: 'column' | 'grid';
 }
 
 const AnswerSelection: React.FC<AnswerSelectionProps> = ({ 
     options, 
     onSelect,
-    disabled = false 
+    disabled = false,
+    getOptionLabel = (option) => option
 }) => {
   return (
     <div className="grid gap-4">
@@ -22,11 +25,11 @@ const AnswerSelection: React.FC<AnswerSelectionProps> = ({
           onClick={() => onSelect(option)}
           disabled={disabled}
         >
-          <span className="text-md whitespace-normal break-words">{option}</span>
+          <span className="text-md whitespace-normal break-words">{getOptionLabel(option)}</span>
         </Button>
       ))}
     </div>
   );
 };
 
-export default AnswerSelection; 
+export default AnswerSelection;

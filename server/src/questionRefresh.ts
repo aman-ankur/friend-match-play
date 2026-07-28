@@ -138,7 +138,8 @@ const retiredIds: Record<GameMode, Set<string>> = {
   ]),
   "how-would-i-react": new Set(),
   "most-likely-to": new Set(),
-  "dealbreaker-draft": new Set()
+  "dealbreaker-draft": new Set(),
+  "red-flag-radar": new Set()
 };
 
 // These texts belong to duplicate-ID blocks. Removing by text retires only the
@@ -181,7 +182,8 @@ const replacements: Record<GameMode, GameQuestion[]> = {
   "this-or-that": [...refreshedThisOrThatQuestions, ...refreshedExclusiveQuestions],
   "how-would-i-react": [],
   "most-likely-to": [],
-  "dealbreaker-draft": []
+  "dealbreaker-draft": [],
+  "red-flag-radar": []
 };
 
 export const refreshQuestionPool = (

@@ -16,6 +16,7 @@ interface GuessWhoIAmProps {
   onUpdateScore: (playerId: string, pointsAdded: number) => void;
   gameStyle: GameStyle;
   currentPlayerId: string | null;
+  getOptionLabel?: (option: string) => string;
 }
 
 const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
@@ -27,7 +28,8 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
   onComplete,
   onUpdateScore,
   gameStyle,
-  currentPlayerId
+  currentPlayerId,
+  getOptionLabel = (option) => option
 }) => {
   console.log(`[GuessWhoIAm] Rendering. Round: ${currentRound}`);
 
@@ -82,7 +84,7 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
   }
 
   const cardTitle = `Round ${currentRound}/${totalRounds}`;
-  const predictionPrompt = `Predict ${otherPlayer.nickname}'s Answer`;
+  const predictionPrompt = `Predict ${otherPlayer?.nickname || "your friend's"} Answer`;
 
   // --- Render Waiting State (After Answer Submission) ---
   if (showWaitingAfterAnswer) {
@@ -130,6 +132,7 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
           onContinue={handleContinue}
           showPredictions={gameStyle === 'predict-score'} // Use correct value
           hasClickedContinue={hasClickedContinue}
+          getOptionLabel={getOptionLabel}
         />
       </GameCard>
     );
@@ -153,14 +156,15 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
           
           <div className="bg-white p-4 rounded-md mb-4 border border-indigo-100">
             <p className="text-gray-700 mb-2"><span className="font-semibold">Question:</span> {currentQuestion?.text}</p>
-            <p className="text-gray-700 mb-2"><span className="font-semibold">Your answer:</span> {answers[currentPlayerId!] || "Not available"}</p>
-            <p className="text-sm text-indigo-600 font-medium mb-3">Now predict what {otherPlayer.nickname} answered:</p>
+            <p className="text-gray-700 mb-2"><span className="font-semibold">Your answer:</span> {answers[currentPlayerId!] ? getOptionLabel(answers[currentPlayerId!]) : "Not available"}</p>
+            <p className="text-sm text-indigo-600 font-medium mb-3">Now predict what {otherPlayer?.nickname || "your friend"} answered:</p>
           </div>
 
           <AnswerSelection
             options={currentQuestion.options}
             onSelect={handlePredictionSelect}
             layout="column"
+            getOptionLabel={getOptionLabel}
           />
         </GameCard>
       </div>
@@ -187,6 +191,7 @@ const GuessWhoIAm: React.FC<GuessWhoIAmProps> = ({
             options={currentQuestion.options}
             onSelect={handleAnswerSelect}
             layout="column"
+            getOptionLabel={getOptionLabel}
           />
         )}
       </GameCard>

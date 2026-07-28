@@ -1,4 +1,10 @@
-export type GameMode = 'guess-who-i-am' | 'hot-takes' | 'this-or-that';
+export type GameMode =
+  | 'guess-who-i-am'
+  | 'hot-takes'
+  | 'this-or-that'
+  | 'how-would-i-react'
+  | 'most-likely-to'
+  | 'dealbreaker-draft';
 export type GameStyle = 'predict-score' | 'reveal-only';
 
 export interface GameQuestion {
@@ -77,6 +83,23 @@ export const gameModeConfig: Record<GameMode, {
     description: 'Forced choices with a twist',
     color: 'text-blue-600',
     bgColor: 'bg-blue-50'
+  },
+  'how-would-i-react': {
+    title: 'How Would I React?',
+    description: 'Predict each other under pressure',
+    color: 'text-rose-600',
+    bgColor: 'bg-rose-50'
+  },
+  'most-likely-to': {
+    title: 'Most Likely To',
+    description: 'Decide who would actually do it',
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-50'
+  },
+  'dealbreaker-draft': {
+    title: 'Dealbreaker Draft',
+    description: 'Draft the best dangerously flawed option',
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-50'
   }
 };
-

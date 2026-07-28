@@ -135,7 +135,10 @@ const retiredIds: Record<GameMode, Set<string>> = {
     "tot-new-1001", "tot-new-1002", "tot-new-1003", "tot-new-1004",
     "tot-new-1005", "tot-new-6105", "tot-new-7103", "tot-new-7105",
     "tot-new-8106", "tot-new-9003", "tot-new-9004"
-  ])
+  ]),
+  "how-would-i-react": new Set(),
+  "most-likely-to": new Set(),
+  "dealbreaker-draft": new Set()
 };
 
 // These texts belong to duplicate-ID blocks. Removing by text retires only the
@@ -175,7 +178,10 @@ const retiredTexts = new Set([
 const replacements: Record<GameMode, GameQuestion[]> = {
   "guess-who-i-am": refreshedGuessWhoIAmQuestions,
   "hot-takes": refreshedHotTakesQuestions,
-  "this-or-that": [...refreshedThisOrThatQuestions, ...refreshedExclusiveQuestions]
+  "this-or-that": [...refreshedThisOrThatQuestions, ...refreshedExclusiveQuestions],
+  "how-would-i-react": [],
+  "most-likely-to": [],
+  "dealbreaker-draft": []
 };
 
 export const refreshQuestionPool = (

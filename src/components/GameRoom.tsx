@@ -1068,6 +1068,15 @@ const GameRoom: React.FC<GameRoomProps> = ({
       );
   };
 
+  const getGameOptionLabel = (option: string) => {
+    if (selectedGameMode === 'most-likely-to') {
+      if (option === "{{player1}}") return players[0]?.nickname || "Player 1";
+      if (option === "{{player2}}") return players[1]?.nickname || "Player 2";
+    }
+
+    return option;
+  };
+
   const renderGameComponent = () => {
     // --- Debugging Log ---
     console.log(`[GameRoom] Rendering game component. selectedGameMode:`, selectedGameMode);
@@ -1075,12 +1084,6 @@ const GameRoom: React.FC<GameRoomProps> = ({
 
     // Define dummy onComplete function
     const handleGameComplete = () => { /* console.log("Game component reported complete."); */ };
-    const getMostLikelyOptionLabel = (option: string) => {
-      if (option === "{{player1}}") return players[0]?.nickname || "Player 1";
-      if (option === "{{player2}}") return players[1]?.nickname || "Player 2";
-      return option;
-    };
-
     switch (selectedGameMode) {
       case 'guess-who-i-am':
         return (
@@ -1136,7 +1139,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
             gameStyle={selectedGameStyle}
             onUpdateScore={handleUpdateScore}
             onComplete={handleGameComplete}
-            getOptionLabel={getMostLikelyOptionLabel}
+            getOptionLabel={getGameOptionLabel}
           />
         );
       case 'dealbreaker-draft':
@@ -1230,6 +1233,7 @@ const GameRoom: React.FC<GameRoomProps> = ({
          showPredictions={selectedGameStyle === 'predict-score'}
          hasClickedContinue={hasClickedContinueThisRound}
          onContinue={handleContinueClick}
+         getOptionLabel={getGameOptionLabel}
       />
     );
   };

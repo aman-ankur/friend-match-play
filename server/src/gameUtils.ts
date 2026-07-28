@@ -6,6 +6,7 @@ import {
   highLevelHotTakesQuestions,
   highLevelThisOrThatQuestions
 } from './highLevelQuestions';
+import { refreshQuestionPool } from './questionRefresh';
 
 // Re-export the types for use by other server modules
 export type GameQuestion = ImportedGameQuestion;
@@ -4661,9 +4662,18 @@ const thisOrThatQuestions: GameQuestion[] = [
 ];
 
 const allQuestions: Record<GameMode, GameQuestion[]> = {
-  "guess-who-i-am": [...guessWhoIAmQuestions, ...highLevelGuessWhoIAmQuestions],
-  "hot-takes": [...hotTakesQuestions, ...highLevelHotTakesQuestions],
-  "this-or-that": [...thisOrThatQuestions, ...highLevelThisOrThatQuestions]
+  "guess-who-i-am": refreshQuestionPool(
+    "guess-who-i-am",
+    [...guessWhoIAmQuestions, ...highLevelGuessWhoIAmQuestions]
+  ),
+  "hot-takes": refreshQuestionPool(
+    "hot-takes",
+    [...hotTakesQuestions, ...highLevelHotTakesQuestions]
+  ),
+  "this-or-that": refreshQuestionPool(
+    "this-or-that",
+    [...thisOrThatQuestions, ...highLevelThisOrThatQuestions]
+  )
 };
 
 // --- Function to get questions (Exported for server use) ---

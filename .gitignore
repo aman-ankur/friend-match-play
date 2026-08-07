@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Sensitive content - not tracked in git
+server/src/sensitiveQuestions.ts
